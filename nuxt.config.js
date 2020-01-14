@@ -38,6 +38,10 @@ export default {
     // Doc: https://github.com/nuxt-community/nuxt-tailwindcss
     '@nuxtjs/tailwindcss'
   ],
+  eslint: {
+    emitWarning: true,
+    emitError: true
+  },
   /*
   ** Nuxt.js modules
   */
