@@ -1,0 +1,18 @@
+#!/bin/bash
+# Prevents force-pushing to master
+# This file needs execution permissions
+
+# https://gist.github.com/pixelhandler/5718585#gistcomment-840997
+# https://gist.github.com/pixelhandler/5718585#gistcomment-1390358
+
+BRANCH=`git rev-parse --abbrev-ref HEAD`
+PUSH_COMMAND=`ps -ocommand= -p $PPID`
+PROTECTED_BRANCHES="(master|dev|release-*|patch-*)"
+FORCE_PUSH="force|delete|-f"
+
+if [[ "$BRANCH" =~ $PROTECTED_BRANCHES ]]; then
+  echo "Prevented force-push to protected branch \"$BRANCH\" by pre-push hook"
+  exit 1
+fi
+
+exit 0
