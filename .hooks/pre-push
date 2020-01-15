@@ -5,14 +5,20 @@
 # https://gist.github.com/pixelhandler/5718585#gistcomment-840997
 # https://gist.github.com/pixelhandler/5718585#gistcomment-1390358
 
-BRANCH=`git rev-parse --abbrev-ref HEAD`
+echo "[pre-push]: START"
 PUSH_COMMAND=`ps -ocommand= -p $PPID`
-PROTECTED_BRANCHES="(master|dev|release-*|patch-*)"
-FORCE_PUSH="force|delete|-f"
+PROTECTED_REMOTE_BRANCHES="(master|release-*|patch-*)"
 
-if [[ "$BRANCH" =~ $PROTECTED_BRANCHES ]]; then
-  echo "Prevented force-push to protected branch \"$BRANCH\" by pre-push hook"
-  exit 1
-fi
+# Check the file of example pre-push.sample to get variables
+while read local_ref local_sha remote_ref remote_sha
+do
+  echo "[pre-push]: Trying to push towards the branch $remote_ref"
+  BRANCH_TO_PUSH="$remote_ref"
+  if [[ "$BRANCH_TO_PUSH" =~ $PROTECTED_REMOTE_BRANCHES ]]; then
+      echo "[pre-push]: Failed to push to \"$BRANCH_TO_PUSH\" because is blocked by the repository owner"
+      exit 1
+  fi
+done
 
+echo "[pre-push]: Push to $BRANCH_TO_PUSH succeeded"
 exit 0
