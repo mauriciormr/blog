@@ -20,12 +20,18 @@ fi
 
 for FILE in $STAGED_FILES
 do
-  "$ESLINT" "$FILE"
-
-  if ! [[ "$?" == 0 ]]; then
-    PASS=false
+  if ! [[ "$FILE" =~ .json$ ]]; then
+    "$ESLINT" "$FILE"
+    if ! [[ "$?" == 0 ]]; then
+      echo "[pre-commit]: ERROR: $FILE "
+      PASS=false
+    else
+      echo "[pre-commit]: OK: $FILE "
+    fi
   fi
 done
+
+echo "[pre-commit]: eslint review finished"
 
 if ! $PASS; then
   echo "[pre-commit]: Fix eslint errors and try again"
