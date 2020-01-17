@@ -7,6 +7,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   data() {
     return {
@@ -51,9 +53,14 @@ export default {
     const fn = this
     if (this.logged) {
       setTimeout(() => {
-        fn.$router.push('/')
+        fn.loginUser(fn.userData).then(() => fn.$router.push('/'))
       }, 500)
     }
+  },
+  methods: {
+    ...mapActions({
+      loginUser: 'users/loginUser'
+    })
   },
   head() {
     return {
