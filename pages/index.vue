@@ -19,17 +19,40 @@
         >
           GitHub
         </a>
+        <p v-if="user.logged">
+          LOGUEADO
+        </p>
+        <p v-else>
+          <nuxt-link to="/login" class="button--grey">
+            Login
+          </nuxt-link>
+        </p>
+        <button v-if="user.logged" @click="logoutUser">
+          SALIR
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex'
+
 import Logo from '~/components/Logo.vue'
 
 export default {
   components: {
     Logo
+  },
+  computed: {
+    ...mapState({
+      user: state => state.users.user
+    })
+  },
+  methods: {
+    ...mapActions({
+      logoutUser: 'users/logoutUser'
+    })
   }
 }
 </script>
