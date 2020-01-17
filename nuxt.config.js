@@ -62,6 +62,12 @@ export default {
     /*
      ** You can extend webpack config here
      */
+    hotMiddleware: {
+      client: {
+        // turn off client overlay when errors are present
+        overlay: false
+      }
+    },
     extend(config, ctx) {}
   }
 }
