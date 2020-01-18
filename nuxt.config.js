@@ -35,7 +35,7 @@ export default {
    ** https://nuxtjs.org/guide/routing/#middleware
    */
   router: {
-    middleware: 'axios'
+    middleware: ['axios', 'auth']
   },
   /*
    ** Nuxt.js dev-modules
