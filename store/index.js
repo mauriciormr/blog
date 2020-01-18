@@ -5,7 +5,19 @@ export const state = () => ({})
 
 export const mutations = {}
 
-export const actions = {}
+export const actions = {
+  nuxtServerInit({ dispatch }, { app }) {
+    const cookies = app.$cookies.get('vuex')
+    if (cookies) {
+      const {
+        users: { user }
+      } = cookies
+      if (user.logged) {
+        dispatch('users/loginUser', user)
+      }
+    }
+  }
+}
 
 export const plugins = [
   createPersistedState({
