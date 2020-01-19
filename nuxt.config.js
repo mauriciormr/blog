@@ -27,7 +27,16 @@ export default {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: [{ src: '~plugins/vuex-shared-mutations.js', ssr: false }],
+  plugins: [
+    { src: '~plugins/vuex-shared-mutations.js', ssr: false },
+    { src: '~plugins/axios.js', ssr: false }
+  ],
+  /*
+   ** https://nuxtjs.org/guide/routing/#middleware
+   */
+  router: {
+    middleware: ['axios', 'auth']
+  },
   /*
    ** Nuxt.js dev-modules
    */
@@ -48,7 +57,9 @@ export default {
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
     // Doc: https://github.com/nuxt-community/dotenv-module
-    '@nuxtjs/dotenv'
+    '@nuxtjs/dotenv',
+    // Doc: https://github.com/microcipcip/cookie-universal/tree/master/packages/cookie-universal-nuxt
+    'cookie-universal-nuxt'
   ],
   /*
    ** Axios module configuration
