@@ -1,6 +1,11 @@
 <template>
   <div class="container-page">
-    <div class="posts-list">
+    <div v-if="isDataPending" class="loading">
+      <span>
+        Loading...
+      </span>
+    </div>
+    <div v-else class="posts-list">
       <div v-for="post in posts" :key="post.id" class="post-card">
         <nuxt-link :to="`/posts/${post.number}`">
           <p class="post-card__title">
@@ -16,29 +21,17 @@
 </template>
 
 <script>
-import _ from 'lodash'
+import { mapState } from 'vuex'
 
 export default {
-  data() {
-    return {
-      posts: []
-    }
+  computed: {
+    ...mapState({
+      posts: state => state.posts.list,
+      isDataPending: state => state.posts.status.get.isPending
+    })
   },
-  async mounted() {
-    const publications = _.values(await this.getPosts())
-    const formattedPosts = publications.map(p => ({
-      ...p,
-      post: {
-        ...JSON.parse(p.title),
-        content: p.body
-      }
-    }))
-    this.posts = formattedPosts
-  },
-  methods: {
-    getPosts() {
-      return this.$axios.$get('issues')
-    }
+  async fetch({ store }) {
+    await store.dispatch('posts/getPostsList')
   },
   head() {
     return {

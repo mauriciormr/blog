@@ -19,6 +19,11 @@
         >
           GitHub
         </a>
+        <button>
+          <nuxt-link to="/posts" class="button--grey">
+            Posts
+          </nuxt-link>
+        </button>
         <p v-if="user.logged">
           LOGUEADO
         </p>

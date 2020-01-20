@@ -1,4 +1,9 @@
-/* It's activated when a request is made */
+/* It's activated when a request is made.
+ *
+ * Its functionality is to verify the user's login
+ * in each request, as double verification of the
+ * user's session.
+ */
 import _ from 'lodash'
 
 export default function({ $axios, store }) {
