@@ -1,13 +1,66 @@
 <template>
   <div class="container-page">
-    <div>
-      Individual post
+    <div v-if="isDataPending" class="loading">
+      <span>
+        Loading...
+      </span>
+    </div>
+    <div v-else-if="!post">
+      Resource not found
+    </div>
+    <div v-else class="post">
+      <p class="post-card__title">
+        {{ post.post.title }}
+      </p>
+      <p class="post-card__description">
+        {{ post.post.description }}
+      </p>
     </div>
   </div>
 </template>
 
 <script>
-export default {}
+import _ from 'lodash'
+
+import { mapState } from 'vuex'
+
+export default {
+  data() {
+    return {
+      postNumber: null,
+      titlePage: ''
+    }
+  },
+  computed: {
+    ...mapState({
+      posts: state => state.posts.list,
+      isDataPending: state => state.posts.status.get.isPending
+    }),
+    post() {
+      return _.find(this.posts, { number: +this.postNumber })
+    }
+  },
+  asyncData({ params }) {
+    return {
+      postNumber: params.id
+    }
+  },
+  async fetch({ store, params }) {
+    await store.dispatch('posts/getPostsList')
+  },
+  mounted() {
+    if (this.post) {
+      this.titlePage = this.post.post.title
+    } else {
+      this.titlePage = 'Resource not found'
+    }
+  },
+  head() {
+    return {
+      title: this.titlePage
+    }
+  }
+}
 </script>
 
 <style></style>
