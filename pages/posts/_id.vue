@@ -9,6 +9,21 @@
       Resource not found
     </div>
     <div v-else class="post">
+      <div class="post__reactions">
+        <span
+          v-for="reaction in post.reactions"
+          :key="reaction.content"
+          :class="[
+            'post-reaction',
+            reaction.userLoggedHasReaction ? 'active-reaction' : ''
+          ]"
+        >
+          <img :src="`/img/reactions/${reaction.content}.png`" />
+          <span v-if="reaction.count > 0">
+            {{ reaction.count }}
+          </span>
+        </span>
+      </div>
       <p class="post-card__title">
         {{ post.post.title }}
       </p>
@@ -63,4 +78,11 @@ export default {
 }
 </script>
 
-<style></style>
+<style>
+.post__reactions {
+  display: flex;
+}
+.active-reaction {
+  border: 1px solid red;
+}
+</style>
