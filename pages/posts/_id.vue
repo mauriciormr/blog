@@ -24,12 +24,9 @@
           </span>
         </span>
       </div>
-      <p class="post-card__title">
-        {{ post.post.title }}
-      </p>
-      <p class="post-card__description">
-        {{ post.post.description }}
-      </p>
+      <div v-html="post.post.titleHTML" class="post-card__title" />
+      <div v-html="post.post.descriptionHTML" class="post-card__description" />
+      <div v-html="post.post.contentHTML" class="post-card__content" />
     </div>
   </div>
 </template>

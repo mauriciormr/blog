@@ -106,13 +106,21 @@ export const actions = {
       try {
         await dispatch('getPostsListPending')
         const posts = _.values(await this.$axios.$get('issues'))
-        const formattedPosts = posts.map(p => ({
-          ...p,
-          post: {
-            ...JSON.parse(p.title),
-            content: p.body
+        const formattedPosts = posts.map(p => {
+          const postJSON = JSON.parse(p.title)
+          return {
+            ...p,
+            post: {
+              ...postJSON,
+              titleHTML: this.$markdownit.renderInline(postJSON.title),
+              descriptionHTML: this.$markdownit.renderInline(
+                postJSON.description
+              ),
+              content: p.body,
+              contentHTML: this.$markdownit.render(p.body)
+            }
           }
-        }))
+        })
         await dispatch('getPostsListFulfilled', formattedPosts)
         await dispatch('getReactionsPostsList')
         return Promise.resolve()
