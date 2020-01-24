@@ -17,6 +17,7 @@
             'post-reaction',
             reaction.userLoggedHasReaction ? 'active-reaction' : ''
           ]"
+          @click="handleReaction({ number: post.number, reaction: reaction })"
         >
           <img :src="`/img/reactions/${reaction.content}.png`" />
           <span v-if="reaction.count > 0">
@@ -24,12 +25,9 @@
           </span>
         </span>
       </div>
-      <p class="post-card__title">
-        {{ post.post.title }}
-      </p>
-      <p class="post-card__description">
-        {{ post.post.description }}
-      </p>
+      <div v-html="post.post.titleHTML" class="post-card__title" />
+      <div v-html="post.post.descriptionHTML" class="post-card__description" />
+      <div v-html="post.post.contentHTML" class="post-card__content" />
     </div>
   </div>
 </template>
@@ -37,7 +35,7 @@
 <script>
 import _ from 'lodash'
 
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default {
   data() {
@@ -69,6 +67,11 @@ export default {
     } else {
       this.titlePage = 'Resource not found'
     }
+  },
+  methods: {
+    ...mapActions({
+      handleReaction: 'posts/handleReaction'
+    })
   },
   head() {
     return {

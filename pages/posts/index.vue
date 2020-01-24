@@ -8,12 +8,11 @@
     <div v-else class="posts-list">
       <div v-for="post in posts" :key="post.id" class="post-card">
         <nuxt-link :to="`/posts/${post.number}`">
-          <p class="post-card__title">
-            {{ post.post.title }}
-          </p>
-          <p class="post-card__description">
-            {{ post.post.description }}
-          </p>
+          <div v-html="post.post.titleHTML" class="post-card__title" />
+          <div
+            v-html="post.post.descriptionHTML"
+            class="post-card__description"
+          />
         </nuxt-link>
       </div>
     </div>
