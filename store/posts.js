@@ -237,6 +237,7 @@ export const actions = {
         return Promise.resolve()
       } catch (error) {
         dispatch('getPostsListRejected')
+        this.$errorGlobalHandler(error)
       }
     }
   },
@@ -283,6 +284,7 @@ export const actions = {
       )
     } catch (error) {
       dispatch('getReactionsPostsListRejected')
+      this.$errorGlobalHandler(error)
     }
   },
   async handleReaction({ dispatch, rootState }, data) {
@@ -344,6 +346,7 @@ export const actions = {
       return Promise.resolve()
     } catch (error) {
       dispatch('postAddReactionRejected')
+      return Promise.reject(error)
     }
   },
   async deleteRemoveReaction(
@@ -369,6 +372,7 @@ export const actions = {
       return Promise.resolve()
     } catch (error) {
       dispatch('deleteRemoveReactionRejected')
+      return Promise.reject(error)
     }
   }
 }

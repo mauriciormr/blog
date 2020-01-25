@@ -5,9 +5,7 @@
         Loading...
       </span>
     </div>
-    <div v-else-if="!post">
-      Resource not found
-    </div>
+    <ResourceNotFound v-else-if="!post" :error="{ statusCode }" />
     <div v-else class="post">
       <div class="post__reactions">
         <span
@@ -36,12 +34,18 @@
 import _ from 'lodash'
 
 import { mapState, mapActions } from 'vuex'
+import { errorHandler } from '~/utils/validate-errors'
+import ResourceNotFound from '~/components/ResourceNotFound.vue'
 
 export default {
+  components: {
+    ResourceNotFound
+  },
   data() {
     return {
       postNumber: null,
-      titlePage: ''
+      titlePage: '',
+      statusCode: 404
     }
   },
   computed: {
@@ -62,11 +66,9 @@ export default {
     await store.dispatch('posts/getPostsList')
   },
   mounted() {
-    if (this.post) {
-      this.titlePage = this.post.post.title
-    } else {
-      this.titlePage = 'Resource not found'
-    }
+    this.titlePage = this.post
+      ? this.post.post.title
+      : errorHandler(new Error(this.statusCode)).message
   },
   methods: {
     ...mapActions({

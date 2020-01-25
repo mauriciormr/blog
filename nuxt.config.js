@@ -30,7 +30,8 @@ export default {
   plugins: [
     { src: '~plugins/vuex-shared-mutations.js', ssr: false },
     { src: '~plugins/axios.js', ssr: false },
-    { src: '~plugins/markdown-it.js' }
+    { src: '~plugins/markdown-it.js' },
+    { src: '~plugins/error-global-handler.js' }
   ],
   /*
    ** https://nuxtjs.org/guide/routing/#middleware
