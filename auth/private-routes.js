@@ -4,5 +4,9 @@
  * to see the file and add the specific route
  * to restrict access
  */
-const routes = ['/posts/add', '/posts/edit/:id?']
+const routes = [
+  '/posts/dashboard',
+  '/posts/dashboard/add',
+  '/posts/dashboard/edit/:id?'
+]
 export default routes

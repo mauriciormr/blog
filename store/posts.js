@@ -1,11 +1,17 @@
 import _ from 'lodash'
 import {
-  GET_POSTS_LIST_PENDING,
-  GET_POSTS_LIST_FULFILLED,
-  GET_POSTS_LIST_REJECTED,
-  GET_REACTIONS_POSTS_LIST_PENDING,
-  GET_REACTIONS_POSTS_LIST_FULFILLED,
-  GET_REACTIONS_POSTS_LIST_REJECTED,
+  GET_PUBLIC_POSTS_LIST_PENDING,
+  GET_PUBLIC_POSTS_LIST_FULFILLED,
+  GET_PUBLIC_POSTS_LIST_REJECTED,
+  GET_PUBLIC_REACTIONS_POSTS_LIST_PENDING,
+  GET_PUBLIC_REACTIONS_POSTS_LIST_FULFILLED,
+  GET_PUBLIC_REACTIONS_POSTS_LIST_REJECTED,
+  GET_PRIVATE_POSTS_LIST_PENDING,
+  GET_PRIVATE_POSTS_LIST_FULFILLED,
+  GET_PRIVATE_POSTS_LIST_REJECTED,
+  GET_PRIVATE_REACTIONS_POSTS_LIST_PENDING,
+  GET_PRIVATE_REACTIONS_POSTS_LIST_FULFILLED,
+  GET_PRIVATE_REACTIONS_POSTS_LIST_REJECTED,
   POST_ADD_REACTION_PENDING,
   POST_ADD_REACTION_FULFILLED,
   POST_ADD_REACTION_REJECTED,
@@ -18,12 +24,16 @@ import reactionTypes from '../data/reaction-types'
 // https://dev.to/localeai/architecting-vuex-store-for-large-scale-vue-js-applications-4f1f
 // 4. Resseting module state
 const initialState = () => ({
-  list: [],
+  publicList: [],
+  privateList: [],
   status: {
     get: {
-      isPending: false,
-      isFulfilled: false,
-      isRejected: false
+      isPublicPending: false,
+      isPublicFulfilled: false,
+      isPublicRejected: false,
+      isPrivatePending: false,
+      isPrivateFulfilled: false,
+      isPrivateRejected: false
     },
     post: {
       isPending: false,
@@ -41,52 +51,108 @@ const initialState = () => ({
 export const state = () => initialState()
 
 export const mutations = {
-  [GET_POSTS_LIST_PENDING](state) {
+  [GET_PUBLIC_POSTS_LIST_PENDING](state) {
     state.status.get = {
       ...state.status.get,
-      isPending: true,
-      isFulfilled: false
+      isPublicPending: true,
+      isPublicFulfilled: false
     }
   },
-  [GET_POSTS_LIST_FULFILLED](state, payload) {
-    state.list = payload
+  [GET_PUBLIC_POSTS_LIST_FULFILLED](state, payload) {
+    state.publicList = payload
     state.status = {
       get: {
-        isPending: false,
-        isFulfilled: true,
-        isRejected: false
+        ...state.status.get,
+        isPublicPending: false,
+        isPublicFulfilled: true,
+        isPublicRejected: false
       }
     }
   },
-  [GET_POSTS_LIST_REJECTED](state) {
-    state.status.get = {
-      isPending: false,
-      isFulfilled: false,
-      isRejected: true
-    }
-  },
-  [GET_REACTIONS_POSTS_LIST_PENDING](state) {
+  [GET_PUBLIC_POSTS_LIST_REJECTED](state) {
     state.status.get = {
       ...state.status.get,
-      isPending: true,
-      isFulfilled: false
+      isPublicPending: false,
+      isPublicFulfilled: false,
+      isPublicRejected: true
     }
   },
-  [GET_REACTIONS_POSTS_LIST_FULFILLED](state, payload) {
-    state.list = payload
+  [GET_PUBLIC_REACTIONS_POSTS_LIST_PENDING](state) {
+    state.status.get = {
+      ...state.status.get,
+      isPublicPending: true,
+      isPublicFulfilled: false
+    }
+  },
+  [GET_PUBLIC_REACTIONS_POSTS_LIST_FULFILLED](state, payload) {
+    state.publicList = payload
     state.status = {
       get: {
-        isPending: false,
-        isFulfilled: true,
-        isRejected: false
+        ...state.status.get,
+        isPublicPending: false,
+        isPublicFulfilled: true,
+        isPublicRejected: false
       }
     }
   },
-  [GET_REACTIONS_POSTS_LIST_REJECTED](state) {
+  [GET_PUBLIC_REACTIONS_POSTS_LIST_REJECTED](state) {
     state.status.get = {
-      isPending: false,
-      isFulfilled: false,
-      isRejected: true
+      ...state.status.get,
+      isPublicPending: false,
+      isPublicFulfilled: false,
+      isPublicRejected: true
+    }
+  },
+  [GET_PRIVATE_POSTS_LIST_PENDING](state) {
+    state.status.get = {
+      ...state.status.get,
+      isPrivatePending: true,
+      isPrivateFulfilled: false
+    }
+  },
+  [GET_PRIVATE_POSTS_LIST_FULFILLED](state, payload) {
+    state.privateList = payload
+    state.status = {
+      get: {
+        ...state.status.get,
+        isPrivatePending: false,
+        isPrivateFulfilled: true,
+        isPrivateRejected: false
+      }
+    }
+  },
+  [GET_PRIVATE_POSTS_LIST_REJECTED](state) {
+    state.status.get = {
+      ...state.status.get,
+      isPrivatePending: false,
+      isPrivateFulfilled: false,
+      isPrivateRejected: true
+    }
+  },
+  [GET_PRIVATE_REACTIONS_POSTS_LIST_PENDING](state) {
+    state.status.get = {
+      ...state.status.get,
+      isPrivatePending: true,
+      isPrivateFulfilled: false
+    }
+  },
+  [GET_PRIVATE_REACTIONS_POSTS_LIST_FULFILLED](state, payload) {
+    state.privateList = payload
+    state.status = {
+      get: {
+        ...state.status.get,
+        isPrivatePending: false,
+        isPrivateFulfilled: true,
+        isPrivateRejected: false
+      }
+    }
+  },
+  [GET_PRIVATE_REACTIONS_POSTS_LIST_REJECTED](state) {
+    state.status.get = {
+      ...state.status.get,
+      isPrivatePending: false,
+      isPrivateFulfilled: false,
+      isPrivateRejected: true
     }
   },
   [POST_ADD_REACTION_PENDING](state) {
@@ -98,14 +164,17 @@ export const mutations = {
   },
   [POST_ADD_REACTION_FULFILLED](state, payload) {
     const { postNumber, indexReaction } = payload
-    const statePost = state.list[postNumber]
+    const statePost = state.publicList[postNumber]
     const stateReactionPost = statePost.reactions[indexReaction]
 
-    state.list[postNumber].reactions[indexReaction].userLoggedHasReaction = true
+    // eslint-disable-next-line
+    state.publicList[postNumber].reactions[
+      indexReaction
+    ].userLoggedHasReaction = true
 
-    state.list[postNumber].reactions[indexReaction].count += 1
+    state.publicList[postNumber].reactions[indexReaction].count += 1
 
-    state.list[postNumber].reactions[indexReaction].users = [
+    state.publicList[postNumber].reactions[indexReaction].users = [
       ...stateReactionPost.users,
       payload.reaction
     ]
@@ -134,13 +203,13 @@ export const mutations = {
     const { postNumber, indexReaction, idReaction } = payload
 
     _.remove(
-      state.list[postNumber].reactions[indexReaction].users,
+      state.publicList[postNumber].reactions[indexReaction].users,
       u => u.id === idReaction
     )
 
-    state.list[postNumber].reactions[indexReaction].count -= 1
+    state.publicList[postNumber].reactions[indexReaction].count -= 1
     // eslint-disable-next-line
-    state.list[postNumber].reactions[
+    state.publicList[postNumber].reactions[
       indexReaction
     ].userLoggedHasReaction = false
 
@@ -160,28 +229,52 @@ export const mutations = {
 }
 
 export const actions = {
-  getPostsListPending({ commit }) {
-    commit(GET_POSTS_LIST_PENDING)
+  getPublicPostsListPending({ commit }) {
+    commit(GET_PUBLIC_POSTS_LIST_PENDING)
     return Promise.resolve()
   },
-  getPostsListFulfilled({ commit }, posts) {
-    commit(GET_POSTS_LIST_FULFILLED, posts)
+  getPublicPostsListFulfilled({ commit }, posts) {
+    commit(GET_PUBLIC_POSTS_LIST_FULFILLED, posts)
     return Promise.resolve()
   },
-  getPostsListRejected({ commit }) {
-    commit(GET_POSTS_LIST_REJECTED)
+  getPublicPostsListRejected({ commit }) {
+    commit(GET_PUBLIC_POSTS_LIST_REJECTED)
     return Promise.resolve()
   },
-  getReactionsPostsListPending({ commit }) {
-    commit(GET_REACTIONS_POSTS_LIST_PENDING)
+  getPublicReactionsPostsListPending({ commit }) {
+    commit(GET_PUBLIC_REACTIONS_POSTS_LIST_PENDING)
     return Promise.resolve()
   },
-  getReactionsPostsListFulfilled({ commit }, posts) {
-    commit(GET_REACTIONS_POSTS_LIST_FULFILLED, posts)
+  getPublicReactionsPostsListFulfilled({ commit }, posts) {
+    commit(GET_PUBLIC_REACTIONS_POSTS_LIST_FULFILLED, posts)
     return Promise.resolve()
   },
-  getReactionsPostsListRejected({ commit }) {
-    commit(GET_REACTIONS_POSTS_LIST_REJECTED)
+  getPublicReactionsPostsListRejected({ commit }) {
+    commit(GET_PUBLIC_REACTIONS_POSTS_LIST_REJECTED)
+    return Promise.resolve()
+  },
+  getPrivatePostsListPending({ commit }) {
+    commit(GET_PRIVATE_POSTS_LIST_PENDING)
+    return Promise.resolve()
+  },
+  getPrivatePostsListFulfilled({ commit }, posts) {
+    commit(GET_PRIVATE_POSTS_LIST_FULFILLED, posts)
+    return Promise.resolve()
+  },
+  getPrivatePostsListRejected({ commit }) {
+    commit(GET_PRIVATE_POSTS_LIST_REJECTED)
+    return Promise.resolve()
+  },
+  getPrivateReactionsPostsListPending({ commit }) {
+    commit(GET_PRIVATE_REACTIONS_POSTS_LIST_PENDING)
+    return Promise.resolve()
+  },
+  getPrivateReactionsPostsListFulfilled({ commit }, posts) {
+    commit(GET_PRIVATE_REACTIONS_POSTS_LIST_FULFILLED, posts)
+    return Promise.resolve()
+  },
+  getPrivateReactionsPostsListRejected({ commit }) {
+    commit(GET_PRIVATE_REACTIONS_POSTS_LIST_REJECTED)
     return Promise.resolve()
   },
   postAddReactionPending({ commit }) {
@@ -208,12 +301,34 @@ export const actions = {
     commit(DELETE_REMOVE_REACTION_REJECTED)
     return Promise.resolve()
   },
-  async getPostsList({ dispatch, state, $axios }) {
-    const { isPending, isFulfilled } = state.status.get
+  async getPostsList({ dispatch, state, $axios }, { type = '' } = {}) {
+    let flagType = 'Public'
+    let {
+      isPublicPending: isPending,
+      isPublicFulfilled: isFulfilled
+    } = state.status.get
+
+    if (type === 'private') {
+      const { isPrivatePending, isPrivateFulfilled } = state.status.get
+      isPending = isPrivatePending
+      isFulfilled = isPrivateFulfilled
+      flagType = 'Private'
+    }
+
     if (!isPending && !isFulfilled) {
       try {
-        await dispatch('getPostsListPending')
-        const posts = _.values(await this.$axios.$get('issues'))
+        await dispatch(`get${flagType}PostsListPending`)
+        let posts = null
+
+        posts = _.values(
+          await this.$axios.$get(
+            'issues?filter=all&labels=post,public&sort=created&direction=desc'
+          )
+        )
+
+        if (type === 'private') {
+          posts = _.values(await this.$axios.$get('issues?labels=post'))
+        }
         const formattedPosts = posts.map(p => {
           const postJSON = JSON.parse(p.title)
           return {
@@ -230,23 +345,34 @@ export const actions = {
           }
         })
         await dispatch(
-          'getPostsListFulfilled',
-          _.keyBy(formattedPosts, 'number')
+          `get${flagType}PostsListFulfilled`,
+          _.orderBy(_.keyBy(formattedPosts, 'number'), ['number'], ['desc'])
         )
-        await dispatch('getReactionsPostsList')
+        await dispatch('getReactionsPostsList', type)
         return Promise.resolve()
       } catch (error) {
-        dispatch('getPostsListRejected')
+        dispatch(`get${flagType}PostsListRejected`)
         this.$errorGlobalHandler(error)
       }
     }
   },
-  async getReactionsPostsList({ dispatch, state, $axios, rootState }) {
-    const { list: postsList } = state
+  async getReactionsPostsList(
+    { dispatch, state, $axios, rootState },
+    type = 'public'
+  ) {
+    let { publicList: postsList } = state
+    let flagType = 'Public'
+
+    if (type === 'private') {
+      const { privateList } = state
+      postsList = privateList
+      flagType = 'Private'
+    }
+
     const usernameLogged = _.get(rootState.users.user, 'login', '')
 
     try {
-      await dispatch('getReactionsPostsListPending')
+      await dispatch(`get${flagType}ReactionsPostsListPending`)
       const postsWithReactionsPromises = _.map(postsList, async post => {
         const reactions = _.values(
           await this.$axios.$get(`issues/${post.number}/reactions`, {
@@ -276,14 +402,18 @@ export const actions = {
       await Promise.all(postsWithReactionsPromises).then(
         async postsWithReactions => {
           await dispatch(
-            'getReactionsPostsListFulfilled',
-            _.keyBy(postsWithReactions, 'number')
+            `get${flagType}ReactionsPostsListFulfilled`,
+            _.orderBy(
+              _.keyBy(postsWithReactions, 'number'),
+              ['number'],
+              ['desc']
+            )
           )
           return Promise.resolve()
         }
       )
     } catch (error) {
-      dispatch('getReactionsPostsListRejected')
+      dispatch(`get${flagType}ReactionsPostsListRejected`)
       this.$errorGlobalHandler(error)
     }
   },
