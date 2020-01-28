@@ -15,7 +15,6 @@
             'post-reaction',
             reaction.userLoggedHasReaction ? 'active-reaction' : ''
           ]"
-          @click="handleReaction({ number: post.number, reaction: reaction })"
         >
           <img :src="`/img/reactions/${reaction.content}.png`" />
           <span v-if="reaction.count > 0">
