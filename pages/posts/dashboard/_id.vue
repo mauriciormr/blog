@@ -50,8 +50,8 @@ export default {
   },
   computed: {
     ...mapState({
-      posts: state => state.posts.publicList,
-      isDataPending: state => state.posts.status.get.isPublicPending
+      posts: state => state.posts.privateList,
+      isDataPending: state => state.posts.status.get.isPrivatePending
     }),
     post() {
       return _.find(this.posts, { number: +this.postNumber })
@@ -63,7 +63,7 @@ export default {
     }
   },
   async fetch({ store, params }) {
-    await store.dispatch('posts/getPostsList')
+    await store.dispatch('posts/getPostsList', { type: 'private' })
   },
   mounted() {
     this.titlePage = this.post

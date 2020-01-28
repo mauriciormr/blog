@@ -6,11 +6,8 @@
       </span>
     </div>
     <div v-else class="posts-list">
-      <nuxt-link to="/posts/dashboard">
-        <span>Dashboard</span>
-      </nuxt-link>
       <div v-for="post in posts" :key="post.id" class="post-card">
-        <nuxt-link :to="`/posts/${post.number}`">
+        <nuxt-link :to="`/posts/dashboard/${post.number}`">
           <div v-html="post.post.titleHTML" class="post-card__title" />
           <div
             v-html="post.post.descriptionHTML"
@@ -28,12 +25,12 @@ import { mapState } from 'vuex'
 export default {
   computed: {
     ...mapState({
-      posts: state => state.posts.publicList,
-      isDataPending: state => state.posts.status.get.isPublicPending
+      posts: state => state.posts.privateList,
+      isDataPending: state => state.posts.status.get.isPrivatePending
     })
   },
   async fetch({ store }) {
-    await store.dispatch('posts/getPostsList')
+    await store.dispatch('posts/getPostsList', { type: 'private' })
   },
   head() {
     return {
