@@ -9,6 +9,10 @@
         Publish
       </button>
     </div>
+    <Toolbar
+      :dom="getRefTextArea"
+      @updateContentFromToolbar="updateContentFromToolbar"
+    />
     <div class="editor-preview">
       <div class="editor">
         <input
@@ -24,6 +28,7 @@
           type="text"
         />
         <textarea
+          ref="textarea"
           :value="blogText"
           @input="updateContent"
           class="editor__content"
@@ -45,8 +50,12 @@
 <script>
 import _ from 'lodash'
 import { mapActions } from 'vuex'
+import Toolbar from '~/components/toolbar/Toolbar.vue'
 
 export default {
+  components: {
+    Toolbar
+  },
   data() {
     return {
       titleText: 'Title post',
@@ -80,6 +89,12 @@ export default {
     ...mapActions({
       addPost: 'posts/postAddPost'
     }),
+    getRefTextArea() {
+      return this.$refs.textarea
+    },
+    updateContentFromToolbar(content) {
+      this.blogText = content
+    },
     publish(type = 'public') {
       const dataPost = {
         type,

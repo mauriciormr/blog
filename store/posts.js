@@ -562,10 +562,11 @@ export const actions = {
         throw new Error('401')
       }
 
-      const emptyKey = _.map(data, k => k === '' || k === null)
+      const emptyKey = _.filter(data, k => k === '' || k === null)
       if (emptyKey.length > 0) {
         throw new Error('Empty parameters')
       }
+
       const titleGitHubIssueFormat = {
         title: data.title,
         description: data.description
