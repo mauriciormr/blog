@@ -10,7 +10,10 @@ import hlBash from 'highlight.js/lib/languages/bash.js'
 import container from 'markdown-it-container'
 import marked from 'markdown-it-mark'
 import checkbox from 'markdown-it-task-checkbox'
-
+import ins from 'markdown-it-ins'
+import tableContents from 'markdown-it-table-of-contents'
+import anchor from 'markdown-it-anchor'
+import stringPackage from 'string'
 import 'highlight.js/styles/rainbow.css'
 
 hljs.registerLanguage('html', hlHtml)
@@ -40,8 +43,19 @@ export default ({ app }, inject) => {
       )}</code></pre>`
     }
   })
+
+  // https://www.npmjs.com/package/markdown-it-anchor#user-friendly-urls
+  const slugify = s =>
+    stringPackage(s)
+      .slugify()
+      .toString()
+
   mark.use(emoji)
   mark.use(marked)
+  mark.use(ins)
+  mark.use(anchor, { slugify })
+  // https://www.npmjs.com/package/markdown-it-table-of-contents#options
+  mark.use(tableContents, { slugify })
   mark.use(container, 'hljs-left')
   mark.use(container, 'hljs-center')
   mark.use(container, 'hljs-right')
