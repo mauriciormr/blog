@@ -17,7 +17,13 @@ import {
   POST_ADD_REACTION_REJECTED,
   DELETE_REMOVE_REACTION_PENDING,
   DELETE_REMOVE_REACTION_FULFILLED,
-  DELETE_REMOVE_REACTION_REJECTED
+  DELETE_REMOVE_REACTION_REJECTED,
+  POST_ADD_POST_PENDING,
+  POST_ADD_POST_FULFILLED,
+  POST_ADD_POST_REJECTED,
+  PATCH_UPDATE_POST_PENDING,
+  PATCH_UPDATE_POST_FULFILLED,
+  PATCH_UPDATE_POST_REJECTED
 } from '../data/mutation-types'
 import reactionTypes from '../data/reaction-types'
 
@@ -164,17 +170,20 @@ export const mutations = {
   },
   [POST_ADD_REACTION_FULFILLED](state, payload) {
     const { postNumber, indexReaction } = payload
-    const statePost = state.publicList[postNumber]
+    const statePost = _.find(state.publicList, {
+      number: postNumber
+    })
+    const indexPost = _.findIndex(state.publicList, { number: postNumber })
     const stateReactionPost = statePost.reactions[indexReaction]
 
     // eslint-disable-next-line
-    state.publicList[postNumber].reactions[
+    state.publicList[indexPost].reactions[
       indexReaction
     ].userLoggedHasReaction = true
 
-    state.publicList[postNumber].reactions[indexReaction].count += 1
+    state.publicList[indexPost].reactions[indexReaction].count += 1
 
-    state.publicList[postNumber].reactions[indexReaction].users = [
+    state.publicList[indexPost].reactions[indexReaction].users = [
       ...stateReactionPost.users,
       payload.reaction
     ]
@@ -201,15 +210,15 @@ export const mutations = {
   },
   [DELETE_REMOVE_REACTION_FULFILLED](state, payload) {
     const { postNumber, indexReaction, idReaction } = payload
-
+    const indexPost = _.findIndex(state.publicList, { number: postNumber })
     _.remove(
-      state.publicList[postNumber].reactions[indexReaction].users,
+      state.publicList[indexPost].reactions[indexReaction].users,
       u => u.id === idReaction
     )
 
-    state.publicList[postNumber].reactions[indexReaction].count -= 1
+    state.publicList[indexPost].reactions[indexReaction].count -= 1
     // eslint-disable-next-line
-    state.publicList[postNumber].reactions[
+    state.publicList[indexPost].reactions[
       indexReaction
     ].userLoggedHasReaction = false
 
@@ -221,6 +230,60 @@ export const mutations = {
   },
   [DELETE_REMOVE_REACTION_REJECTED](state) {
     state.status.delete = {
+      isPending: false,
+      isFulfilled: false,
+      isRejected: true
+    }
+  },
+  [POST_ADD_POST_PENDING](state) {
+    state.status.post = {
+      isPending: true,
+      isFulfilled: false,
+      isRejected: false
+    }
+  },
+  [POST_ADD_POST_FULFILLED](state) {
+    state.status.get = {
+      ...state.status.get,
+      isPrivatePending: false,
+      isPrivateFulfilled: false,
+      isPrivateRejected: false
+    }
+    state.status.post = {
+      isPending: false,
+      isFulfilled: true,
+      isRejected: false
+    }
+  },
+  [POST_ADD_POST_REJECTED](state) {
+    state.status.post = {
+      isPending: false,
+      isFulfilled: false,
+      isRejected: true
+    }
+  },
+  [PATCH_UPDATE_POST_PENDING](state) {
+    state.status.post = {
+      isPending: true,
+      isFulfilled: false,
+      isRejected: false
+    }
+  },
+  [PATCH_UPDATE_POST_FULFILLED](state) {
+    state.status.get = {
+      ...state.status.get,
+      isPrivatePending: false,
+      isPrivateFulfilled: false,
+      isPrivateRejected: false
+    }
+    state.status.post = {
+      isPending: false,
+      isFulfilled: true,
+      isRejected: false
+    }
+  },
+  [PATCH_UPDATE_POST_REJECTED](state) {
+    state.status.post = {
       isPending: false,
       isFulfilled: false,
       isRejected: true
@@ -301,6 +364,32 @@ export const actions = {
     commit(DELETE_REMOVE_REACTION_REJECTED)
     return Promise.resolve()
   },
+  postAddPostPending({ commit }) {
+    commit(POST_ADD_POST_PENDING)
+    return Promise.resolve()
+  },
+  postAddPostFulfilled({ commit }) {
+    commit(POST_ADD_POST_FULFILLED)
+    return Promise.resolve()
+  },
+  postAddPostRejected({ commit }) {
+    commit(POST_ADD_POST_REJECTED)
+    return Promise.resolve()
+  },
+  patchUpdatePostPending({ commit }) {
+    commit(PATCH_UPDATE_POST_PENDING)
+    return Promise.resolve()
+  },
+  patchUpdatePostFulfilled({ commit }) {
+    commit(PATCH_UPDATE_POST_FULFILLED)
+    return Promise.resolve()
+  },
+  patchUpdatePostRejected({ commit }) {
+    commit(PATCH_UPDATE_POST_REJECTED)
+    return Promise.resolve()
+  },
+  // Default values in object parameters
+  // https://javascript.info/destructuring-assignment
   async getPostsList({ dispatch, state, $axios }, { type = '' } = {}) {
     let flagType = 'Public'
     let {
@@ -346,7 +435,7 @@ export const actions = {
         })
         await dispatch(
           `get${flagType}PostsListFulfilled`,
-          _.orderBy(_.keyBy(formattedPosts, 'number'), ['number'], ['desc'])
+          _.orderBy(formattedPosts, ['number'], ['desc'])
         )
         await dispatch('getReactionsPostsList', type)
         return Promise.resolve()
@@ -403,11 +492,7 @@ export const actions = {
         async postsWithReactions => {
           await dispatch(
             `get${flagType}ReactionsPostsListFulfilled`,
-            _.orderBy(
-              _.keyBy(postsWithReactions, 'number'),
-              ['number'],
-              ['desc']
-            )
+            _.orderBy(postsWithReactions, ['number'], ['desc'])
           )
           return Promise.resolve()
         }
@@ -502,6 +587,85 @@ export const actions = {
       return Promise.resolve()
     } catch (error) {
       dispatch('deleteRemoveReactionRejected')
+      return Promise.reject(error)
+    }
+  },
+  // Default values in object parameters
+  // https://javascript.info/destructuring-assignment
+  async postAddPost(
+    { dispatch, rootState },
+    { type = 'public', data = {} } = {}
+  ) {
+    try {
+      await dispatch('postAddPostPending')
+
+      const usernameLogged = _.get(rootState.users.user, 'login', '')
+      if (!usernameLogged) {
+        throw new Error('401')
+      }
+
+      const emptyKey = _.filter(data, k => k === '' || k === null)
+      if (emptyKey.length > 0) {
+        throw new Error('Empty parameters')
+      }
+
+      const titleGitHubIssueFormat = {
+        title: data.title,
+        description: data.description
+      }
+
+      const dataPost = {
+        title: JSON.stringify(titleGitHubIssueFormat),
+        body: data.body,
+        labels: ['post', type]
+      }
+
+      await this.$axios.$post('issues', dataPost)
+
+      await dispatch('postAddPostFulfilled')
+      return Promise.resolve()
+    } catch (error) {
+      await dispatch('postAddPostRejected')
+      return Promise.reject(error)
+    }
+  },
+  // Default values in object parameters
+  // https://javascript.info/destructuring-assignment
+  async patchUpdatePost(
+    { dispatch, rootState },
+    { type = 'public', data = {} } = {}
+  ) {
+    try {
+      await dispatch('patchUpdatePostPending')
+
+      const usernameLogged = _.get(rootState.users.user, 'login', '')
+      if (!usernameLogged) {
+        throw new Error('401')
+      }
+
+      const emptyKey = _.filter(data, k => k === '' || k === null)
+      if (emptyKey.length > 0) {
+        throw new Error('Empty parameters')
+      }
+
+      const titleGitHubIssueFormat = {
+        title: data.title,
+        description: data.description
+      }
+
+      const dataPost = {
+        title: JSON.stringify(titleGitHubIssueFormat),
+        body: data.body,
+        labels: ['post', type]
+      }
+
+      const { postNumber } = data
+      await this.$axios.$patch(`issues/${postNumber}`, dataPost)
+
+      await dispatch('patchUpdatePostFulfilled')
+      return Promise.resolve()
+    } catch (error) {
+      await dispatch('patchUpdatePostRejected')
       return Promise.reject(error)
     }
   }

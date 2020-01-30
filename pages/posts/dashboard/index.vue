@@ -6,8 +6,14 @@
       </span>
     </div>
     <div v-else class="posts-list">
+      <nuxt-link to="/posts/dashboard/add">
+        <span>Agregar</span>
+      </nuxt-link>
       <div v-for="post in posts" :key="post.id" class="post-card">
         <nuxt-link :to="`/posts/dashboard/${post.number}`">
+          <nuxt-link :to="`/posts/dashboard/edit/${post.number}`">
+            <span>Editar</span>
+          </nuxt-link>
           <div v-html="post.post.titleHTML" class="post-card__title" />
           <div
             v-html="post.post.descriptionHTML"
