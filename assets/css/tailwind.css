@@ -1,3 +1,15 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+
+:root {
+  --bg-background-base: #F5F5F5;
+  --bg-background-primary: #00F49B;
+  --bg-background-primary--selected: rgba(0, 244, 155, 0.5);
+  --bg-background-secondary: #FFFFFF;
+  --bg-background-ternary: #000000;
+  --text-primary: #000000;
+  --text-secondary: #747474;
+  
+}
+
