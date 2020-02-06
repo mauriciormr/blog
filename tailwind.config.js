@@ -28,7 +28,14 @@ module.exports = {
       base: theme('colors.base'),
       primary: theme('colors.primary'),
       ternary: theme('colors.ternary')
-    })
+    }),
+    // https://tailwindcss.com/docs/breakpoints
+    // https://tailwindcss.com/docs/container
+    screens: {
+      tablet: '768px',
+      laptop: '1024px',
+      desktop: '1280px'
+    }
   },
   variants: {},
   plugins: []
