@@ -35,6 +35,21 @@ module.exports = {
       tablet: '768px',
       laptop: '1024px',
       desktop: '1280px'
+    },
+    extend: {
+      spacing: {
+        14: '3.5rem'
+      },
+      fontFamily: {
+        raleway: 'Raleway, sans-serif',
+        poppins: 'Poppins, sans-serif'
+      },
+      fontSize: {
+        '7xl': '5rem',
+        '8xl': '6rem',
+        '9xl': '7rem',
+        '10xl': '8rem'
+      }
     }
   },
   variants: {},
