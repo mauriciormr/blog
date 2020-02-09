@@ -1,53 +1,59 @@
 <template>
-  <div class="container">
-    <div>
-      <logo />
-      <h1 class="title">
-        nuxt-blog-using-github-api
-      </h1>
-      <h2 class="subtitle">
-        My rad Nuxt.js project
-      </h2>
-      <div class="links">
-        <a href="https://nuxtjs.org/" target="_blank" class="button--green">
-          Documentation
-        </a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          class="button--grey"
-        >
-          GitHub
-        </a>
-        <button>
-          <nuxt-link to="/posts" class="button--grey">
-            Posts
-          </nuxt-link>
-        </button>
-        <p v-if="user.logged">
-          LOGUEADO
-        </p>
-        <p v-else>
-          <nuxt-link to="/login" class="button--grey">
-            Login
-          </nuxt-link>
-        </p>
-        <button v-if="user.logged" @click="logoutUser">
-          SALIR
-        </button>
+  <div class="page">
+    <div class="cover">
+      <div class="cover__letters container">
+        <div class="cover__letters__fullname">
+          <h1 class="cover__letters__fullname__name">
+            {{ USER.name }}
+          </h1>
+          <h1 class="cover__letters__fullname__lastname">
+            {{ USER.lastname }}
+          </h1>
+        </div>
+        <div class="cover__letters__role">
+          <h2>{{ USER.role }}</h2>
+        </div>
+        <div v-html="USER.quote" class="cover__letters__quote container" />
+        <div class="cover__social__icons-abs-container container">
+          <SocialIcon
+            v-for="social in USER.social"
+            :key="social.link"
+            :social="social"
+            class="cover__social__icons-abs-container__icon"
+          />
+        </div>
       </div>
+      <Wave class="cover__wave-svg" />
+      <SocialMediaContainer class="cover__social" />
     </div>
   </div>
 </template>
 
 <script>
+import _ from 'lodash'
 import { mapState, mapActions } from 'vuex'
 
-import Logo from '~/components/Logo.vue'
+import Wave from '~/components/landing/Wave.vue'
+import SocialMediaContainer from '~/components/landing/SocialMediaContainer.vue'
+import SocialIcon from '~/components/landing/SocialIcon.vue'
+import { USER_INFORMATION } from '~/data/config'
 
 export default {
   components: {
-    Logo
+    Wave,
+    SocialMediaContainer,
+    SocialIcon
+  },
+  data() {
+    return {
+      USER: {
+        ...USER_INFORMATION,
+        social: _.filter(
+          USER_INFORMATION.social,
+          s => _.get(s, 'link', false) && _.get(s, 'icon', false)
+        )
+      }
+    }
   },
   computed: {
     ...mapState({
@@ -62,40 +68,132 @@ export default {
 }
 </script>
 
-<style>
-/* Sample `apply` at-rules with Tailwind CSS
-.container {
-  @apply min-h-screen flex justify-center items-center text-center mx-auto;
-}
-*/
-.container {
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+<style lang="scss" scoped>
+.page {
+  @apply pt-0;
 }
 
-.title {
-  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
+.cover {
+  position: relative;
+  height: 100vh;
+  @apply bg-cover bg-primary;
+
+  &__letters {
+    position: relative;
+    color: white;
+    height: 100%;
+    z-index: 3;
+    @apply flex flex-col justify-center;
+    @apply font-poppins text-center text-primary text-6xl;
+
+    &__fullname {
+      @apply leading-none;
+    }
+
+    &__fullname__name {
+      @apply font-light;
+    }
+
+    &__fullname__lastname {
+      @apply font-semibold;
+    }
+
+    &__quote {
+      position: absolute;
+      right: 0px;
+      bottom: 7rem;
+      @apply font-light text-sm text-right;
+    }
+
+    &__role {
+      margin-top: 10px;
+      @apply font-light text-base;
+    }
+  }
+
+  &__wave-svg {
+    position: absolute;
+    bottom: 0px;
+    @apply w-full h-64;
+  }
+
+  &__social,
+  &__social__icons-abs-container {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    @apply w-11/12 h-10;
+  }
+
+  &__social__icons-abs-container {
+    z-index: 4;
+    @apply flex justify-end items-end;
+
+    &__icon {
+      height: 100%;
+      @apply flex items-center;
+      @apply ml-8;
+    }
+  }
 }
 
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
+@screen tablet {
+  .cover {
+    &__letters {
+      @apply text-8xl;
+
+      &__quote {
+        @apply text-base;
+      }
+    }
+
+    &__wave-svg {
+      @apply h-64;
+    }
+
+    &__social,
+    &__social__icons-abs-container {
+      @apply w-5/6 h-12;
+    }
+
+    &__social__icons-abs-container {
+      &__icon {
+        @apply ml-16;
+      }
+    }
+  }
 }
 
-.links {
-  padding-top: 15px;
+@screen laptop {
+  .page {
+    @apply pt-0;
+  }
+
+  .cover {
+    &__letters {
+      @apply text-left;
+    }
+
+    &__social,
+    &__social__icons-abs-container {
+      @apply w-1/2;
+    }
+
+    &__social__icons-abs-container {
+      &__icon {
+        @apply ml-8;
+      }
+    }
+  }
+}
+
+@screen desktop {
+  .cover {
+    &__social__icons-abs-container {
+      &__icon {
+        @apply ml-16;
+      }
+    }
+  }
 }
 </style>

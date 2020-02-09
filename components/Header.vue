@@ -1,6 +1,6 @@
 <template>
   <header class="wrapper-header">
-    <div class="header container mx-auto">
+    <div class="header container">
       <span class="header__logo">Logo</span>
       <div class="header__icon-mobile">
         <button @click="openClose()" type="button">
@@ -67,7 +67,7 @@ export default {
 
 .header {
   @apply w-full;
-  @apply p-3;
+  @apply py-3;
   @apply flex flex-row justify-between;
   @apply bg-primary text-primary;
 
@@ -116,7 +116,7 @@ export default {
 
 @screen laptop {
   .header {
-    @apply p-5;
+    @apply py-5;
 
     &__icon-mobile {
       @apply hidden;
