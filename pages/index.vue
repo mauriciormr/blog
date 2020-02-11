@@ -107,7 +107,7 @@ export default {
 
     &__role {
       margin-top: 10px;
-      @apply font-light text-base;
+      @apply font-light text-baseSize;
     }
   }
 
@@ -143,7 +143,7 @@ export default {
       @apply text-8xl;
 
       &__quote {
-        @apply text-base;
+        @apply text-baseSize;
       }
     }
 

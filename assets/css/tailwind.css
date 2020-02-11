@@ -12,6 +12,16 @@
   --bg-background-ternary: #000000;
   --text-primary: #000000;
   --text-secondary: #747474;
+  --bg-input: #FFFFFF;
+  --bg-input--selected: rgba(0, 244, 155, 0.5);
+  --border-input: #D6DFE0;
+  --border-input--focus: #00F49B;
+  --text-input: #747474;
+  --border-div-container: #D6DFE0;
+}
+
+body {
+  @apply bg-base;
 }
 
 .page {
