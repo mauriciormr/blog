@@ -1,5 +1,5 @@
 <template>
-  <div class="page">
+  <div>
     <div class="cover">
       <div class="cover__letters container">
         <div class="cover__letters__fullname">
