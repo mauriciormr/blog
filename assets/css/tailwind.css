@@ -47,3 +47,18 @@ body {
     @apply px-16;
   }
 }
+
+/* Components */
+
+.input-text {
+  border-width: 1px;
+  border-style: solid;
+  @apply bg-input;
+  @apply border-input rounded;
+  @apply text-input;
+  @apply w-full py-3 px-4;
+
+  &:focus {
+    @apply border-inputFocus;
+  }
+}

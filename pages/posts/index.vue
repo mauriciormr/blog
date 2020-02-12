@@ -1,5 +1,5 @@
 <template>
-  <div class="container-page">
+  <div>
     <div v-if="isDataPending" class="loading">
       <span>
         Loading...
@@ -26,6 +26,7 @@
 import { mapState } from 'vuex'
 
 export default {
+  layout: 'blog',
   computed: {
     ...mapState({
       posts: state => state.posts.publicList,
