@@ -6,27 +6,18 @@
       </span>
     </div>
     <div v-else class="posts-list">
-      <nuxt-link to="/posts/dashboard">
-        <span>Dashboard</span>
-      </nuxt-link>
-      <div v-for="post in posts" :key="post.id" class="post-card">
-        <nuxt-link :to="`/posts/${post.number}`">
-          <div v-html="post.post.titleHTML" class="post-card__title" />
-          <div
-            v-html="post.post.descriptionHTML"
-            class="post-card__description"
-          />
-        </nuxt-link>
-      </div>
+      <PostCard v-for="post in posts" :key="post.id" :post="post" />
     </div>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import PostCard from '~/components/post/PostCard.vue'
 
 export default {
   layout: 'blog',
+  components: { PostCard },
   computed: {
     ...mapState({
       posts: state => state.posts.publicList,
@@ -44,10 +35,4 @@ export default {
 }
 </script>
 
-<style>
-.post-card {
-  border: 1px solid red;
-  margin: 15px 0px;
-  background: #ebf8ff;
-}
-</style>
+<style></style>

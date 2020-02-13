@@ -51,12 +51,20 @@ export default {
     @apply flex-row;
 
     &__content {
-      @apply flex-9;
+      @apply flex-7;
       @apply mr-6;
     }
 
     &__sidebar {
       @apply flex-2;
+    }
+  }
+}
+
+@screen desktop {
+  .blog {
+    &__content {
+      @apply flex-9;
     }
   }
 }

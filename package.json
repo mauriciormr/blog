@@ -27,6 +27,7 @@
     "markdown-it-mark": "^3.0.0",
     "markdown-it-table-of-contents": "^0.4.4",
     "markdown-it-task-checkbox": "^1.0.6",
+    "moment": "^2.24.0",
     "nuxt": "^2.0.0",
     "string": "^3.3.3",
     "string-random": "^0.1.3",
