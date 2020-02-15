@@ -1,4 +1,8 @@
 <template>
   <div />
 </template>
-<style></style>
+<style lang="scss" scoped>
+.blog__sidebar {
+  @apply bg-secondary;
+}
+</style>

@@ -4,25 +4,30 @@
     <div class="blog page container">
       <div class="blog__content">
         <SearchBar class="blog__search" />
-        <nuxt class="blog__list" />
+        <nuxt class="blog__view" />
       </div>
-      <GeneralInformation class="blog__sidebar" />
+      <div class="blog__sidebar">
+        <AuthorInformation />
+      </div>
     </div>
   </div>
 </template>
 <script>
 import Header from '~/components/Header.vue'
 import SearchBar from '~/components/post/SearchBar.vue'
-import GeneralInformation from '~/components/post/GeneralInformation.vue'
+import AuthorInformation from '~/components/post/AuthorInformation.vue'
 
 export default {
   components: {
     Header,
     SearchBar,
-    GeneralInformation
+    AuthorInformation
   }
 }
 </script>
 <style lang="scss" scoped>
 @import 'style/indexLayout';
+.blog__sidebar {
+  @apply p-0;
+}
 </style>

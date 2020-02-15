@@ -1,0 +1,44 @@
+.blog {
+  @apply flex flex-col;
+  @apply mb-10;
+
+  &__content,
+  &__sidebar {
+    @apply mt-5;
+  }
+
+  &__search {
+    @apply mb-5;
+  }
+
+  &__content {
+  }
+
+  &__sidebar {
+    @apply p-5;
+    @apply rounded;
+  }
+}
+
+@screen laptop {
+  .blog {
+    @apply flex-row items-start;
+
+    &__content {
+      @apply flex-7;
+      @apply mr-6;
+    }
+
+    &__sidebar {
+      @apply flex-2;
+    }
+  }
+}
+
+@screen desktop {
+  .blog {
+    &__content {
+      @apply flex-9;
+    }
+  }
+}
