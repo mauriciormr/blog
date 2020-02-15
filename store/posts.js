@@ -23,7 +23,10 @@ import {
   POST_ADD_POST_REJECTED,
   PATCH_UPDATE_POST_PENDING,
   PATCH_UPDATE_POST_FULFILLED,
-  PATCH_UPDATE_POST_REJECTED
+  PATCH_UPDATE_POST_REJECTED,
+  SET_AUTHOR_POST_VIEW_PENDING,
+  SET_AUTHOR_POST_VIEW_FULFILLED,
+  SET_AUTHOR_POST_VIEW_REJECTED
 } from '../data/mutation-types'
 import reactionTypes from '../data/reaction-types'
 
@@ -32,12 +35,21 @@ import reactionTypes from '../data/reaction-types'
 const initialState = () => ({
   publicList: [],
   privateList: [],
+  postView: {
+    author: {},
+    post: {}
+  },
   status: {
+    getAuthorPostView: {
+      isPending: true,
+      isFulfilled: false,
+      isRejected: false
+    },
     get: {
-      isPublicPending: false,
+      isPublicPending: true,
       isPublicFulfilled: false,
       isPublicRejected: false,
-      isPrivatePending: false,
+      isPrivatePending: true,
       isPrivateFulfilled: false,
       isPrivateRejected: false
     },
@@ -66,13 +78,11 @@ export const mutations = {
   },
   [GET_PUBLIC_POSTS_LIST_FULFILLED](state, payload) {
     state.publicList = payload
-    state.status = {
-      get: {
-        ...state.status.get,
-        isPublicPending: false,
-        isPublicFulfilled: true,
-        isPublicRejected: false
-      }
+    state.status.get = {
+      ...state.status.get,
+      isPublicPending: false,
+      isPublicFulfilled: true,
+      isPublicRejected: false
     }
   },
   [GET_PUBLIC_POSTS_LIST_REJECTED](state) {
@@ -92,13 +102,11 @@ export const mutations = {
   },
   [GET_PUBLIC_REACTIONS_POSTS_LIST_FULFILLED](state, payload) {
     state.publicList = payload
-    state.status = {
-      get: {
-        ...state.status.get,
-        isPublicPending: false,
-        isPublicFulfilled: true,
-        isPublicRejected: false
-      }
+    state.status.get = {
+      ...state.status.get,
+      isPublicPending: false,
+      isPublicFulfilled: true,
+      isPublicRejected: false
     }
   },
   [GET_PUBLIC_REACTIONS_POSTS_LIST_REJECTED](state) {
@@ -118,13 +126,11 @@ export const mutations = {
   },
   [GET_PRIVATE_POSTS_LIST_FULFILLED](state, payload) {
     state.privateList = payload
-    state.status = {
-      get: {
-        ...state.status.get,
-        isPrivatePending: false,
-        isPrivateFulfilled: true,
-        isPrivateRejected: false
-      }
+    state.status.get = {
+      ...state.status.get,
+      isPrivatePending: false,
+      isPrivateFulfilled: true,
+      isPrivateRejected: false
     }
   },
   [GET_PRIVATE_POSTS_LIST_REJECTED](state) {
@@ -144,13 +150,11 @@ export const mutations = {
   },
   [GET_PRIVATE_REACTIONS_POSTS_LIST_FULFILLED](state, payload) {
     state.privateList = payload
-    state.status = {
-      get: {
-        ...state.status.get,
-        isPrivatePending: false,
-        isPrivateFulfilled: true,
-        isPrivateRejected: false
-      }
+    state.status.get = {
+      ...state.status.get,
+      isPrivatePending: false,
+      isPrivateFulfilled: true,
+      isPrivateRejected: false
     }
   },
   [GET_PRIVATE_REACTIONS_POSTS_LIST_REJECTED](state) {
@@ -288,6 +292,28 @@ export const mutations = {
       isFulfilled: false,
       isRejected: true
     }
+  },
+  [SET_AUTHOR_POST_VIEW_PENDING](state) {
+    state.status.getAuthorPostView = {
+      isPending: true,
+      isFulfilled: false,
+      isRejected: false
+    }
+  },
+  [SET_AUTHOR_POST_VIEW_FULFILLED](state, payload) {
+    state.status.getAuthorPostView = {
+      isPending: false,
+      isFulfilled: true,
+      isRejected: false
+    }
+    state.postView.author = payload
+  },
+  [SET_AUTHOR_POST_VIEW_REJECTED](state) {
+    state.status.getAuthorPostView = {
+      isPending: false,
+      isFulfilled: false,
+      isRejected: true
+    }
   }
 }
 
@@ -388,23 +414,31 @@ export const actions = {
     commit(PATCH_UPDATE_POST_REJECTED)
     return Promise.resolve()
   },
+  setAuthorPostViewPending({ commit }) {
+    commit(SET_AUTHOR_POST_VIEW_PENDING)
+    return Promise.resolve()
+  },
+  setAuthorPostViewFulfilled({ commit }, author) {
+    commit(SET_AUTHOR_POST_VIEW_FULFILLED, author)
+    return Promise.resolve()
+  },
+  setAuthorPostViewRejected({ commit }) {
+    commit(SET_AUTHOR_POST_VIEW_REJECTED)
+    return Promise.resolve()
+  },
   // Default values in object parameters
   // https://javascript.info/destructuring-assignment
   async getPostsList({ dispatch, state, $axios }, { type = '' } = {}) {
     let flagType = 'Public'
-    let {
-      isPublicPending: isPending,
-      isPublicFulfilled: isFulfilled
-    } = state.status.get
+    let { isPublicFulfilled: isFulfilled } = state.status.get
 
     if (type === 'private') {
-      const { isPrivatePending, isPrivateFulfilled } = state.status.get
-      isPending = isPrivatePending
+      const { isPrivateFulfilled } = state.status.get
       isFulfilled = isPrivateFulfilled
       flagType = 'Private'
     }
 
-    if (!isPending && !isFulfilled) {
+    if (!isFulfilled) {
       try {
         await dispatch(`get${flagType}PostsListPending`)
         let posts = null
@@ -666,6 +700,18 @@ export const actions = {
       return Promise.resolve()
     } catch (error) {
       await dispatch('patchUpdatePostRejected')
+      return Promise.reject(error)
+    }
+  },
+  async updateAuthorPostView({ dispatch, state }, author) {
+    try {
+      await dispatch('setAuthorPostViewPending')
+      const { url } = author
+      const user = await this.$axios.$get(url)
+      await dispatch('setAuthorPostViewFulfilled', user)
+      return Promise.resolve()
+    } catch (error) {
+      await dispatch('setAuthorPostViewRejected')
       return Promise.reject(error)
     }
   }

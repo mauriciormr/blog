@@ -12,6 +12,16 @@
   --bg-background-ternary: #000000;
   --text-primary: #000000;
   --text-secondary: #747474;
+  --bg-input: #FFFFFF;
+  --bg-input--selected: rgba(0, 244, 155, 0.5);
+  --border-input: #D6DFE0;
+  --border-input--focus: #00F49B;
+  --text-input: #747474;
+  --border-div-container: #D6DFE0;
+}
+
+body {
+  @apply bg-base;
 }
 
 .page {
@@ -35,5 +45,20 @@
 @screen desktop {
   .container {
     @apply px-16;
+  }
+}
+
+/* Components */
+
+.input-text {
+  border-width: 1px;
+  border-style: solid;
+  @apply bg-input;
+  @apply border-input rounded;
+  @apply text-input;
+  @apply w-full py-3 px-4;
+
+  &:focus {
+    @apply border-inputFocus;
   }
 }

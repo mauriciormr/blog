@@ -1,39 +1,36 @@
 <template>
-  <div class="container-page">
-    <div v-if="isDataPending" class="loading">
-      <span>
-        Loading...
-      </span>
-    </div>
+  <div>
+    <Loading v-if="isDataPending" class="loading" />
     <div v-else class="posts-list">
-      <nuxt-link to="/posts/dashboard">
-        <span>Dashboard</span>
-      </nuxt-link>
-      <div v-for="post in posts" :key="post.id" class="post-card">
-        <nuxt-link :to="`/posts/${post.number}`">
-          <div v-html="post.post.titleHTML" class="post-card__title" />
-          <div
-            v-html="post.post.descriptionHTML"
-            class="post-card__description"
-          />
-        </nuxt-link>
-      </div>
+      <PostCard v-for="post in posts" :key="post.id" :post="post" />
     </div>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
+import PostCard from '~/components/post/PostCard.vue'
+import Loading from '~/components/Loading.vue'
 
 export default {
+  layout: 'blog',
+  components: {
+    PostCard,
+    Loading
+  },
   computed: {
     ...mapState({
       posts: state => state.posts.publicList,
       isDataPending: state => state.posts.status.get.isPublicPending
     })
   },
-  async fetch({ store }) {
-    await store.dispatch('posts/getPostsList')
+  mounted() {
+    this.getPostsList()
+  },
+  methods: {
+    ...mapActions({
+      getPostsList: 'posts/getPostsList'
+    })
   },
   head() {
     return {
@@ -43,10 +40,4 @@ export default {
 }
 </script>
 
-<style>
-.post-card {
-  border: 1px solid red;
-  margin: 15px 0px;
-  background: #ebf8ff;
-}
-</style>
+<style></style>

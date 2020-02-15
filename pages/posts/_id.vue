@@ -1,11 +1,10 @@
 <template>
   <div class="container-page">
-    <div v-if="isDataPending" class="loading">
-      <span>
-        Loading...
-      </span>
-    </div>
-    <ResourceNotFound v-else-if="!post" :error="{ statusCode }" />
+    <Loading v-if="isDataPending" class="loading" />
+    <ResourceNotFound
+      v-else-if="!post && !isDataPending"
+      :error="{ statusCode }"
+    />
     <div v-else class="post">
       <div class="post__reactions">
         <span
@@ -36,10 +35,13 @@ import _ from 'lodash'
 import { mapState, mapActions } from 'vuex'
 import { errorHandler } from '~/utils/validate-errors'
 import ResourceNotFound from '~/components/ResourceNotFound.vue'
+import Loading from '~/components/Loading.vue'
 
 export default {
+  layout: 'post',
   components: {
-    ResourceNotFound
+    ResourceNotFound,
+    Loading
   },
   data() {
     return {
@@ -62,17 +64,21 @@ export default {
       postNumber: params.id
     }
   },
-  async fetch({ store, params }) {
-    await store.dispatch('posts/getPostsList')
-  },
   mounted() {
-    this.titlePage = this.post
-      ? this.post.post.title
-      : errorHandler(new Error(this.statusCode)).message
+    this.getPostsList().then(() => {
+      if (this.post) {
+        this.titlePage = this.post
+          ? this.post.post.title
+          : errorHandler(new Error(this.statusCode)).message
+        this.updateAuthorPostView(this.post.user)
+      }
+    })
   },
   methods: {
     ...mapActions({
-      handleReaction: 'posts/handleReaction'
+      handleReaction: 'posts/handleReaction',
+      updateAuthorPostView: 'posts/updateAuthorPostView',
+      getPostsList: 'posts/getPostsList'
     })
   },
   head() {
