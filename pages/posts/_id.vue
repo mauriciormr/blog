@@ -1,5 +1,5 @@
 <template>
-  <div class="container-page">
+  <div>
     <Loading v-if="isDataPending" class="loading" />
     <ResourceNotFound
       v-else-if="!post && !isDataPending"
@@ -22,9 +22,9 @@
           </span>
         </span>
       </div>
-      <div v-html="post.post.titleHTML" class="post-card__title" />
-      <div v-html="post.post.descriptionHTML" class="post-card__description" />
-      <div v-html="post.post.contentHTML" class="post-card__content" />
+      <div v-html="post.post.titleHTML" class="post__title" />
+      <div v-html="post.post.descriptionHTML" class="post__description" />
+      <div v-html="post.post.contentHTML" class="post__content" />
     </div>
   </div>
 </template>
@@ -89,7 +89,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
 .post__reactions {
   display: flex;
 }

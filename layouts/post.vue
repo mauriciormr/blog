@@ -25,9 +25,19 @@ export default {
   }
 }
 </script>
+
 <style lang="scss" scoped>
 @import 'style/indexLayout';
 .blog__sidebar {
   @apply p-0;
 }
+
+.blog__view {
+  @apply rounded;
+  @apply p-5;
+  @apply bg-secondary;
+}
+</style>
+<style lang="scss">
+@import 'style/blogPreview';
 </style>
