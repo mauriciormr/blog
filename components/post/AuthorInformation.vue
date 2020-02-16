@@ -170,7 +170,11 @@ export default {
 
 @screen laptop {
   .author-card {
-    @apply text-sm;
+    @apply text-xs;
+
+    &__photo {
+      @apply w-20;
+    }
 
     &__list {
       @apply flex-col items-stretch;
@@ -188,6 +192,8 @@ export default {
 
 @screen desktop {
   .author-card {
+    @apply text-sm;
+
     &__photo {
       @apply w-24;
     }
