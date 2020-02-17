@@ -19,23 +19,23 @@
   }
 
   h1 {
-    @apply text-4xl;
-  }
-
-  h2 {
     @apply text-3xl;
   }
 
-  h3 {
+  h2 {
     @apply text-2xl;
   }
 
-  h4 {
+  h3 {
     @apply text-xl;
   }
 
-  h5 {
+  h4 {
     @apply text-lg;
+  }
+
+  h5 {
+    @apply text-baseSize;
   }
 
   table {
@@ -131,12 +131,18 @@
 
   div.post__title {
     line-height: 1.5;
-    @apply font-raleway font-semibold text-4xl;
+    @apply font-raleway font-semibold text-3xl;
     @apply mb-4;
   }
 
   div.post__description {
-    @apply font-raleway italic text-secondary;
+    @apply font-raleway italic text-secondary font-medium;
     @apply mb-4;
+  }
+
+  @screen desktop {
+    div.post__title {
+      @apply text-4xl;
+    }
   }
 }

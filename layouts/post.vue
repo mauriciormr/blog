@@ -34,8 +34,20 @@ export default {
 
 .blog__view {
   @apply rounded;
-  @apply p-5;
+  @apply px-6 pt-10 pb-16;
   @apply bg-secondary;
+}
+
+@screen laptop {
+  .blog__view {
+    @apply px-8 pt-12;
+  }
+}
+
+@screen desktop {
+  .blog__view {
+    @apply px-12 pt-16 pb-20;
+  }
 }
 </style>
 <style lang="scss">
