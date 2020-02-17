@@ -11,13 +11,19 @@
           v-for="reaction in post.reactions"
           :key="reaction.content"
           :class="[
-            'post-reaction',
-            reaction.userLoggedHasReaction ? 'active-reaction' : ''
+            'post__reactions__reaction',
+            reaction.userLoggedHasReaction ? '--active' : ''
           ]"
           @click="handleReaction({ number: post.number, reaction: reaction })"
         >
-          <img :src="`/img/reactions/${reaction.content}.png`" />
-          <span v-if="reaction.count > 0">
+          <img
+            :src="`/img/reactions/${reaction.content}.png`"
+            class="post__reactions__reaction__icon"
+          />
+          <span
+            v-if="reaction.count > 0"
+            class="post__reactions__reaction__count"
+          >
             {{ reaction.count }}
           </span>
         </span>
@@ -90,10 +96,81 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.post__reactions {
-  display: flex;
+.post {
+  &__reactions {
+    @apply flex w-full justify-center;
+    @apply pt-2 pb-4;
+    @apply fixed left-0 bottom-0;
+    @apply bg-base;
+
+    &__reaction {
+      @apply relative;
+      @apply mx-1 p-1;
+      @apply rounded-full;
+      @apply border-2 border-divContainer cursor-pointer;
+
+      &.--active {
+        @apply border-2 border-inputFocus;
+      }
+
+      &__icon {
+        @apply w-6;
+      }
+
+      &__count {
+        @apply absolute;
+        bottom: 0px;
+        right: -5px;
+        @apply rounded-full border border-divContainer;
+        @apply w-4;
+        @apply text-center text-sm leading-none text-primary;
+        @apply bg-primary;
+      }
+    }
+  }
 }
-.active-reaction {
-  border: 1px solid red;
+
+@screen tablet {
+  .post {
+    &__reactions {
+      &__reaction {
+        @apply mx-3;
+
+        &__icon {
+          @apply w-8;
+        }
+
+        &__count {
+          @apply w-5;
+        }
+      }
+    }
+  }
+}
+
+@screen laptop {
+  .post {
+    @apply relative;
+
+    &__reactions {
+      @apply absolute w-auto;
+      bottom: auto;
+      left: -6.2rem;
+      @apply flex-col;
+      @apply bg-transparent;
+
+      &__reaction {
+        @apply mr-2 my-2;
+      }
+    }
+  }
+}
+
+@screen desktop {
+  .post {
+    &__reactions {
+      left: -7.2rem;
+    }
+  }
 }
 </style>

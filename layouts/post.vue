@@ -28,6 +28,11 @@ export default {
 
 <style lang="scss" scoped>
 @import 'style/indexLayout';
+
+.blog {
+  @apply pb-16;
+}
+
 .blog__sidebar {
   @apply p-0;
 }
