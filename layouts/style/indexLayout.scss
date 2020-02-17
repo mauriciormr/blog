@@ -25,20 +25,12 @@
     @apply flex-row items-start;
 
     &__content {
-      @apply flex-7;
+      @apply w-4/5;
       @apply mr-6;
     }
 
     &__sidebar {
-      @apply flex-2;
-    }
-  }
-}
-
-@screen desktop {
-  .blog {
-    &__content {
-      @apply flex-9;
+      @apply w-1/5;
     }
   }
 }
