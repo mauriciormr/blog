@@ -41,6 +41,7 @@
   table {
     @apply table-auto border-collapse;
     @apply mb-4;
+    @apply w-full block overflow-auto;
 
     th, td {
       @apply border-2 border-divContainer;
@@ -127,6 +128,18 @@
     @apply pl-4 mb-4;
     @apply border-l-4 border-divContainer;
     @apply text-secondary italic;
+  }
+
+  [class*="center"] {
+    @apply text-center;
+  }
+
+  [class*="left"] {
+    @apply text-left;
+  }
+
+  [class*="right"] {
+    @apply text-right;
   }
 
   div.post__title {
