@@ -58,7 +58,7 @@ export default {
 
 <style lang="scss" scoped>
 .wrapper-header {
-  position: absolute;
+  position: fixed;
   z-index: 100;
   @apply w-full;
   @apply bg-primary;
