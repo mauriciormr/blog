@@ -76,7 +76,7 @@ export default {
   mounted() {
     const labelsOmitted = ['post', 'hidden']
     const labelsBackup = this.post.labels
-    _.remove(labelsBackup, l => _.includes(labelsOmitted))
+    _.remove(labelsBackup, l => _.includes(labelsOmitted, l.name))
     this.labels = labelsBackup
   }
 }
