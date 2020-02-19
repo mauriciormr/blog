@@ -98,7 +98,7 @@ export default {
     border-width: 5px;
     border-style: solid;
     @apply border-input rounded-full;
-    @apply w-2/6 self-center;
+    @apply w-24 h-24 self-center;
     @apply mt-3 mb-4;
   }
 
@@ -159,7 +159,7 @@ export default {
 @screen tablet {
   .author-card {
     &__photo {
-      @apply w-32;
+      @apply w-32 h-32;
     }
 
     &__list {
@@ -173,7 +173,7 @@ export default {
     @apply text-xs;
 
     &__photo {
-      @apply w-20;
+      @apply w-20 h-20;
     }
 
     &__list {
@@ -195,7 +195,7 @@ export default {
     @apply text-sm;
 
     &__photo {
-      @apply w-24;
+      @apply w-24 h-24;
     }
   }
 }

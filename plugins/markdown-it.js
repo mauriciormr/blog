@@ -14,7 +14,7 @@ import ins from 'markdown-it-ins'
 import tableContents from 'markdown-it-table-of-contents'
 import anchor from 'markdown-it-anchor'
 import stringPackage from 'string'
-import 'highlight.js/styles/rainbow.css'
+import 'highlight.js/styles/github.css'
 
 hljs.registerLanguage('html', hlHtml)
 hljs.registerLanguage('css', hlCss)
