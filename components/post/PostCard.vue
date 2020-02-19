@@ -43,6 +43,7 @@
 <script>
 import moment from 'moment'
 import _ from 'lodash'
+import { filterPostLabels } from '~/utils/utils'
 
 export default {
   props: {
@@ -75,9 +76,7 @@ export default {
   },
   mounted() {
     const labelsOmitted = ['post', 'hidden']
-    const labelsBackup = this.post.labels
-    _.remove(labelsBackup, l => _.includes(labelsOmitted, l.name))
-    this.labels = labelsBackup
+    this.labels = filterPostLabels(labelsOmitted, this.post.labels)
   }
 }
 </script>
