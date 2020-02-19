@@ -428,7 +428,10 @@ export const actions = {
   },
   // Default values in object parameters
   // https://javascript.info/destructuring-assignment
-  async getPostsList({ dispatch, state, $axios }, { type = '' } = {}) {
+  async getPostsList(
+    { dispatch, state, rootState, $axios },
+    { type = '' } = {}
+  ) {
     let flagType = 'Public'
     let { isPublicFulfilled: isFulfilled } = state.status.get
 
@@ -443,14 +446,15 @@ export const actions = {
         await dispatch(`get${flagType}PostsListPending`)
         let posts = null
 
-        posts = _.values(
-          await this.$axios.$get(
-            'issues?filter=all&labels=post,public&sort=created&direction=desc'
-          )
-        )
+        posts = _.values(await this.$axios.$get('issues?labels=post,public'))
 
         if (type === 'private') {
-          posts = _.values(await this.$axios.$get('issues?labels=post'))
+          const usernameLogged = _.get(rootState.users.user, 'login', '')
+          posts = _.values(
+            await this.$axios.$get(
+              `issues?creator=${usernameLogged}&labels=post`
+            )
+          )
         }
         const formattedPosts = posts.map(p => {
           const postJSON = JSON.parse(p.title)
