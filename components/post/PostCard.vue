@@ -121,12 +121,11 @@ export default {
     @apply flex items-center;
 
     &__photo {
-      @apply flex-1;
+      @apply w-12;
       @apply rounded-full;
     }
 
     &__username {
-      @apply flex-7;
       @apply pl-3;
     }
   }
