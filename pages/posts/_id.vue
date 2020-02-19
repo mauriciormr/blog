@@ -28,9 +28,12 @@
           </span>
         </span>
       </div>
-      <div v-html="post.post.titleHTML" class="post__title" />
-      <div v-html="post.post.descriptionHTML" class="post__description" />
-      <div v-html="post.post.contentHTML" class="post__content" />
+      <div :style="`background-image: url('${unplash}')`" class="post__cover" />
+      <div class="post__group">
+        <div v-html="post.post.titleHTML" class="post__title" />
+        <div v-html="post.post.descriptionHTML" class="post__description" />
+        <div v-html="post.post.contentHTML" class="post__content" />
+      </div>
     </div>
   </div>
 </template>
@@ -53,7 +56,8 @@ export default {
     return {
       postNumber: null,
       titlePage: '',
-      statusCode: 404
+      statusCode: 404,
+      unplash: 'https://source.unsplash.com/random/1280x720'
     }
   },
   computed: {
@@ -96,7 +100,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.loading {
+  @apply pt-8;
+}
 .post {
+  &__cover {
+    @apply rounded-t;
+    @apply bg-local bg-center bg-no-repeat bg-cover;
+    @apply h-40;
+  }
+
+  &__group {
+    @apply pt-4 px-6;
+  }
+
   &__reactions {
     @apply flex w-full justify-center;
     @apply pt-2 pb-4;
@@ -132,6 +149,14 @@ export default {
 
 @screen tablet {
   .post {
+    &__cover {
+      @apply h-56;
+    }
+
+    &__group {
+      @apply px-8;
+    }
+
     &__reactions {
       &__reaction {
         @apply mx-3;
@@ -152,10 +177,14 @@ export default {
   .post {
     @apply relative;
 
+    &__group {
+      @apply px-8;
+    }
+
     &__reactions {
       @apply absolute w-auto;
       bottom: auto;
-      left: -6.2rem;
+      left: -4.2rem;
       @apply flex-col;
       @apply bg-transparent;
 
@@ -168,8 +197,8 @@ export default {
 
 @screen desktop {
   .post {
-    &__reactions {
-      left: -7.2rem;
+    &__group {
+      @apply px-12;
     }
   }
 }
