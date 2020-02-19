@@ -1,55 +1,48 @@
 <template>
-  <div class="container-page">
-    <div v-if="isDataPending" class="loading">
-      <span>
-        Loading...
-      </span>
-    </div>
-    <div v-else class="posts-list">
-      <nuxt-link to="/posts/dashboard/add">
-        <span>Agregar</span>
-      </nuxt-link>
-      <div v-for="post in posts" :key="post.id" class="post-card">
-        <nuxt-link :to="`/posts/dashboard/${post.number}`">
-          <nuxt-link :to="`/posts/dashboard/edit/${post.number}`">
-            <span>Editar</span>
-          </nuxt-link>
-          <div v-html="post.post.titleHTML" class="post-card__title" />
-          <div
-            v-html="post.post.descriptionHTML"
-            class="post-card__description"
-          />
-        </nuxt-link>
-      </div>
+  <div>
+    <Loading v-if="isDataPending" class="loading" />
+    <div v-else class="admin-posts-list">
+      <PostCard
+        v-for="post in posts"
+        :key="post.id"
+        :post="post"
+        :isPostCardAdmin="true"
+      />
     </div>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
+import PostCard from '~/components/post/PostCard.vue'
+import Loading from '~/components/Loading.vue'
 
 export default {
+  layout: 'blog',
+  components: {
+    PostCard,
+    Loading
+  },
   computed: {
     ...mapState({
       posts: state => state.posts.privateList,
       isDataPending: state => state.posts.status.get.isPrivatePending
     })
   },
-  async fetch({ store }) {
-    await store.dispatch('posts/getPostsList', { type: 'private' })
+  mounted() {
+    this.getPostsList({ type: 'private' })
+  },
+  methods: {
+    ...mapActions({
+      getPostsList: 'posts/getPostsList'
+    })
   },
   head() {
     return {
-      title: 'Publications'
+      title: 'Dashboard'
     }
   }
 }
 </script>
 
-<style>
-.post-card {
-  border: 1px solid red;
-  margin: 15px 0px;
-  background: #ebf8ff;
-}
-</style>
+<style></style>
