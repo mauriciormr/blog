@@ -2,17 +2,43 @@ const HEADER_LINKS = [
   {
     name: 'Home',
     route: '/',
-    show: true
+    show: true,
+    showWhenUserIsLogged: true
   },
   {
     name: 'About me',
     route: '/posts/',
-    show: true
+    show: true,
+    showWhenUserIsLogged: true
   },
   {
     name: 'Blog',
     route: '/posts/',
-    show: true
+    show: true,
+    showWhenUserIsLogged: true
+  },
+  {
+    name: 'Login',
+    route: '/login/',
+    show: true,
+    showWhenUserIsLogged: false
+  }
+]
+
+const ADMIN_HEADER_LINKS = [
+  {
+    name: 'My publications',
+    route: '/posts/dashboard',
+    show: true,
+    action: ''
+  },
+  {
+    name: 'Logout',
+    route: '',
+    show: true,
+    //  - Vuex action -
+    // vuexModuleName/vuexModuleAction
+    action: 'users/logoutUser'
   }
 ]
 
@@ -50,4 +76,4 @@ const USER_INFORMATION = {
   }
 }
 
-export { HEADER_LINKS, USER_INFORMATION }
+export { HEADER_LINKS, USER_INFORMATION, ADMIN_HEADER_LINKS }
