@@ -115,6 +115,7 @@ export default {
     @apply absolute right-0 w-12 h-12;
     @apply flex justify-center items-center;
     @apply mr-4;
+    bottom: 4rem;
   }
 
   &__title {
