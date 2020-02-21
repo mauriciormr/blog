@@ -3,6 +3,13 @@
     <nuxt-link :to="`/posts/${post.number}`" class="post-card__wrapper">
       <div class="post-card__cover" />
       <div class="post-card__content">
+        <div v-if="isPostCardAdmin" class="post-card__actions">
+          <nuxt-link :to="`/posts/dashboard/edit/${post.number}`">
+            <span>
+              <i class="fa fa-edit" aria-hidden="true" />
+            </span>
+          </nuxt-link>
+        </div>
         <div v-html="post.post.titleHTML" class="post-card__title" />
         <div
           v-html="post.post.descriptionHTML"
@@ -51,6 +58,11 @@ export default {
       type: Object,
       required: true,
       default: () => ({})
+    },
+    isPostCardAdmin: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   data() {
@@ -93,7 +105,17 @@ export default {
   }
 
   &__content {
+    @apply relative;
     @apply p-4;
+  }
+
+  &__actions {
+    @apply text-3xl text-secondary;
+    @apply rounded-full bg-primary shadow-xl;
+    @apply absolute right-0 w-12 h-12;
+    @apply flex justify-center items-center;
+    @apply mr-4;
+    bottom: 4rem;
   }
 
   &__title {
