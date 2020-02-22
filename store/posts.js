@@ -467,7 +467,9 @@ export const actions = {
                 postJSON.description
               ),
               content: p.body,
-              contentHTML: this.$markdownit.render(p.body)
+              contentHTML: this.$markdownit.render(p.body),
+              coverBlog: postJSON.coverBlog,
+              coverCEO: postJSON.coverCEO
             }
           }
         })

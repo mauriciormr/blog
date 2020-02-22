@@ -28,7 +28,11 @@
           </span>
         </span>
       </div>
-      <div :style="`background-image: url('${unplash}')`" class="post__cover" />
+      <div
+        v-if="cover"
+        :style="`background-image: url('${cover}')`"
+        class="post__cover"
+      />
       <div class="post__group">
         <div v-html="post.post.titleHTML" class="post__title" />
         <div class="post__information">
@@ -81,7 +85,8 @@ export default {
       unplash: 'https://source.unsplash.com/random/1280x720',
       labels: [],
       date: '',
-      year: ''
+      year: '',
+      cover: ''
     }
   },
   computed: {
@@ -112,6 +117,9 @@ export default {
 
         const labelsOmitted = ['hidden']
         this.labels = filterPostLabels(labelsOmitted, this.post.labels)
+
+        const postCover = _.get(this.post.post, 'coverBlog', '').trim()
+        this.cover = !postCover ? this.cover : postCover
       }
     })
   },

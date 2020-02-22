@@ -1,7 +1,11 @@
+<!--  -->
 <template>
   <div class="post-card">
     <nuxt-link :to="`/posts/${post.number}`" class="post-card__wrapper">
-      <div class="post-card__cover" />
+      <div
+        :style="`background-image: url('${cover}')`"
+        class="post-card__cover"
+      />
       <div class="post-card__content">
         <div v-if="isPostCardAdmin" class="post-card__actions">
           <nuxt-link :to="`/posts/dashboard/edit/${post.number}`">
@@ -51,6 +55,7 @@
 import moment from 'moment'
 import _ from 'lodash'
 import { filterPostLabels } from '~/utils/utils'
+import { POSTS_DATA } from '~/data/default-data'
 
 export default {
   props: {
@@ -70,7 +75,8 @@ export default {
       labels: [],
       date: '',
       year: '',
-      reactionsCount: 0
+      reactionsCount: 0,
+      cover: POSTS_DATA.coverList
     }
   },
   created() {
@@ -89,6 +95,8 @@ export default {
   mounted() {
     const labelsOmitted = ['post', 'hidden']
     this.labels = filterPostLabels(labelsOmitted, this.post.labels)
+    const postCover = _.get(this.post.post, 'coverBlog', '').trim()
+    this.cover = !postCover ? this.cover : postCover
   }
 }
 </script>
@@ -184,11 +192,7 @@ export default {
     }
 
     &__cover {
-      background-image: url('/img/meta/post_banner_default.jpg');
-      background-position-x: center;
-      background-position-y: center;
-      background-repeat: no-repeat;
-      background-size: cover;
+      @apply bg-local bg-center bg-no-repeat bg-cover;
       height: 250px;
     }
 
