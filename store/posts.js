@@ -649,7 +649,9 @@ export const actions = {
 
       const titleGitHubIssueFormat = {
         title: data.title,
-        description: data.description
+        description: data.description,
+        coverBlog: data.coverBlog,
+        coverCEO: data.coverCEO
       }
 
       const dataPost = {
@@ -688,7 +690,9 @@ export const actions = {
 
       const titleGitHubIssueFormat = {
         title: data.title,
-        description: data.description
+        description: data.description,
+        coverBlog: data.coverBlog,
+        coverCEO: data.coverCEO
       }
 
       const dataPost = {

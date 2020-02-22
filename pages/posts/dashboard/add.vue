@@ -2,12 +2,29 @@
   <div class="container-page">
     <h2>Add post</h2>
     <div class="actions">
+      <button @click="openCloseCovers()">
+        Covers
+      </button>
       <button @click="publish('hidden')">
         Draft
       </button>
       <button @click="publish('public')">
         Publish
       </button>
+    </div>
+    <div v-if="isOpenCovers" class="media-covers">
+      <div>
+        <label>Blog</label>
+        <input
+          v-model="coverBlog"
+          type="text"
+          placeholder="URL cover principal"
+        />
+      </div>
+      <div>
+        <label>Redes sociales</label>
+        <input v-model="coverCEO" type="text" placeholder="URL cover CEO" />
+      </div>
     </div>
     <Toolbar
       :dom="getRefTextArea"
@@ -60,7 +77,10 @@ export default {
     return {
       titleText: 'Title post',
       descriptionText: 'Description post',
-      blogText: '# Content post'
+      blogText: '# Content post',
+      isOpenCovers: false,
+      coverBlog: ' ',
+      coverCEO: ' '
     }
   },
   computed: {
@@ -86,6 +106,9 @@ export default {
     updateDescription: _.debounce(function(e) {
       this.descriptionText = e.target.value
     }, 300),
+    openCloseCovers() {
+      this.isOpenCovers = !this.isOpenCovers
+    },
     ...mapActions({
       addPost: 'posts/postAddPost'
     }),
@@ -101,7 +124,9 @@ export default {
         data: {
           title: this.titleText,
           description: this.descriptionText,
-          body: this.blogText
+          body: this.blogText,
+          coverBlog: this.coverBlog,
+          coverCEO: this.coverCEO
         }
       }
       this.addPost(dataPost).then(() => this.$router.push('/posts/dashboard'))

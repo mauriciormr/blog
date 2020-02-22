@@ -9,12 +9,29 @@
     <div v-else class="editor-container">
       <h2>Edit post</h2>
       <div class="actions">
+        <button @click="openCloseCovers()">
+          Covers
+        </button>
         <button @click="publish('hidden')">
           Draft
         </button>
         <button @click="publish('public')">
           Publish
         </button>
+      </div>
+      <div v-if="isOpenCovers" class="media-covers">
+        <div>
+          <label>Blog</label>
+          <input
+            v-model="coverBlog"
+            type="text"
+            placeholder="URL cover principal"
+          />
+        </div>
+        <div>
+          <label>Redes sociales</label>
+          <input v-model="coverCEO" type="text" placeholder="URL cover CEO" />
+        </div>
       </div>
       <Toolbar
         :dom="getRefTextArea"
@@ -74,7 +91,10 @@ export default {
       statusCode: 404,
       titleText: 'Title post',
       descriptionText: 'Description post',
-      blogText: '# Content post'
+      blogText: '# Content post',
+      isOpenCovers: false,
+      coverBlog: ' ',
+      coverCEO: ' '
     }
   },
   computed: {
@@ -105,9 +125,15 @@ export default {
   },
   mounted() {
     if (this.post) {
-      this.titleText = this.post.post.title
-      this.descriptionText = this.post.post.description
-      this.blogText = this.post.post.content
+      this.coverBlog = _.get(this.post.post, 'coverBlog', this.coverBlog)
+      this.coverCEO = _.get(this.post.post, 'coverCEO', this.coverCEO)
+      this.titleText = _.get(this.post.post, 'title', this.titleText)
+      this.descriptionText = _.get(
+        this.post.post,
+        'description',
+        this.decriptionText
+      )
+      this.blogText = _.get(this.post.post, 'content', this.blogText)
     }
 
     this.titlePage = this.post
@@ -126,6 +152,9 @@ export default {
     updateDescription: _.debounce(function(e) {
       this.descriptionText = e.target.value
     }, 300),
+    openCloseCovers() {
+      this.isOpenCovers = !this.isOpenCovers
+    },
     ...mapActions({
       updatePost: 'posts/patchUpdatePost'
     }),
@@ -142,7 +171,9 @@ export default {
           title: this.titleText,
           description: this.descriptionText,
           body: this.blogText,
-          postNumber: this.postNumber
+          postNumber: this.postNumber,
+          coverBlog: this.coverBlog,
+          coverCEO: this.coverCEO
         }
       }
       this.updatePost(dataPost).then(() =>
