@@ -13,6 +13,9 @@
       </button>
     </div>
     <div v-if="isOpenCovers" class="media-covers">
+      <button @click="openCloseModalPreview()">
+        Covers preview
+      </button>
       <div>
         <label>Blog</label>
         <input
@@ -61,6 +64,12 @@
         <div v-html="compiledContentMarkdown" class="preview__content" />
       </div>
     </div>
+    <ModalCoversPreview
+      v-if="isOpenModalPreview"
+      :coverCEO="coverCEO"
+      @closeModal="openCloseModalPreview"
+      class="modal"
+    />
   </div>
 </template>
 
@@ -68,10 +77,12 @@
 import _ from 'lodash'
 import { mapActions } from 'vuex'
 import Toolbar from '~/components/toolbar/Toolbar.vue'
+import ModalCoversPreview from '~/components/post/ModalCoversPreview.vue'
 
 export default {
   components: {
-    Toolbar
+    Toolbar,
+    ModalCoversPreview
   },
   data() {
     return {
@@ -79,8 +90,9 @@ export default {
       descriptionText: 'Description post',
       blogText: '# Content post',
       isOpenCovers: false,
-      coverBlog: ' ',
-      coverCEO: ' '
+      coverBlog: '',
+      coverCEO: '',
+      isOpenModalPreview: false
     }
   },
   computed: {
@@ -109,6 +121,9 @@ export default {
     openCloseCovers() {
       this.isOpenCovers = !this.isOpenCovers
     },
+    openCloseModalPreview() {
+      this.isOpenModalPreview = !this.isOpenModalPreview
+    },
     ...mapActions({
       addPost: 'posts/postAddPost'
     }),
@@ -125,8 +140,8 @@ export default {
           title: this.titleText,
           description: this.descriptionText,
           body: this.blogText,
-          coverBlog: this.coverBlog,
-          coverCEO: this.coverCEO
+          coverBlog: !this.coverBlog ? ' ' : this.coverBlog,
+          coverCEO: !this.coverCEO ? ' ' : this.coverCEO
         }
       }
       this.addPost(dataPost).then(() => this.$router.push('/posts/dashboard'))
@@ -135,7 +150,14 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+.modal {
+  @apply absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
 .actions {
   margin: 20px 10px;
 }
