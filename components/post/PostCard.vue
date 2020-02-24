@@ -54,8 +54,8 @@
 <script>
 import moment from 'moment'
 import _ from 'lodash'
-import { filterPostLabels } from '~/utils/utils'
-import { POSTS_DATA } from '~/data/default-data'
+import { fnFilterPostLabels } from '~/utils/utils'
+import { POSTS_DATA, OMITTED_LABELS } from '~/data/default-data'
 
 export default {
   props: {
@@ -93,8 +93,7 @@ export default {
     )
   },
   mounted() {
-    const labelsOmitted = ['post', 'hidden']
-    this.labels = filterPostLabels(labelsOmitted, this.post.labels)
+    this.labels = fnFilterPostLabels(OMITTED_LABELS, this.post.labels)
     const postCover = _.get(this.post.post, 'coverBlog', '').trim()
     this.cover = !postCover ? this.cover : postCover
   }

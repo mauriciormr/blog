@@ -20,10 +20,12 @@ import moment from 'moment'
 
 import { mapState, mapActions } from 'vuex'
 import { errorHandler } from '~/utils/validate-errors'
+import { fnFilterPostLabels } from '~/utils/utils'
+import { OMITTED_LABELS } from '~/data/default-data'
+
 import ResourceNotFound from '~/components/ResourceNotFound.vue'
 import Loading from '~/components/Loading.vue'
 import PostPublicPreview from '~/components/post/PostPublicPreview.vue'
-import { filterPostLabels } from '~/utils/utils'
 
 export default {
   layout: 'post',
@@ -66,8 +68,10 @@ export default {
         const formatDate = moment(this.post.created_at).format('MMM DD')
         const formatYear = moment(this.post.created_at).format('YYYY')
 
-        const labelsOmitted = ['hidden']
-        const formatLabels = filterPostLabels(labelsOmitted, this.post.labels)
+        const formatLabels = fnFilterPostLabels(
+          OMITTED_LABELS,
+          this.post.labels
+        )
 
         const postCover = _.get(this.post.post, 'coverBlog', '').trim()
         const cover = !postCover ? '' : postCover

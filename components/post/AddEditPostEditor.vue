@@ -76,8 +76,11 @@ import _ from 'lodash'
 import moment from 'moment'
 
 import { mapActions, mapState } from 'vuex'
-import Toolbar from '~/components/toolbar/Toolbar.vue'
 import { errorHandler } from '~/utils/validate-errors'
+import { fnFilterPostLabels } from '~/utils/utils'
+import { OMITTED_LABELS } from '~/data/default-data'
+
+import Toolbar from '~/components/toolbar/Toolbar.vue'
 import ResourceNotFound from '~/components/ResourceNotFound.vue'
 import ModalCoversPreview from '~/components/post/ModalCoversPreview.vue'
 import Loading from '~/components/Loading.vue'
@@ -150,7 +153,7 @@ export default {
           ...post,
           formatDate: moment(this.post.created_at).format('MMM DD'),
           formatYear: moment(this.post.created_at).format('YYYY'),
-          formatLabels: this.post.labels
+          formatLabels: fnFilterPostLabels(OMITTED_LABELS, this.post.labels)
         }
       }
       return post

@@ -4,4 +4,6 @@ const POSTS_DATA = {
   coverBlog: ''
 }
 
-export { POSTS_DATA }
+const OMITTED_LABELS = ['hidden', 'public']
+
+export { POSTS_DATA, OMITTED_LABELS }
