@@ -1,13 +1,12 @@
 <template>
-  <div class="container-page">
-    <AddEditPostEditor />
-  </div>
+  <AddEditPostEditor />
 </template>
 
 <script>
 import AddEditPostEditor from '~/components/post/AddEditPostEditor.vue'
 
 export default {
+  layout: 'addEdit',
   components: {
     AddEditPostEditor
   }

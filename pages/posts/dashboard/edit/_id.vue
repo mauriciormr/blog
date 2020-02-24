@@ -1,13 +1,12 @@
 <template>
-  <div class="container-page">
-    <AddEditPostEditor :typeAction="'edit'" :postNumber="postNumber" />
-  </div>
+  <AddEditPostEditor :typeAction="'edit'" :postNumber="postNumber" />
 </template>
 
 <script>
 import AddEditPostEditor from '~/components/post/AddEditPostEditor.vue'
 
 export default {
+  layout: 'addEdit',
   components: {
     AddEditPostEditor
   },

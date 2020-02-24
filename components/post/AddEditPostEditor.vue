@@ -1,11 +1,11 @@
 <template>
-  <div class="container-page">
+  <div>
     <Loading v-if="isDataPending && typeAction === 'edit'" class="loading" />
     <ResourceNotFound
       v-else-if="!post && typeAction === 'edit'"
       :error="{ statusCode }"
     />
-    <div v-else class="editor-container">
+    <div v-else>
       <div class="actions">
         <button @click="openCloseCovers()">
           Covers
@@ -59,15 +59,7 @@
             class="editor__content"
           />
         </div>
-        <div class="preview">
-          <div class="preview__title">
-            <h1 v-html="compiledTitleMarkdown" />
-          </div>
-          <div class="preview__description">
-            <p v-html="compiledDescriptionMarkdown" />
-          </div>
-          <div v-html="compiledContentMarkdown" class="preview__content" />
-        </div>
+        <PostPublicPreview :post="customObjectPost" class="preview" />
       </div>
     </div>
     <ModalCoversPreview
@@ -81,19 +73,23 @@
 
 <script>
 import _ from 'lodash'
+import moment from 'moment'
+
 import { mapActions, mapState } from 'vuex'
 import Toolbar from '~/components/toolbar/Toolbar.vue'
 import { errorHandler } from '~/utils/validate-errors'
 import ResourceNotFound from '~/components/ResourceNotFound.vue'
 import ModalCoversPreview from '~/components/post/ModalCoversPreview.vue'
 import Loading from '~/components/Loading.vue'
+import PostPublicPreview from '~/components/post/PostPublicPreview.vue'
 
 export default {
   components: {
     Toolbar,
     ResourceNotFound,
     ModalCoversPreview,
-    Loading
+    Loading,
+    PostPublicPreview
   },
   props: {
     typeAction: {
@@ -136,6 +132,28 @@ export default {
     },
     compiledContentMarkdown() {
       return this.$markdownit.render(this.blogText)
+    },
+    customObjectPost() {
+      let post = {
+        reactions: [],
+        titleHTML: this.compiledTitleMarkdown,
+        descriptionHTML: this.compiledDescriptionMarkdown,
+        contentHTML: this.compiledContentMarkdown,
+        cover: this.coverBlog,
+        formatDate: moment().format('MMM DD'),
+        formatYear: moment().format('YYYY'),
+        formatLabels: []
+      }
+
+      if (this.typeAction === 'edit') {
+        post = {
+          ...post,
+          formatDate: moment(this.post.created_at).format('MMM DD'),
+          formatYear: moment(this.post.created_at).format('YYYY'),
+          formatLabels: this.post.labels
+        }
+      }
+      return post
     }
   },
   mounted() {
@@ -147,17 +165,21 @@ export default {
             'coverBlog',
             this.coverBlog
           ).trim()
+
           this.coverCEO = _.get(
             this.post.post,
             'coverCEO',
             this.coverCEO
           ).trim()
+
           this.titleText = _.get(this.post.post, 'title', this.titleText)
+
           this.descriptionText = _.get(
             this.post.post,
             'description',
             this.decriptionText
           )
+
           this.blogText = _.get(this.post.post, 'content', this.blogText)
         }
 
@@ -228,13 +250,16 @@ export default {
   },
   head() {
     return {
-      title: !this.typeAction === 'edit' ? 'Add publication' : this.titlePage
+      title: this.typeAction !== 'edit' ? 'Add publication' : this.titlePage
     }
   }
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+.loading {
+  @apply pt-8;
+}
 .modal {
   @apply absolute;
   left: 50%;
