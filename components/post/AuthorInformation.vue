@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper-card">
-    <Loading v-if="isDataPending" class="loading" />
+    <Loading v-if="isAuthorPending" class="loading" />
     <div v-else class="author-card">
       <span class="author-card__title">AUTHOR</span>
       <img
@@ -69,7 +69,7 @@ export default {
   computed: {
     ...mapState({
       author: state => state.posts.postView.author,
-      isDataPending: state => state.posts.status.getAuthorPostView.isPending
+      isAuthorPending: state => state.posts.status.get.isAuthorPending
     })
   }
 }

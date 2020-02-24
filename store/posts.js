@@ -40,18 +40,16 @@ const initialState = () => ({
     post: {}
   },
   status: {
-    getAuthorPostView: {
-      isPending: true,
-      isFulfilled: false,
-      isRejected: false
-    },
     get: {
       isPublicPending: true,
       isPublicFulfilled: false,
       isPublicRejected: false,
       isPrivatePending: true,
       isPrivateFulfilled: false,
-      isPrivateRejected: false
+      isPrivateRejected: false,
+      isAuthorPending: true,
+      isAuthorFulfilled: false,
+      isAuthorRejected: false
     },
     post: {
       isPending: false,
@@ -294,25 +292,28 @@ export const mutations = {
     }
   },
   [SET_AUTHOR_POST_VIEW_PENDING](state) {
-    state.status.getAuthorPostView = {
-      isPending: true,
-      isFulfilled: false,
-      isRejected: false
+    state.status.get = {
+      ...state.status.get,
+      isAuthorPending: true,
+      isAuthorFulfilled: false,
+      isAuthorRejected: false
     }
   },
   [SET_AUTHOR_POST_VIEW_FULFILLED](state, payload) {
-    state.status.getAuthorPostView = {
-      isPending: false,
-      isFulfilled: true,
-      isRejected: false
+    state.status.get = {
+      ...state.status.get,
+      isAuthorPending: false,
+      isAuthorFulfilled: true,
+      isAuthorRejected: false
     }
     state.postView.author = payload
   },
   [SET_AUTHOR_POST_VIEW_REJECTED](state) {
-    state.status.getAuthorPostView = {
-      isPending: false,
-      isFulfilled: false,
-      isRejected: true
+    state.status.get = {
+      ...state.status.get,
+      isAuthorPending: false,
+      isAuthorFulfilled: false,
+      isAuthorRejected: true
     }
   }
 }
