@@ -7,11 +7,7 @@
       @click.stop="clickEvent"
       class="emoji-invoker"
     >
-      <img
-        src="/img/icons/mood-happy-outline.svg"
-        class="icon-toolbar__img"
-        alt="Emojis"
-      />
+      <i class="fa fa-smile-o" aria-hidden="true" />
     </span>
     <div slot="emoji-picker" slot-scope="{ emojis, insert }">
       <div class="emoji-picker">
@@ -65,7 +61,7 @@ export default {
   }
 }
 </script>
-<style>
+<style scoped>
 .regular-input {
   border-radius: 3px;
   border: 1px solid #ccc;
@@ -88,6 +84,7 @@ export default {
 }
 .emoji-picker {
   position: absolute;
+  right: 0px;
   z-index: 1;
   font-family: Montserrat;
   border: 1px solid #ccc;
