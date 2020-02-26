@@ -1,0 +1,72 @@
+body {
+  @apply bg-base;
+}
+
+.page {
+  @apply pt-14;
+}
+
+.container {
+  @apply mx-auto px-3;
+}
+
+@screen laptop {
+  .page {
+    @apply pt-16;
+  }
+
+  .container {
+    @apply px-20;
+  }
+}
+
+@screen desktop {
+  .container {
+    @apply px-16;
+  }
+}
+
+/* Components */
+
+.input-text {
+  border-width: 1px;
+  border-style: solid;
+  @apply bg-input;
+  @apply border-input rounded;
+  @apply text-input;
+  @apply w-full py-3 px-4;
+
+  &:focus {
+    @apply border-inputFocus;
+  }
+}
+
+.input-text.--small {
+  @extend .input-text;
+  @apply py-0 px-1;
+}
+
+.button {
+  @apply text-primary font-poppins font-light;
+  @apply rounded;
+  @apply py-0 px-2;
+
+  &:hover {
+    @apply bg-primarySelected;
+  }
+}
+
+.button-primary {
+  @extend .button;
+  @apply bg-primary;
+}
+
+.button-secondary {
+  @extend .button;
+  @apply bg-base;
+}
+
+[class^="button-"].--big {
+  @extend .button;
+  @apply py-1 px-4;
+}
