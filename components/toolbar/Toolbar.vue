@@ -1,133 +1,75 @@
 <template>
   <div class="toolbar">
-    <span @click="insertText('title1')" class="icon-toolbar">
-      <span class="icon-toolbar__img" alt="Text titles">
-        Title1
-      </span>
+    <span @click="insertText('title1')" class="toolbar__option h1">
+      <i class="fa fa-text-height toolbar__option__icon" aria-hidden="true" />
     </span>
-    <span @click="insertText('title2')" class="icon-toolbar">
-      <span class="icon-toolbar__img" alt="Text titles">
-        Title2
-      </span>
+    <span @click="insertText('title2')" class="toolbar__option h2">
+      <i class="fa fa-text-height toolbar__option__icon" aria-hidden="true" />
     </span>
-    <span @click="insertText('title3')" class="icon-toolbar">
-      <span class="icon-toolbar__img" alt="Text titles">
-        Title3
-      </span>
+    <span @click="insertText('title3')" class="toolbar__option h3">
+      <i class="fa fa-text-height toolbar__option__icon" aria-hidden="true" />
     </span>
-    <span @click="insertText('title4')" class="icon-toolbar">
-      <span class="icon-toolbar__img" alt="Text titles">
-        Title4
-      </span>
+    <span @click="insertText('title4')" class="toolbar__option h4">
+      <i class=" fa fa-text-height toolbar__option__icon" aria-hidden="true" />
     </span>
-    <span @click="insertText('title5')" class="icon-toolbar">
-      <span class="icon-toolbar__img" alt="Text titles">
-        Title5
-      </span>
+    <span @click="insertText('title5')" class="toolbar__option h5">
+      <i class="fa fa-text-height toolbar__option__icon" aria-hidden="true" />
     </span>
-    <span @click="insertText('bold')" class="icon-toolbar">
-      <img
-        src="/img/icons/format-text-size.svg"
-        class="icon-toolbar__img"
-        alt="Text titles"
+    <span @click="insertText('bold')" class="toolbar__option">
+      <i class="fa fa-bold toolbar__option__icon" aria-hidden="true" />
+    </span>
+    <span @click="insertText('italic')" class="toolbar__option">
+      <i class="fa fa-italic toolbar__option__icon" aria-hidden="true" />
+    </span>
+    <span @click="insertText('underline')" class="toolbar__option">
+      <i class="fa fa-underline toolbar__option__icon" aria-hidden="true" />
+    </span>
+    <span @click="insertText('mark')" class="toolbar__option">
+      <i class="fa fa-paint-brush toolbar__option__icon" aria-hidden="true" />
+    </span>
+    <span @click="insertText('quotation')" class="toolbar__option">
+      <i class="fa fa-quote-left toolbar__option__icon" aria-hidden="true" />
+    </span>
+    <span @click="insertText('code')" class="toolbar__option">
+      <i class="fa fa-code toolbar__option__icon" aria-hidden="true" />
+    </span>
+    <span @click="insertText('link')" class="toolbar__option">
+      <i class="fa fa-link toolbar__option__icon" aria-hidden="true" />
+    </span>
+    <span @click="insertText('image')" class="toolbar__option">
+      <i class="fa fa-picture-o toolbar__option__icon" aria-hidden="true" />
+    </span>
+    <span @click="insertText('ul')" class="toolbar__option">
+      <i class="fa fa-list toolbar__option__icon" aria-hidden="true" />
+    </span>
+    <span @click="insertText('ol')" class="toolbar__option">
+      <i class="fa fa-list-ol toolbar__option__icon" aria-hidden="true" />
+    </span>
+    <span @click="insertText('check')" class="toolbar__option">
+      <i
+        class="fa fa-check-square-o toolbar__option__icon"
+        aria-hidden="true"
       />
     </span>
-    <span @click="insertText('bold')" class="icon-toolbar">
-      <img
-        src="/img/icons/format-bold.svg"
-        class="icon-toolbar__img"
-        alt="Bold"
+    <span @click="insertText('left')" class="toolbar__option">
+      <i class="fa fa-align-left toolbar__option__icon" aria-hidden="true" />
+    </span>
+    <span @click="insertText('center')" class="toolbar__option">
+      <i class="fa fa-align-center toolbar__option__icon" aria-hidden="true" />
+    </span>
+    <span @click="insertText('right')" class="toolbar__option">
+      <i class="fa fa-align-right toolbar__option__icon" aria-hidden="true" />
+    </span>
+    <span @click="insertText('table')" class="toolbar__option">
+      <i class="fa fa-table toolbar__option__icon" aria-hidden="true" />
+    </span>
+    <span class="toolbar__option">
+      <Emoji
+        :dom="dom"
+        @updateContentFromToolbar="updateContentFromToolbar"
+        class="toolbar__option__icon"
       />
     </span>
-    <span @click="insertText('italic')" class="icon-toolbar">
-      <img
-        src="/img/icons/format-italic.svg"
-        class="icon-toolbar__img"
-        alt="Cursive"
-      />
-    </span>
-    <span @click="insertText('underline')" class="icon-toolbar">
-      <img
-        src="/img/icons/format-underline.svg"
-        class="icon-toolbar__img"
-        alt="Underline"
-      />
-    </span>
-    <span @click="insertText('mark')" class="icon-toolbar">
-      <img
-        src="/img/icons/bookmark.svg"
-        class="icon-toolbar__img"
-        alt="Remark"
-      />
-    </span>
-    <span @click="insertText('quotation')" class="icon-toolbar">
-      <img
-        src="/img/icons/indent-increase.svg"
-        class="icon-toolbar__img"
-        alt="Quote"
-      />
-    </span>
-    <span @click="insertText('code')" class="icon-toolbar">
-      <img src="/img/icons/code.svg" class="icon-toolbar__img" alt="Code" />
-    </span>
-    <span @click="insertText('link')" class="icon-toolbar">
-      <img src="/img/icons/link.svg" class="icon-toolbar__img" alt="Link" />
-    </span>
-    <span @click="insertText('image')" class="icon-toolbar">
-      <img src="/img/icons/photo.svg" class="icon-toolbar__img" alt="Image" />
-    </span>
-    <span @click="insertText('ul')" class="icon-toolbar">
-      <img
-        src="/img/icons/list-bullet.svg"
-        class="icon-toolbar__img"
-        alt="List"
-      />
-    </span>
-    <span @click="insertText('ol')" class="icon-toolbar">
-      <img
-        src="/img/icons/view-list.svg"
-        class="icon-toolbar__img"
-        alt="Number list"
-      />
-    </span>
-    <span @click="insertText('check')" class="icon-toolbar">
-      <img
-        src="/img/icons/checkmark.svg"
-        class="icon-toolbar__img"
-        alt="Check"
-      />
-    </span>
-    <span @click="insertText('left')" class="icon-toolbar">
-      <img
-        src="/img/icons/align-left.svg"
-        class="icon-toolbar__img"
-        alt="Align left"
-      />
-    </span>
-    <span @click="insertText('center')" class="icon-toolbar">
-      <img
-        src="/img/icons/align-center.svg"
-        class="icon-toolbar__img"
-        alt="Align center"
-      />
-    </span>
-    <span @click="insertText('right')" class="icon-toolbar">
-      <img
-        src="/img/icons/align-right.svg"
-        class="icon-toolbar__img"
-        alt="Align right"
-      />
-    </span>
-    <span @click="insertText('table')" class="icon-toolbar">
-      <img
-        src="/img/icons/border-all.svg"
-        class="icon-toolbar__img"
-        alt="Table"
-      />
-    </span>
-    <div class="icon-toolbar emoji">
-      <Emoji :dom="dom" @updateContentFromToolbar="updateContentFromToolbar" />
-    </div>
   </div>
 </template>
 
@@ -155,23 +97,49 @@ export default {
   }
 }
 </script>
-<style>
+<style lang="scss" scoped>
 .toolbar {
-  display: flex;
-}
-.icon-toolbar__img {
-  width: 20px;
-}
-.icon-toolbar.emoji {
-  position: relative;
-}
-.hljs-center {
-  text-align: center;
-}
-.hljs-right {
-  text-align: right;
-}
-.hljs-left {
-  text-align: left;
+  @apply flex flex-wrap justify-end;
+
+  &__option {
+    @apply px-1 mr-1;
+    @apply cursor-pointer;
+
+    &:hover {
+      @apply bg-base;
+    }
+
+    &__icon {
+      @apply relative;
+    }
+
+    &.h1,
+    &.h2,
+    &.h3,
+    &.h4,
+    &.h5 {
+      @apply flex flex-col justify-center;
+    }
+
+    &.h1 {
+      font-size: 18px;
+    }
+
+    &.h2 {
+      font-size: 16px;
+    }
+
+    &.h3 {
+      font-size: 14px;
+    }
+
+    &.h4 {
+      font-size: 12px;
+    }
+
+    &.h5 {
+      font-size: 10px;
+    }
+  }
 }
 </style>
