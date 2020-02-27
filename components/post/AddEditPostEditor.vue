@@ -85,6 +85,8 @@
     <ModalCoversPreview
       v-if="isOpenModalPreview"
       :coverCEO="coverCEO"
+      :title="titleText"
+      :description="descriptionText"
       @closeModal="openCloseModalPreview"
       class="modal"
     />
@@ -401,7 +403,7 @@ export default {
 .modal {
   @apply absolute;
   left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  top: 15%;
+  transform: translate(-50%, 0%);
 }
 </style>

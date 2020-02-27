@@ -1,30 +1,42 @@
 <template>
   <div class="modal-preview">
-    <button @click="closeModal">
-      X
+    <button @click="closeModal" class="modal-preview__close">
+      <i class="fa fa-times-circle" aria-hidden="true" />
     </button>
-    <div class="facebook modal-preview__container">
-      <div class="preview__cover">
-        <img :src="`${cover}`" alt="Facebook preview" />
+    <div class="cards">
+      <div class="facebook modal-preview__container">
+        <div
+          :style="`background-image: url('${cover}')`"
+          class="modal-preview__container__cover"
+        />
+        <div class="modal-preview__container__information">
+          <span class="modal-preview__container__information__url">
+            exampleurl.io
+          </span>
+          <span class="modal-preview__container__information__title">
+            {{ title }}
+          </span>
+          <span class="modal-preview__container__information__description">
+            {{ description }}
+          </span>
+        </div>
       </div>
-      <div class="preview__information">
-        <span class="preview__information__url">localhost.com</span>
-        <h4 class="preview__information__title">
-          Title publication
-        </h4>
-        <span class="preview__information__description">Description</span>
-      </div>
-    </div>
-    <div class="twitter modal-preview__container">
-      <div class="preview__cover">
-        <img :src="`${cover}`" alt="Facebook preview" />
-      </div>
-      <div class="preview__information">
-        <h4 class="preview__information__title">
-          Title publication
-        </h4>
-        <span class="preview__information__description">Description</span>
-        <span class="preview__information__url">localhost.com</span>
+      <div class="twitter modal-preview__container">
+        <div
+          :style="`background-image: url('${cover}')`"
+          class="modal-preview__container__cover"
+        />
+        <div class="modal-preview__container__information">
+          <span class="modal-preview__container__information__title">
+            {{ title }}
+          </span>
+          <span class="modal-preview__container__information__description">
+            {{ description }}
+          </span>
+          <span class="modal-preview__container__information__url">
+            exampleurl.io
+          </span>
+        </div>
       </div>
     </div>
   </div>
@@ -39,6 +51,16 @@ export default {
       type: String,
       required: true,
       default: POSTS_DATA.coverCEO
+    },
+    title: {
+      type: String,
+      required: true,
+      default: 'Example title'
+    },
+    description: {
+      type: String,
+      required: true,
+      default: 'Example description'
     }
   },
   data() {
@@ -61,30 +83,80 @@ export default {
 .modal-preview {
   @apply p-4;
   @apply border border-divContainer rounded shadow bg-secondary;
-}
+  @apply w-11/12;
 
-.modal-preview__container {
-  @apply border border-divContainer rounded;
-
-  img {
-    height: 200px;
+  &__close {
+    @apply w-full text-right text-2xl;
   }
 
-  .preview__information {
-    background: #f2f3f5;
-    @apply border-t border-divContainer;
-    @apply flex flex-col;
+  &__container {
+    @apply border border-divContainer rounded;
+    @apply mb-4;
+    font-family: Helvetica, Arial, sans-serif;
 
-    &__title {
-      @apply text-primary font-semibold;
+    &__cover {
+      @apply bg-local bg-center bg-no-repeat bg-cover;
+      @apply h-40;
     }
 
-    &__url,
-    &__description {
-      @apply text-secondary;
+    &__information {
+      @apply border-t border-divContainer bg-base;
+      @apply flex flex-col;
+      @apply px-4 py-2 text-sm leading-normal;
+
+      &__url {
+        @apply uppercase text-xs;
+      }
+
+      &__title {
+        @apply text-primary font-semibold truncate;
+        @apply m-0;
+      }
+
+      &__url,
+      &__description {
+        @apply text-secondary truncate;
+      }
+    }
+  }
+
+  &__container[class*='twitter'] {
+    [class$='information'] {
+      @apply bg-secondary;
     }
 
-    &__description {
+    [class$='title'] {
+      @apply font-normal;
+    }
+
+    [class$='url'] {
+      @apply hidden lowercase;
+    }
+  }
+}
+
+@screen laptop {
+  .modal-preview {
+    @apply w-5/12;
+
+    &__container {
+      &__cover {
+        @apply h-64;
+      }
+
+      &__information {
+        @apply text-baseSize;
+      }
+    }
+
+    &__container[class*='twitter'] {
+      [class$='url'] {
+        @apply block;
+      }
+
+      [class$='title'] {
+        @apply font-semibold;
+      }
     }
   }
 }
