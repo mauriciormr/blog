@@ -3,7 +3,6 @@
     <Header />
     <div class="blog page container">
       <div class="blog__content">
-        <SearchBar class="blog__search" />
         <nuxt class="blog__view" />
       </div>
       <div class="blog__sidebar">
@@ -14,13 +13,11 @@
 </template>
 <script>
 import Header from '~/components/Header.vue'
-import SearchBar from '~/components/post/SearchBar.vue'
 import AuthorInformation from '~/components/post/AuthorInformation.vue'
 
 export default {
   components: {
     Header,
-    SearchBar,
     AuthorInformation
   }
 }
