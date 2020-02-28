@@ -5,66 +5,98 @@
       v-else-if="!post && typeAction === 'edit'"
       :error="{ statusCode }"
     />
-    <div v-else>
-      <div class="actions">
-        <button @click="openCloseCovers()">
+    <div v-else class="post-editor">
+      <div>
+        <h2 class="post-editor__title">
+          Add publication
+        </h2>
+      </div>
+      <div class="post-editor__actions">
+        <button @click="openCloseCovers()" class="button-secondary">
           Covers
         </button>
-        <button @click="publish('hidden')">
+        <button @click="publish('hidden')" class="button-secondary">
           Draft
         </button>
-        <button @click="publish('public')">
+        <button @click="publish('public')" class="button-primary">
           Publish
         </button>
       </div>
-      <div v-if="isOpenCovers" class="media-covers">
-        <button @click="openCloseModalPreview">
+      <div v-if="isOpenCovers" class="post-editor__media-covers">
+        <button @click="openCloseModalPreview" class="button-secondary --small">
           Covers preview
         </button>
-        <div>
+        <div class="post-editor__media-covers__field">
           <label>Blog</label>
           <input
             v-model="coverBlog"
             type="text"
             placeholder="URL cover principal"
+            class="input-text --small"
           />
         </div>
-        <div>
+        <div class="post-editor__media-covers__field">
           <label>Redes sociales</label>
-          <input v-model="coverCEO" type="text" placeholder="URL cover CEO" />
+          <input
+            v-model="coverCEO"
+            type="text"
+            placeholder="URL cover CEO"
+            class="input-text --small"
+          />
         </div>
       </div>
       <Toolbar
         :dom="getRefTextArea"
         @updateContentFromToolbar="updateContentFromToolbar"
+        :class="full ? '--hidden' : '--show'"
       />
-      <div class="editor-preview">
-        <div class="editor">
-          <input
-            :value="titleText"
-            @input="updateTitle"
-            class="editor__title"
-            type="text"
-          />
-          <input
-            :value="descriptionText"
-            @input="updateDescription"
-            class="editor__description"
-            type="text"
-          />
+      <div class="post-editor__container">
+        <button
+          @click="fullpreview"
+          class="post-editor__container__fullpreview"
+        >
+          <i class="fa fa-arrows-alt" aria-hidden="true" />
+        </button>
+        <div
+          :class="full ? '--hidden' : '--show'"
+          class="post-editor__container__editor"
+        >
+          <div class="post-editor__container__editor__field">
+            <label>Title</label>
+            <input
+              :value="titleText"
+              @input="updateTitle"
+              class="input-text --small"
+              type="text"
+            />
+          </div>
+          <div class="post-editor__container__editor__field">
+            <label>Description</label>
+            <input
+              :value="descriptionText"
+              @input="updateDescription"
+              class="input-text --small"
+              type="text"
+            />
+          </div>
           <textarea
             ref="textarea"
             :value="blogText"
             @input="updateContent"
-            class="editor__content"
+            class="post-editor__container__editor__text"
           />
         </div>
-        <PostPublicPreview :post="customObjectPost" class="preview" />
+        <PostPublicPreview
+          :post="customObjectPost"
+          class="post-editor__container__preview"
+        />
       </div>
     </div>
     <ModalCoversPreview
       v-if="isOpenModalPreview"
       :coverCEO="coverCEO"
+      :title="titleText"
+      :description="descriptionText"
       @closeModal="openCloseModalPreview"
       class="modal"
     />
@@ -116,7 +148,8 @@ export default {
       isOpenCovers: false,
       coverBlog: '',
       coverCEO: '',
-      isOpenModalPreview: false
+      isOpenModalPreview: false,
+      full: false
     }
   },
   computed: {
@@ -212,6 +245,9 @@ export default {
     openCloseModalPreview() {
       this.isOpenModalPreview = !this.isOpenModalPreview
     },
+    fullpreview() {
+      this.full = !this.full
+    },
     ...mapActions({
       updatePost: 'posts/patchUpdatePost',
       addPost: 'posts/postAddPost',
@@ -263,46 +299,160 @@ export default {
 .loading {
   @apply pt-8;
 }
+
+.post-editor {
+  @apply p-4;
+
+  &__title {
+    @apply mt-0;
+  }
+
+  .toolbar {
+    @apply justify-center;
+    @apply mt-6 mb-2;
+
+    &.--hidden {
+      @apply hidden;
+    }
+
+    &.--show {
+      @apply flex;
+    }
+  }
+
+  &__actions {
+    @apply flex justify-end;
+    @apply my-6;
+
+    button {
+      @apply ml-2;
+    }
+  }
+
+  &__media-covers {
+    @apply my-6;
+    @apply flex flex-col items-end;
+
+    &__field {
+      @apply w-full;
+      @apply mb-2;
+
+      label {
+        @apply font-poppins text-secondary;
+      }
+
+      input.input-text {
+        @apply text-primary;
+      }
+    }
+  }
+
+  &__container {
+    @apply flex flex-col;
+
+    &__fullpreview {
+      @apply rounded-full bg-primary shadow w-8;
+      @apply text-secondary text-baseSize text-center;
+      @apply fixed cursor-pointer;
+      right: 2rem;
+      bottom: 2rem;
+    }
+
+    &__editor {
+      &.--hidden {
+        @apply hidden;
+      }
+
+      &.--show {
+        @apply block;
+      }
+
+      label {
+        @apply font-poppins text-secondary;
+      }
+
+      input.input-text {
+        @apply text-primary;
+      }
+
+      &__field {
+        @apply mb-4;
+      }
+
+      &__text {
+        @apply border bg-base border-divContainer w-full;
+        @apply p-2;
+        @apply font-poppins text-sm;
+        height: 90vh;
+      }
+    }
+
+    &__preview {
+      @apply rounded border border-divContainer;
+    }
+  }
+}
+
+@screen tablet {
+  .post-editor {
+    .toolbar {
+      @apply justify-end;
+    }
+
+    &__container {
+      &__fullpreview {
+        @apply w-12 h-12;
+        @apply text-2xl;
+      }
+    }
+  }
+}
+
+@screen laptop {
+  .post-editor {
+    .toolbar {
+      @apply w-1/2;
+    }
+
+    &__actions {
+      @apply w-1/2;
+    }
+
+    &__media-covers {
+      @apply w-1/2;
+    }
+
+    &__container {
+      @apply flex-row;
+
+      &__editor {
+        @apply w-1/2;
+        @apply mr-2;
+      }
+
+      &__editor.--hidden + &__preview {
+        @apply w-4/5 m-auto;
+      }
+
+      &__preview {
+        @apply w-1/2;
+      }
+    }
+  }
+}
+
+@screen desktop {
+  .post-editor {
+    .toolbar {
+      @apply flex-no-wrap;
+    }
+  }
+}
+
 .modal {
   @apply absolute;
   left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.actions {
-  margin: 20px 10px;
-}
-
-.editor-preview {
-  height: 100vh;
-  display: flex;
-  width: 100%;
-}
-
-.editor,
-.preview {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  flex: 2;
-  overflow: auto;
-  width: 100%;
-}
-
-.editor__title,
-.preview__title,
-.editor__description,
-.preview__description {
-  margin-bottom: 20px;
-}
-
-.editor__content {
-  flex: 1;
-  border: none;
-  border-right: 1px solid #ccc;
-  background-color: #f6f6f6;
-  font-family: 'Monaco', courier, monospace;
-  padding: 20px;
+  top: 15%;
+  transform: translate(-50%, 0%);
 }
 </style>
