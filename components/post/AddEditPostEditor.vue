@@ -48,9 +48,19 @@
       <Toolbar
         :dom="getRefTextArea"
         @updateContentFromToolbar="updateContentFromToolbar"
+        :class="full ? '--hidden' : '--show'"
       />
       <div class="post-editor__container">
-        <div class="post-editor__container__editor">
+        <button
+          @click="fullpreview"
+          class="post-editor__container__fullpreview"
+        >
+          <i class="fa fa-arrows-alt" aria-hidden="true" />
+        </button>
+        <div
+          :class="full ? '--hidden' : '--show'"
+          class="post-editor__container__editor"
+        >
           <div class="post-editor__container__editor__field">
             <label>Title</label>
             <input
@@ -138,7 +148,8 @@ export default {
       isOpenCovers: false,
       coverBlog: '',
       coverCEO: '',
-      isOpenModalPreview: false
+      isOpenModalPreview: false,
+      full: false
     }
   },
   computed: {
@@ -234,6 +245,9 @@ export default {
     openCloseModalPreview() {
       this.isOpenModalPreview = !this.isOpenModalPreview
     },
+    fullpreview() {
+      this.full = !this.full
+    },
     ...mapActions({
       updatePost: 'posts/patchUpdatePost',
       addPost: 'posts/postAddPost',
@@ -296,6 +310,14 @@ export default {
   .toolbar {
     @apply justify-center;
     @apply mt-6 mb-2;
+
+    &.--hidden {
+      @apply hidden;
+    }
+
+    &.--show {
+      @apply flex;
+    }
   }
 
   &__actions {
@@ -328,7 +350,23 @@ export default {
   &__container {
     @apply flex flex-col;
 
+    &__fullpreview {
+      @apply rounded-full bg-primary shadow w-8;
+      @apply text-secondary text-baseSize text-center;
+      @apply fixed cursor-pointer;
+      right: 2rem;
+      bottom: 2rem;
+    }
+
     &__editor {
+      &.--hidden {
+        @apply hidden;
+      }
+
+      &.--show {
+        @apply block;
+      }
+
       label {
         @apply font-poppins text-secondary;
       }
@@ -360,6 +398,13 @@ export default {
     .toolbar {
       @apply justify-end;
     }
+
+    &__container {
+      &__fullpreview {
+        @apply w-12 h-12;
+        @apply text-2xl;
+      }
+    }
   }
 }
 
@@ -383,6 +428,10 @@ export default {
       &__editor {
         @apply w-1/2;
         @apply mr-2;
+      }
+
+      &__editor.--hidden + &__preview {
+        @apply w-4/5 m-auto;
       }
 
       &__preview {
