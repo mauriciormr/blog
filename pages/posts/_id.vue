@@ -40,7 +40,8 @@ export default {
       titlePage: '',
       statusCode: 404,
       customObjectPost: {},
-      postProcessed: false
+      postProcessed: false,
+      typePost: 'public'
     }
   },
   computed: {
@@ -69,7 +70,7 @@ export default {
         const formatYear = moment(this.post.created_at).format('YYYY')
 
         const formatLabels = fnFilterPostLabels(
-          OMITTED_LABELS,
+          OMITTED_LABELS[`${this.typePost}`],
           this.post.labels
         )
 

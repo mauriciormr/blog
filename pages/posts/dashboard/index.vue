@@ -7,6 +7,7 @@
         :key="post.id"
         :post="post"
         :isPostCardAdmin="true"
+        :typeCard="'admin'"
       />
     </div>
   </div>
