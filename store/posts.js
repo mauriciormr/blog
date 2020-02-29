@@ -29,6 +29,7 @@ import {
   SET_AUTHOR_POST_VIEW_REJECTED
 } from '../data/mutation-types'
 import reactionTypes from '../data/reaction-types'
+import { POSTS_LABELS_CONFIG } from '~/data/default-data'
 
 // https://dev.to/localeai/architecting-vuex-store-for-large-scale-vue-js-applications-4f1f
 // 4. Resseting module state
@@ -247,6 +248,9 @@ export const mutations = {
   [POST_ADD_POST_FULFILLED](state) {
     state.status.get = {
       ...state.status.get,
+      isPublicPending: true,
+      isPublicFulfilled: false,
+      isPublicRejected: false,
       isPrivatePending: false,
       isPrivateFulfilled: false,
       isPrivateRejected: false
@@ -274,6 +278,9 @@ export const mutations = {
   [PATCH_UPDATE_POST_FULFILLED](state) {
     state.status.get = {
       ...state.status.get,
+      isPublicPending: true,
+      isPublicFulfilled: false,
+      isPublicRejected: false,
       isPrivatePending: false,
       isPrivateFulfilled: false,
       isPrivateRejected: false
@@ -447,13 +454,18 @@ export const actions = {
         await dispatch(`get${flagType}PostsListPending`)
         let posts = null
 
-        posts = _.values(await this.$axios.$get('issues?labels=post,public'))
+        const postLabel = POSTS_LABELS_CONFIG.post
+        const publicLabel = POSTS_LABELS_CONFIG.public
+
+        posts = _.values(
+          await this.$axios.$get(`issues?labels=${postLabel},${publicLabel}`)
+        )
 
         if (type === 'private') {
           const usernameLogged = _.get(rootState.users.user, 'login', '')
           posts = _.values(
             await this.$axios.$get(
-              `issues?creator=${usernameLogged}&labels=post`
+              `issues?creator=${usernameLogged}&labels=${postLabel}`
             )
           )
         }
@@ -633,10 +645,7 @@ export const actions = {
   },
   // Default values in object parameters
   // https://javascript.info/destructuring-assignment
-  async postAddPost(
-    { dispatch, rootState },
-    { type = 'public', data = {} } = {}
-  ) {
+  async postAddPost({ dispatch, rootState }, { data = {} } = {}) {
     try {
       await dispatch('postAddPostPending')
 
@@ -660,7 +669,7 @@ export const actions = {
       const dataPost = {
         title: JSON.stringify(titleGitHubIssueFormat),
         body: data.body,
-        labels: ['post', type]
+        labels: data.labels
       }
 
       await this.$axios.$post('issues', dataPost)
@@ -674,10 +683,7 @@ export const actions = {
   },
   // Default values in object parameters
   // https://javascript.info/destructuring-assignment
-  async patchUpdatePost(
-    { dispatch, rootState },
-    { type = 'public', data = {} } = {}
-  ) {
+  async patchUpdatePost({ dispatch, rootState }, { data = {} } = {}) {
     try {
       await dispatch('patchUpdatePostPending')
 
@@ -701,9 +707,8 @@ export const actions = {
       const dataPost = {
         title: JSON.stringify(titleGitHubIssueFormat),
         body: data.body,
-        labels: ['post', type]
+        labels: data.labels
       }
-
       const { postNumber } = data
       await this.$axios.$patch(`issues/${postNumber}`, dataPost)
 

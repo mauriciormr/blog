@@ -110,7 +110,7 @@ import moment from 'moment'
 import { mapActions, mapState } from 'vuex'
 import { errorHandler } from '~/utils/validate-errors'
 import { fnFilterPostLabels } from '~/utils/utils'
-import { OMITTED_LABELS } from '~/data/default-data'
+import { OMITTED_LABELS, POSTS_LABELS_CONFIG } from '~/data/default-data'
 
 import Toolbar from '~/components/toolbar/Toolbar.vue'
 import ResourceNotFound from '~/components/ResourceNotFound.vue'
@@ -148,6 +148,7 @@ export default {
       isOpenCovers: false,
       coverBlog: '',
       coverCEO: '',
+      postLabels: {},
       isOpenModalPreview: false,
       full: false
     }
@@ -216,6 +217,7 @@ export default {
             this.decriptionText
           )
 
+          this.postLabels = this.post.labels
           this.blogText = _.get(this.post.post, 'content', this.blogText)
         }
 
@@ -260,17 +262,27 @@ export default {
       this.blogText = content
     },
     publish(type = 'public') {
+      this.postLabels = fnFilterPostLabels(
+        [
+          POSTS_LABELS_CONFIG.post,
+          POSTS_LABELS_CONFIG.hidden,
+          POSTS_LABELS_CONFIG.public
+        ],
+        this.postLabels
+      )
+
+      this.postLabels = _.map(this.postLabels, l => l.name)
+      this.postLabels = [...this.postLabels, type, POSTS_LABELS_CONFIG.post]
       let dataPost = {
-        type,
         data: {
           title: this.titleText,
           description: this.descriptionText,
           body: this.blogText,
           coverBlog: !this.coverBlog ? ' ' : this.coverBlog,
-          coverCEO: !this.coverCEO ? ' ' : this.coverCEO
+          coverCEO: !this.coverCEO ? ' ' : this.coverCEO,
+          labels: this.postLabels
         }
       }
-
       if (this.typeAction === 'edit') {
         dataPost = {
           ...dataPost,
