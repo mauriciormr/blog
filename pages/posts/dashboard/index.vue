@@ -2,11 +2,16 @@
   <div>
     <Loading v-if="isDataPending" class="loading" />
     <div v-else class="admin-posts-list">
+      <div v-if="posts.length === 0">
+        <ResourceNotFound :error="{ statusCode }" />
+      </div>
       <PostCard
+        v-else
         v-for="post in posts"
         :key="post.id"
         :post="post"
         :isPostCardAdmin="true"
+        :typeCard="'admin'"
       />
     </div>
   </div>
@@ -16,12 +21,19 @@
 import { mapState, mapActions } from 'vuex'
 import PostCard from '~/components/post/PostCard.vue'
 import Loading from '~/components/Loading.vue'
+import ResourceNotFound from '~/components/ResourceNotFound.vue'
 
 export default {
   layout: 'blog',
   components: {
     PostCard,
-    Loading
+    Loading,
+    ResourceNotFound
+  },
+  data() {
+    return {
+      statusCode: 404
+    }
   },
   computed: {
     ...mapState({

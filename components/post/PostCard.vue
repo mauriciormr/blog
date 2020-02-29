@@ -6,7 +6,7 @@
         :style="`background-image: url('${cover}')`"
         class="post-card__cover"
       />
-      <div class="post-card__content">
+      <div :class="`--${type}`" class="post-card__content">
         <div v-if="isPostCardAdmin" class="post-card__actions">
           <nuxt-link :to="`/posts/dashboard/edit/${post.number}`">
             <span>
@@ -68,6 +68,11 @@ export default {
       type: Boolean,
       required: false,
       default: false
+    },
+    typeCard: {
+      type: String,
+      required: false,
+      default: 'public'
     }
   },
   data() {
@@ -76,7 +81,8 @@ export default {
       date: '',
       year: '',
       reactionsCount: 0,
-      cover: POSTS_DATA.coverList
+      cover: POSTS_DATA.coverList,
+      type: ''
     }
   },
   created() {
@@ -93,7 +99,11 @@ export default {
     )
   },
   mounted() {
-    this.labels = fnFilterPostLabels(OMITTED_LABELS, this.post.labels)
+    this.type = _.get(_.find(this.post.labels, { name: 'hidden' }), 'name', '')
+    this.labels = fnFilterPostLabels(
+      OMITTED_LABELS[`${this.typeCard}`],
+      this.post.labels
+    )
     const postCover = _.get(this.post.post, 'coverBlog', '').trim()
     this.cover = !postCover ? this.cover : postCover
   }
@@ -114,6 +124,10 @@ export default {
   &__content {
     @apply relative;
     @apply p-4;
+  }
+
+  &__content.--hidden {
+    @apply bg-base;
   }
 
   &__actions {
