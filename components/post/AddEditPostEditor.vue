@@ -79,8 +79,13 @@
               type="text"
             />
           </div>
-          <div class="post-editor__container__editor__labels">
-            <select class="post-editor__container__editor__labels__select">
+          <div
+            class="post-editor__container__editor__field post-editor__container__editor__labels"
+          >
+            <label>Tags</label>
+            <select
+              class="post-editor__container__editor__labels__select input-text --small"
+            >
               <option
                 v-for="label in adminLabels"
                 @click="addLabel(label)"
@@ -98,7 +103,7 @@
                 {{ label.name }}
                 <i
                   @click="removeLabel(label)"
-                  class="fa fa-times-circle"
+                  class="fa fa-times-circle post-editor__container__editor__labels__list__item__icon"
                   aria-hidden="true"
                 />
               </span>
@@ -428,12 +433,37 @@ export default {
         @apply font-poppins text-secondary;
       }
 
-      input.input-text {
+      input.input-text,
+      select.input-text {
         @apply text-primary;
       }
 
       &__field {
         @apply mb-4;
+        @apply flex flex-col;
+      }
+
+      &__labels {
+        &__select {
+          @apply py-2;
+        }
+
+        &__list {
+          @apply mt-1;
+          @apply font-poppins text-secondary text-sm;
+          @apply flex flex-wrap;
+
+          &__item {
+            @apply text-center;
+            @apply mr-1 mt-1 px-1;
+            @apply rounded;
+
+            &__icon {
+              @apply ml-1;
+              @apply cursor-pointer;
+            }
+          }
+        }
       }
 
       &__text {

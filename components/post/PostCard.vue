@@ -159,11 +159,12 @@ export default {
   }
 
   &__tags {
-    @apply my-2;
+    @apply my-1;
+    @apply flex flex-wrap;
 
     &__tag {
       @apply text-center text-xs;
-      @apply mr-1 p-1;
+      @apply mr-1 mt-1 p-1;
       @apply rounded;
     }
   }
