@@ -2,6 +2,14 @@
   <div>
     <Loading v-if="isDataPending" class="loading" />
     <div v-else class="admin-posts-list">
+      <button class="admin-posts-list__add-btn">
+        <nuxt-link
+          to="/posts/dashboard/add"
+          class="admin-posts-list__add-btn__link"
+        >
+          <i class="fa fa-plus" aria-hidden="true" />
+        </nuxt-link>
+      </button>
       <div v-if="posts.length === 0">
         <ResourceNotFound :error="{ statusCode }" />
       </div>
@@ -57,4 +65,30 @@ export default {
 }
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.admin-posts-list {
+  &__add-btn {
+    @apply rounded-full bg-primary shadow w-12 h-12;
+    @apply text-secondary text-2xl text-center;
+    @apply fixed cursor-pointer;
+    z-index: 10;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    bottom: 1rem;
+
+    &__link {
+      @apply p-3;
+    }
+  }
+}
+
+@screen laptop {
+  .admin-posts-list {
+    &__add-btn {
+      left: auto;
+      right: 2rem;
+      bottom: 2rem;
+    }
+  }
+}
+</style>
