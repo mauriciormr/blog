@@ -79,6 +79,31 @@
               type="text"
             />
           </div>
+          <div class="post-editor__container__editor__labels">
+            <select class="post-editor__container__editor__labels__select">
+              <option
+                v-for="label in adminLabels"
+                @click="addLabel(label)"
+                value="label.name"
+              >
+                {{ label.name }}
+              </option>
+            </select>
+            <div class="post-editor__container__editor__labels__list">
+              <span
+                v-for="label in postLabels"
+                :style="`backgroundColor: #${label.color}`"
+                class="post-editor__container__editor__labels__list__item"
+              >
+                {{ label.name }}
+                <i
+                  @click="removeLabel(label)"
+                  class="fa fa-times-circle"
+                  aria-hidden="true"
+                />
+              </span>
+            </div>
+          </div>
           <textarea
             ref="textarea"
             :value="blogText"
@@ -148,7 +173,7 @@ export default {
       isOpenCovers: false,
       coverBlog: '',
       coverCEO: '',
-      postLabels: {},
+      postLabels: [],
       isOpenModalPreview: false,
       full: false
     }
@@ -156,6 +181,7 @@ export default {
   computed: {
     ...mapState({
       posts: state => state.posts.privateList,
+      adminLabels: state => state.posts.adminLabels,
       isDataPending: state => state.posts.status.get.isPrivatePending
     }),
     post() {
@@ -179,7 +205,7 @@ export default {
         cover: this.coverBlog,
         formatDate: moment().format('MMM DD'),
         formatYear: moment().format('YYYY'),
-        formatLabels: []
+        formatLabels: fnFilterPostLabels(OMITTED_LABELS.public, this.postLabels)
       }
 
       if (this.typeAction === 'edit') {
@@ -187,7 +213,10 @@ export default {
           ...post,
           formatDate: moment(this.post.created_at).format('MMM DD'),
           formatYear: moment(this.post.created_at).format('YYYY'),
-          formatLabels: fnFilterPostLabels(OMITTED_LABELS, this.post.labels)
+          formatLabels: fnFilterPostLabels(
+            OMITTED_LABELS.public,
+            this.postLabels
+          )
         }
       }
       return post
@@ -217,7 +246,15 @@ export default {
             this.decriptionText
           )
 
-          this.postLabels = this.post.labels
+          const backupLabels = [...this.post.labels]
+          this.postLabels = fnFilterPostLabels(
+            [
+              POSTS_LABELS_CONFIG.post,
+              POSTS_LABELS_CONFIG.hidden,
+              POSTS_LABELS_CONFIG.public
+            ],
+            backupLabels
+          )
           this.blogText = _.get(this.post.post, 'content', this.blogText)
         }
 
@@ -226,6 +263,7 @@ export default {
           : errorHandler(new Error(this.statusCode)).message
       })
     } else {
+      this.getPrivateLabelsList()
       this.titlePage = 'Add publication'
     }
   },
@@ -250,10 +288,17 @@ export default {
     fullpreview() {
       this.full = !this.full
     },
+    addLabel(label) {
+      this.postLabels = [...this.postLabels, label]
+    },
+    removeLabel(label) {
+      this.postLabels = [...fnFilterPostLabels([label.name], this.postLabels)]
+    },
     ...mapActions({
       updatePost: 'posts/patchUpdatePost',
       addPost: 'posts/postAddPost',
-      getPostsList: 'posts/getPostsList'
+      getPostsList: 'posts/getPostsList',
+      getPrivateLabelsList: 'posts/getPrivateLabelsList'
     }),
     getRefTextArea() {
       return this.$refs.textarea

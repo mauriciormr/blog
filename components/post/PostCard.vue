@@ -1,4 +1,3 @@
-<!--  -->
 <template>
   <div class="post-card">
     <nuxt-link :to="`/posts/${post.number}`" class="post-card__wrapper">
@@ -55,7 +54,11 @@
 import moment from 'moment'
 import _ from 'lodash'
 import { fnFilterPostLabels } from '~/utils/utils'
-import { POSTS_DATA, OMITTED_LABELS } from '~/data/default-data'
+import {
+  POSTS_DATA,
+  OMITTED_LABELS,
+  POSTS_LABELS_CONFIG
+} from '~/data/default-data'
 
 export default {
   props: {
@@ -99,11 +102,18 @@ export default {
     )
   },
   mounted() {
-    this.type = _.get(_.find(this.post.labels, { name: 'hidden' }), 'name', '')
+    const backupLabels = [...this.post.labels]
+    this.type = _.get(
+      _.find(this.post.labels, { name: POSTS_LABELS_CONFIG.hidden }),
+      'name',
+      ''
+    )
+
     this.labels = fnFilterPostLabels(
       OMITTED_LABELS[`${this.typeCard}`],
-      this.post.labels
+      backupLabels
     )
+
     const postCover = _.get(this.post.post, 'coverBlog', '').trim()
     this.cover = !postCover ? this.cover : postCover
   }
