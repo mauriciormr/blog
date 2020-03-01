@@ -1,6 +1,9 @@
 <template>
   <div>
-    <Loading v-if="isDataPending && typeAction === 'edit'" class="loading" />
+    <Loading
+      v-if="(isDataPending && typeAction === 'edit') || showLoading"
+      class="loading"
+    />
     <ResourceNotFound
       v-else-if="!post && typeAction === 'edit'"
       :error="{ statusCode }"
@@ -180,7 +183,8 @@ export default {
       coverCEO: '',
       postLabels: [],
       isOpenModalPreview: false,
-      full: false
+      full: false,
+      showLoading: false
     }
   },
   computed: {
@@ -312,6 +316,8 @@ export default {
       this.blogText = content
     },
     publish(type = 'public') {
+      this.showLoading = true
+
       this.postLabels = fnFilterPostLabels(
         [
           POSTS_LABELS_CONFIG.post,
@@ -341,11 +347,13 @@ export default {
             postNumber: this.postNumber
           }
         }
-        this.updatePost(dataPost).then(() =>
-          this.$router.push('/posts/dashboard')
-        )
+        this.updatePost(dataPost)
+          .then(() => this.$router.push('/posts/dashboard'))
+          .catch(() => (this.showLoading = false))
       } else {
-        this.addPost(dataPost).then(() => this.$router.push('/posts/dashboard'))
+        this.addPost(dataPost)
+          .then(() => this.$router.push('/posts/dashboard'))
+          .catch(() => (this.showLoading = false))
       }
     }
   },
