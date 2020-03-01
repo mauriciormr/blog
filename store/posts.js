@@ -26,9 +26,13 @@ import {
   PATCH_UPDATE_POST_REJECTED,
   SET_AUTHOR_POST_VIEW_PENDING,
   SET_AUTHOR_POST_VIEW_FULFILLED,
-  SET_AUTHOR_POST_VIEW_REJECTED
+  SET_AUTHOR_POST_VIEW_REJECTED,
+  GET_PRIVATE_LABELS_LIST_PENDING,
+  GET_PRIVATE_LABELS_LIST_REJECTED,
+  GET_PRIVATE_LABELS_LIST_FULFILLED
 } from '../data/mutation-types'
 import reactionTypes from '../data/reaction-types'
+import { fnFilterPostLabels } from '~/utils/utils'
 import { POSTS_LABELS_CONFIG } from '~/data/default-data'
 
 // https://dev.to/localeai/architecting-vuex-store-for-large-scale-vue-js-applications-4f1f
@@ -40,6 +44,7 @@ const initialState = () => ({
     author: {},
     post: {}
   },
+  adminLabels: [],
   status: {
     get: {
       isPublicPending: true,
@@ -322,6 +327,30 @@ export const mutations = {
       isAuthorFulfilled: false,
       isAuthorRejected: true
     }
+  },
+  [GET_PRIVATE_LABELS_LIST_PENDING](state) {
+    state.status.get = {
+      ...state.status.get,
+      isPrivatePending: true,
+      isPrivateFulfilled: false
+    }
+  },
+  [GET_PRIVATE_LABELS_LIST_FULFILLED](state, payload) {
+    state.adminLabels = payload
+    state.status.get = {
+      ...state.status.get,
+      isPrivatePending: false,
+      isPrivateFulfilled: true,
+      isPrivateRejected: false
+    }
+  },
+  [GET_PRIVATE_LABELS_LIST_REJECTED](state) {
+    state.status.get = {
+      ...state.status.get,
+      isPrivatePending: false,
+      isPrivateFulfilled: false,
+      isPrivateRejected: true
+    }
   }
 }
 
@@ -434,6 +463,18 @@ export const actions = {
     commit(SET_AUTHOR_POST_VIEW_REJECTED)
     return Promise.resolve()
   },
+  getPrivateLabelsListPending({ commit }) {
+    commit(GET_PRIVATE_LABELS_LIST_PENDING)
+    return Promise.resolve()
+  },
+  getPrivateLabelsListFulfilled({ commit }, labels) {
+    commit(GET_PRIVATE_LABELS_LIST_FULFILLED, labels)
+    return Promise.resolve()
+  },
+  getPrivateLabelsListRejected({ commit }) {
+    commit(GET_PRIVATE_LABELS_LIST_REJECTED)
+    return Promise.resolve()
+  },
   // Default values in object parameters
   // https://javascript.info/destructuring-assignment
   async getPostsList(
@@ -491,6 +532,9 @@ export const actions = {
           _.orderBy(formattedPosts, ['number'], ['desc'])
         )
         await dispatch('getReactionsPostsList', type)
+        if (type === 'private') {
+          await dispatch('getPrivateLabelsList')
+        }
         return Promise.resolve()
       } catch (error) {
         dispatch(`get${flagType}PostsListRejected`)
@@ -553,6 +597,24 @@ export const actions = {
     } catch (error) {
       dispatch(`get${flagType}ReactionsPostsListRejected`)
       this.$errorGlobalHandler(error)
+    }
+  },
+  async getPrivateLabelsList({ dispatch, $axios }) {
+    try {
+      await dispatch('getPrivateLabelsListPending')
+      const labels = await this.$axios.$get('labels')
+      const labelsFiltered = fnFilterPostLabels(
+        [
+          POSTS_LABELS_CONFIG.post,
+          POSTS_LABELS_CONFIG.hidden,
+          POSTS_LABELS_CONFIG.public
+        ],
+        labels
+      )
+      await dispatch('getPrivateLabelsListFulfilled', labelsFiltered)
+    } catch (error) {
+      dispatch('getPrivateLabelsListRejected')
+      return Promise.reject(error)
     }
   },
   async handleReaction({ dispatch, rootState }, data) {
