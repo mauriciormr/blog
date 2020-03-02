@@ -48,6 +48,15 @@
         </div>
       </div>
     </nuxt-link>
+    <div v-if="isPostCardAdmin" class="post-card__delete">
+      <span>
+        <i
+          @click="openModalDeletePost(post)"
+          class="fa fa-trash"
+          aria-hidden="true"
+        />
+      </span>
+    </div>
   </div>
 </template>
 <script>
@@ -116,6 +125,11 @@ export default {
 
     const postCover = _.get(this.post.post, 'coverBlog', '').trim()
     this.cover = !postCover ? this.cover : postCover
+  },
+  methods: {
+    openModalDeletePost(post) {
+      this.$emit('openModalDeletePost', post)
+    }
   }
 }
 </script>
@@ -123,7 +137,7 @@ export default {
 .post-card {
   border-width: 1px;
   border-style: solid;
-  @apply border-input rounded bg-secondary;
+  @apply relative border-input rounded bg-secondary;
   @apply mb-5;
   @apply font-poppins text-secondary text-sm;
 
@@ -203,6 +217,23 @@ export default {
         @apply ml-1;
         @apply text-sm;
       }
+    }
+  }
+
+  &__delete {
+    @apply text-baseSize text-secondary;
+    @apply rounded-full shadow-xl border border-divContainer;
+    @apply absolute right-0 w-8 h-8 cursor-pointer;
+    @apply flex justify-center items-center;
+    @apply mr-6;
+    bottom: 7.5rem;
+
+    &:hover {
+      @apply bg-base;
+    }
+
+    &__icon i {
+      @apply p-2;
     }
   }
 }
