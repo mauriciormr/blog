@@ -93,10 +93,11 @@ export default {
   &__tags {
     @apply mt-0 mb-4;
     @apply font-poppins text-secondary;
+    @apply flex flex-wrap;
 
     &__tag {
       @apply text-center text-xs;
-      @apply mr-1 p-1;
+      @apply mr-1 mt-1 px-1;
       @apply rounded;
     }
   }

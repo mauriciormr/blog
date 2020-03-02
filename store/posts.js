@@ -26,9 +26,14 @@ import {
   PATCH_UPDATE_POST_REJECTED,
   SET_AUTHOR_POST_VIEW_PENDING,
   SET_AUTHOR_POST_VIEW_FULFILLED,
-  SET_AUTHOR_POST_VIEW_REJECTED
+  SET_AUTHOR_POST_VIEW_REJECTED,
+  GET_PRIVATE_LABELS_LIST_PENDING,
+  GET_PRIVATE_LABELS_LIST_REJECTED,
+  GET_PRIVATE_LABELS_LIST_FULFILLED
 } from '../data/mutation-types'
 import reactionTypes from '../data/reaction-types'
+import { fnFilterPostLabels } from '~/utils/utils'
+import { POSTS_LABELS_CONFIG } from '~/data/default-data'
 
 // https://dev.to/localeai/architecting-vuex-store-for-large-scale-vue-js-applications-4f1f
 // 4. Resseting module state
@@ -39,6 +44,7 @@ const initialState = () => ({
     author: {},
     post: {}
   },
+  adminLabels: [],
   status: {
     get: {
       isPublicPending: true,
@@ -247,6 +253,9 @@ export const mutations = {
   [POST_ADD_POST_FULFILLED](state) {
     state.status.get = {
       ...state.status.get,
+      isPublicPending: true,
+      isPublicFulfilled: false,
+      isPublicRejected: false,
       isPrivatePending: false,
       isPrivateFulfilled: false,
       isPrivateRejected: false
@@ -274,6 +283,9 @@ export const mutations = {
   [PATCH_UPDATE_POST_FULFILLED](state) {
     state.status.get = {
       ...state.status.get,
+      isPublicPending: true,
+      isPublicFulfilled: false,
+      isPublicRejected: false,
       isPrivatePending: false,
       isPrivateFulfilled: false,
       isPrivateRejected: false
@@ -314,6 +326,30 @@ export const mutations = {
       isAuthorPending: false,
       isAuthorFulfilled: false,
       isAuthorRejected: true
+    }
+  },
+  [GET_PRIVATE_LABELS_LIST_PENDING](state) {
+    state.status.get = {
+      ...state.status.get,
+      isPrivatePending: true,
+      isPrivateFulfilled: false
+    }
+  },
+  [GET_PRIVATE_LABELS_LIST_FULFILLED](state, payload) {
+    state.adminLabels = payload
+    state.status.get = {
+      ...state.status.get,
+      isPrivatePending: false,
+      isPrivateFulfilled: true,
+      isPrivateRejected: false
+    }
+  },
+  [GET_PRIVATE_LABELS_LIST_REJECTED](state) {
+    state.status.get = {
+      ...state.status.get,
+      isPrivatePending: false,
+      isPrivateFulfilled: false,
+      isPrivateRejected: true
     }
   }
 }
@@ -427,6 +463,18 @@ export const actions = {
     commit(SET_AUTHOR_POST_VIEW_REJECTED)
     return Promise.resolve()
   },
+  getPrivateLabelsListPending({ commit }) {
+    commit(GET_PRIVATE_LABELS_LIST_PENDING)
+    return Promise.resolve()
+  },
+  getPrivateLabelsListFulfilled({ commit }, labels) {
+    commit(GET_PRIVATE_LABELS_LIST_FULFILLED, labels)
+    return Promise.resolve()
+  },
+  getPrivateLabelsListRejected({ commit }) {
+    commit(GET_PRIVATE_LABELS_LIST_REJECTED)
+    return Promise.resolve()
+  },
   // Default values in object parameters
   // https://javascript.info/destructuring-assignment
   async getPostsList(
@@ -447,13 +495,18 @@ export const actions = {
         await dispatch(`get${flagType}PostsListPending`)
         let posts = null
 
-        posts = _.values(await this.$axios.$get('issues?labels=post,public'))
+        const postLabel = POSTS_LABELS_CONFIG.post
+        const publicLabel = POSTS_LABELS_CONFIG.public
+
+        posts = _.values(
+          await this.$axios.$get(`issues?labels=${postLabel},${publicLabel}`)
+        )
 
         if (type === 'private') {
           const usernameLogged = _.get(rootState.users.user, 'login', '')
           posts = _.values(
             await this.$axios.$get(
-              `issues?creator=${usernameLogged}&labels=post`
+              `issues?creator=${usernameLogged}&labels=${postLabel}`
             )
           )
         }
@@ -479,6 +532,9 @@ export const actions = {
           _.orderBy(formattedPosts, ['number'], ['desc'])
         )
         await dispatch('getReactionsPostsList', type)
+        if (type === 'private') {
+          await dispatch('getPrivateLabelsList')
+        }
         return Promise.resolve()
       } catch (error) {
         dispatch(`get${flagType}PostsListRejected`)
@@ -541,6 +597,24 @@ export const actions = {
     } catch (error) {
       dispatch(`get${flagType}ReactionsPostsListRejected`)
       this.$errorGlobalHandler(error)
+    }
+  },
+  async getPrivateLabelsList({ dispatch, $axios }) {
+    try {
+      await dispatch('getPrivateLabelsListPending')
+      const labels = await this.$axios.$get('labels')
+      const labelsFiltered = fnFilterPostLabels(
+        [
+          POSTS_LABELS_CONFIG.post,
+          POSTS_LABELS_CONFIG.hidden,
+          POSTS_LABELS_CONFIG.public
+        ],
+        labels
+      )
+      await dispatch('getPrivateLabelsListFulfilled', labelsFiltered)
+    } catch (error) {
+      dispatch('getPrivateLabelsListRejected')
+      return Promise.reject(error)
     }
   },
   async handleReaction({ dispatch, rootState }, data) {
@@ -633,10 +707,7 @@ export const actions = {
   },
   // Default values in object parameters
   // https://javascript.info/destructuring-assignment
-  async postAddPost(
-    { dispatch, rootState },
-    { type = 'public', data = {} } = {}
-  ) {
+  async postAddPost({ dispatch, rootState }, { data = {} } = {}) {
     try {
       await dispatch('postAddPostPending')
 
@@ -660,7 +731,7 @@ export const actions = {
       const dataPost = {
         title: JSON.stringify(titleGitHubIssueFormat),
         body: data.body,
-        labels: ['post', type]
+        labels: data.labels
       }
 
       await this.$axios.$post('issues', dataPost)
@@ -674,10 +745,7 @@ export const actions = {
   },
   // Default values in object parameters
   // https://javascript.info/destructuring-assignment
-  async patchUpdatePost(
-    { dispatch, rootState },
-    { type = 'public', data = {} } = {}
-  ) {
+  async patchUpdatePost({ dispatch, rootState }, { data = {} } = {}) {
     try {
       await dispatch('patchUpdatePostPending')
 
@@ -701,9 +769,8 @@ export const actions = {
       const dataPost = {
         title: JSON.stringify(titleGitHubIssueFormat),
         body: data.body,
-        labels: ['post', type]
+        labels: data.labels
       }
-
       const { postNumber } = data
       await this.$axios.$patch(`issues/${postNumber}`, dataPost)
 

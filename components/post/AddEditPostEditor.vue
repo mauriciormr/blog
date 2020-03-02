@@ -1,6 +1,9 @@
 <template>
   <div>
-    <Loading v-if="isDataPending && typeAction === 'edit'" class="loading" />
+    <Loading
+      v-if="(isDataPending && typeAction === 'edit') || showLoading"
+      class="loading"
+    />
     <ResourceNotFound
       v-else-if="!post && typeAction === 'edit'"
       :error="{ statusCode }"
@@ -79,6 +82,36 @@
               type="text"
             />
           </div>
+          <div
+            class="post-editor__container__editor__field post-editor__container__editor__labels"
+          >
+            <label>Tags</label>
+            <select
+              class="post-editor__container__editor__labels__select input-text --small"
+            >
+              <option
+                v-for="label in adminLabels"
+                @click="addLabel(label)"
+                value="label.name"
+              >
+                {{ label.name }}
+              </option>
+            </select>
+            <div class="post-editor__container__editor__labels__list">
+              <span
+                v-for="label in postLabels"
+                :style="`backgroundColor: #${label.color}`"
+                class="post-editor__container__editor__labels__list__item"
+              >
+                {{ label.name }}
+                <i
+                  @click="removeLabel(label)"
+                  class="fa fa-times-circle post-editor__container__editor__labels__list__item__icon"
+                  aria-hidden="true"
+                />
+              </span>
+            </div>
+          </div>
           <textarea
             ref="textarea"
             :value="blogText"
@@ -110,7 +143,7 @@ import moment from 'moment'
 import { mapActions, mapState } from 'vuex'
 import { errorHandler } from '~/utils/validate-errors'
 import { fnFilterPostLabels } from '~/utils/utils'
-import { OMITTED_LABELS } from '~/data/default-data'
+import { OMITTED_LABELS, POSTS_LABELS_CONFIG } from '~/data/default-data'
 
 import Toolbar from '~/components/toolbar/Toolbar.vue'
 import ResourceNotFound from '~/components/ResourceNotFound.vue'
@@ -148,13 +181,16 @@ export default {
       isOpenCovers: false,
       coverBlog: '',
       coverCEO: '',
+      postLabels: [],
       isOpenModalPreview: false,
-      full: false
+      full: false,
+      showLoading: false
     }
   },
   computed: {
     ...mapState({
       posts: state => state.posts.privateList,
+      adminLabels: state => state.posts.adminLabels,
       isDataPending: state => state.posts.status.get.isPrivatePending
     }),
     post() {
@@ -178,7 +214,7 @@ export default {
         cover: this.coverBlog,
         formatDate: moment().format('MMM DD'),
         formatYear: moment().format('YYYY'),
-        formatLabels: []
+        formatLabels: fnFilterPostLabels(OMITTED_LABELS.public, this.postLabels)
       }
 
       if (this.typeAction === 'edit') {
@@ -186,7 +222,10 @@ export default {
           ...post,
           formatDate: moment(this.post.created_at).format('MMM DD'),
           formatYear: moment(this.post.created_at).format('YYYY'),
-          formatLabels: fnFilterPostLabels(OMITTED_LABELS, this.post.labels)
+          formatLabels: fnFilterPostLabels(
+            OMITTED_LABELS.public,
+            this.postLabels
+          )
         }
       }
       return post
@@ -216,6 +255,15 @@ export default {
             this.decriptionText
           )
 
+          const backupLabels = [...this.post.labels]
+          this.postLabels = fnFilterPostLabels(
+            [
+              POSTS_LABELS_CONFIG.post,
+              POSTS_LABELS_CONFIG.hidden,
+              POSTS_LABELS_CONFIG.public
+            ],
+            backupLabels
+          )
           this.blogText = _.get(this.post.post, 'content', this.blogText)
         }
 
@@ -224,6 +272,7 @@ export default {
           : errorHandler(new Error(this.statusCode)).message
       })
     } else {
+      this.getPrivateLabelsList()
       this.titlePage = 'Add publication'
     }
   },
@@ -248,10 +297,17 @@ export default {
     fullpreview() {
       this.full = !this.full
     },
+    addLabel(label) {
+      this.postLabels = [...this.postLabels, label]
+    },
+    removeLabel(label) {
+      this.postLabels = [...fnFilterPostLabels([label.name], this.postLabels)]
+    },
     ...mapActions({
       updatePost: 'posts/patchUpdatePost',
       addPost: 'posts/postAddPost',
-      getPostsList: 'posts/getPostsList'
+      getPostsList: 'posts/getPostsList',
+      getPrivateLabelsList: 'posts/getPrivateLabelsList'
     }),
     getRefTextArea() {
       return this.$refs.textarea
@@ -260,17 +316,29 @@ export default {
       this.blogText = content
     },
     publish(type = 'public') {
+      this.showLoading = true
+
+      this.postLabels = fnFilterPostLabels(
+        [
+          POSTS_LABELS_CONFIG.post,
+          POSTS_LABELS_CONFIG.hidden,
+          POSTS_LABELS_CONFIG.public
+        ],
+        this.postLabels
+      )
+
+      this.postLabels = _.map(this.postLabels, l => l.name)
+      this.postLabels = [...this.postLabels, type, POSTS_LABELS_CONFIG.post]
       let dataPost = {
-        type,
         data: {
           title: this.titleText,
           description: this.descriptionText,
           body: this.blogText,
           coverBlog: !this.coverBlog ? ' ' : this.coverBlog,
-          coverCEO: !this.coverCEO ? ' ' : this.coverCEO
+          coverCEO: !this.coverCEO ? ' ' : this.coverCEO,
+          labels: this.postLabels
         }
       }
-
       if (this.typeAction === 'edit') {
         dataPost = {
           ...dataPost,
@@ -279,11 +347,13 @@ export default {
             postNumber: this.postNumber
           }
         }
-        this.updatePost(dataPost).then(() =>
-          this.$router.push('/posts/dashboard')
-        )
+        this.updatePost(dataPost)
+          .then(() => this.$router.push('/posts/dashboard'))
+          .catch(() => (this.showLoading = false))
       } else {
-        this.addPost(dataPost).then(() => this.$router.push('/posts/dashboard'))
+        this.addPost(dataPost)
+          .then(() => this.$router.push('/posts/dashboard'))
+          .catch(() => (this.showLoading = false))
       }
     }
   },
@@ -371,12 +441,37 @@ export default {
         @apply font-poppins text-secondary;
       }
 
-      input.input-text {
+      input.input-text,
+      select.input-text {
         @apply text-primary;
       }
 
       &__field {
         @apply mb-4;
+        @apply flex flex-col;
+      }
+
+      &__labels {
+        &__select {
+          @apply py-2;
+        }
+
+        &__list {
+          @apply mt-1;
+          @apply font-poppins text-secondary text-sm;
+          @apply flex flex-wrap;
+
+          &__item {
+            @apply text-center;
+            @apply mr-1 mt-1 px-1;
+            @apply rounded;
+
+            &__icon {
+              @apply ml-1;
+              @apply cursor-pointer;
+            }
+          }
+        }
       }
 
       &__text {
