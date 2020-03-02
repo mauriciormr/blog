@@ -52,7 +52,7 @@
       <span>
         <i
           @click="openModalDeletePost(post)"
-          class="fa fa-trash"
+          class="fa fa-trash post-card__delete__icon"
           aria-hidden="true"
         />
       </span>
@@ -232,7 +232,7 @@ export default {
       @apply bg-base;
     }
 
-    &__icon i {
+    &__icon {
       @apply p-2;
     }
   }
