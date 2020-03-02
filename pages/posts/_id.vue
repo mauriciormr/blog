@@ -61,6 +61,7 @@ export default {
   },
   mounted() {
     this.getPostsList().then(() => {
+      this.resetAuthorPostView()
       if (this.post) {
         this.titlePage = this.post
           ? this.post.post.title
@@ -97,6 +98,7 @@ export default {
     ...mapActions({
       handleReaction: 'posts/handleReaction',
       updateAuthorPostView: 'posts/updateAuthorPostView',
+      resetAuthorPostView: 'posts/setAuthorPostViewPending',
       getPostsList: 'posts/getPostsList'
     })
   },
