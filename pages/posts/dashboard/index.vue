@@ -20,6 +20,14 @@
         :post="post"
         :isPostCardAdmin="true"
         :typeCard="'admin'"
+        @openModalDeletePost="openModalDeletePost"
+      />
+      <ModalDeletePost
+        v-if="showModalDelete"
+        @deletePost="deletePost"
+        @closeModal="closeModalDeletePost"
+        :post="postToDelete"
+        class="modal"
       />
     </div>
   </div>
@@ -30,17 +38,21 @@ import { mapState, mapActions } from 'vuex'
 import PostCard from '~/components/post/PostCard.vue'
 import Loading from '~/components/Loading.vue'
 import ResourceNotFound from '~/components/ResourceNotFound.vue'
+import ModalDeletePost from '~/components/post/ModalDeletePost.vue'
 
 export default {
   layout: 'blog',
   components: {
     PostCard,
     Loading,
-    ResourceNotFound
+    ResourceNotFound,
+    ModalDeletePost
   },
   data() {
     return {
-      statusCode: 404
+      statusCode: 404,
+      showModalDelete: false,
+      postToDelete: null
     }
   },
   computed: {
@@ -53,8 +65,20 @@ export default {
     this.getPostsList({ type: 'private' })
   },
   methods: {
+    openModalDeletePost(post) {
+      this.showModalDelete = !this.showModalDelete
+      this.postToDelete = post
+    },
+    closeModalDeletePost() {
+      this.showModalDelete = !this.showModalDelete
+      this.postToDelete = null
+    },
+    deletePost(number) {
+      this.deletePrivatePost(number).then(() => window.location.reload(true))
+    },
     ...mapActions({
-      getPostsList: 'posts/getPostsList'
+      getPostsList: 'posts/getPostsList',
+      deletePrivatePost: 'posts/deletePrivatePost'
     })
   },
   head() {
@@ -90,5 +114,12 @@ export default {
       bottom: 2rem;
     }
   }
+}
+
+.modal {
+  @apply fixed;
+  left: 50%;
+  top: 20%;
+  transform: translate(-50%, -20%);
 }
 </style>

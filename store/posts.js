@@ -29,7 +29,10 @@ import {
   SET_AUTHOR_POST_VIEW_REJECTED,
   GET_PRIVATE_LABELS_LIST_PENDING,
   GET_PRIVATE_LABELS_LIST_REJECTED,
-  GET_PRIVATE_LABELS_LIST_FULFILLED
+  GET_PRIVATE_LABELS_LIST_FULFILLED,
+  DELETE_PRIVATE_POST_PENDING,
+  DELETE_PRIVATE_POST_REJECTED,
+  DELETE_PRIVATE_POST_FULFILLED
 } from '../data/mutation-types'
 import reactionTypes from '../data/reaction-types'
 import { fnFilterPostLabels } from '~/utils/utils'
@@ -351,6 +354,37 @@ export const mutations = {
       isPrivateFulfilled: false,
       isPrivateRejected: true
     }
+  },
+  [DELETE_PRIVATE_POST_PENDING](state) {
+    state.status.delete = {
+      isPending: true,
+      isFulfilled: false,
+      isRejected: false
+    }
+  },
+  [DELETE_PRIVATE_POST_FULFILLED](state) {
+    state.status.delete = {
+      isPending: false,
+      isFulfilled: true,
+      isRejected: false
+    }
+
+    state.status.get = {
+      ...state.status.get,
+      isPublicPending: true,
+      isPublicFulfilled: false,
+      isPublicRejected: false,
+      isPrivatePending: false,
+      isPrivateFulfilled: false,
+      isPrivateRejected: false
+    }
+  },
+  [DELETE_PRIVATE_POST_REJECTED](state) {
+    state.status.delete = {
+      isPending: false,
+      isFulfilled: false,
+      isRejected: true
+    }
   }
 }
 
@@ -473,6 +507,18 @@ export const actions = {
   },
   getPrivateLabelsListRejected({ commit }) {
     commit(GET_PRIVATE_LABELS_LIST_REJECTED)
+    return Promise.resolve()
+  },
+  deletePrivatePostPending({ commit }) {
+    commit(DELETE_PRIVATE_POST_PENDING)
+    return Promise.resolve()
+  },
+  deletePrivatePostFulfilled({ commit }) {
+    commit(DELETE_PRIVATE_POST_FULFILLED)
+    return Promise.resolve()
+  },
+  deletePrivatePostRejected({ commit }) {
+    commit(DELETE_PRIVATE_POST_REJECTED)
     return Promise.resolve()
   },
   // Default values in object parameters
@@ -790,6 +836,17 @@ export const actions = {
       return Promise.resolve()
     } catch (error) {
       await dispatch('setAuthorPostViewRejected')
+      return Promise.reject(error)
+    }
+  },
+  async deletePrivatePost({ dispatch }, postNumber) {
+    try {
+      await dispatch('deletePrivatePostPending')
+      await this.$axios.$patch(`issues/${postNumber}`, { state: 'closed' })
+      await dispatch('deletePrivatePostFulfilled')
+      return Promise.resolve()
+    } catch (error) {
+      await dispatch('deletePrivatePostRejected')
       return Promise.reject(error)
     }
   }
