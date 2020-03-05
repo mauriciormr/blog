@@ -58,7 +58,10 @@ const initialState = () => ({
       isPrivateRejected: false,
       isAuthorPending: true,
       isAuthorFulfilled: false,
-      isAuthorRejected: false
+      isAuthorRejected: false,
+      isLabelPending: true,
+      isLabelFulfilled: false,
+      isLabelRejected: false
     },
     post: {
       isPending: false,
@@ -334,25 +337,25 @@ export const mutations = {
   [GET_PRIVATE_LABELS_LIST_PENDING](state) {
     state.status.get = {
       ...state.status.get,
-      isPrivatePending: true,
-      isPrivateFulfilled: false
+      isLabelPending: true,
+      isLabelFulfilled: false
     }
   },
   [GET_PRIVATE_LABELS_LIST_FULFILLED](state, payload) {
     state.adminLabels = payload
     state.status.get = {
       ...state.status.get,
-      isPrivatePending: false,
-      isPrivateFulfilled: true,
-      isPrivateRejected: false
+      isLabelPending: false,
+      isLabelFulfilled: true,
+      isLabelRejected: false
     }
   },
   [GET_PRIVATE_LABELS_LIST_REJECTED](state) {
     state.status.get = {
       ...state.status.get,
-      isPrivatePending: false,
-      isPrivateFulfilled: false,
-      isPrivateRejected: true
+      isLabelPending: false,
+      isLabelFulfilled: false,
+      isLabelRejected: true
     }
   },
   [DELETE_PRIVATE_POST_PENDING](state) {
@@ -578,9 +581,8 @@ export const actions = {
           _.orderBy(formattedPosts, ['number'], ['desc'])
         )
         await dispatch('getReactionsPostsList', type)
-        if (type === 'private') {
-          await dispatch('getPrivateLabelsList')
-        }
+        await dispatch('getPrivateLabelsList')
+
         return Promise.resolve()
       } catch (error) {
         dispatch(`get${flagType}PostsListRejected`)

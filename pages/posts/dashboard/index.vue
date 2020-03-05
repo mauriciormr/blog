@@ -10,12 +10,12 @@
           <i class="fa fa-plus" aria-hidden="true" />
         </nuxt-link>
       </button>
-      <div v-if="posts.length === 0">
+      <div v-if="postsToShow.length === 0">
         <ResourceNotFound :error="{ statusCode }" />
       </div>
       <PostCard
         v-else
-        v-for="post in posts"
+        v-for="post in postsToShow"
         :key="post.id"
         :post="post"
         :isPostCardAdmin="true"
@@ -34,7 +34,9 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import { mapState, mapActions } from 'vuex'
+
 import PostCard from '~/components/post/PostCard.vue'
 import Loading from '~/components/Loading.vue'
 import ResourceNotFound from '~/components/ResourceNotFound.vue'
@@ -42,6 +44,7 @@ import ModalDeletePost from '~/components/post/ModalDeletePost.vue'
 
 export default {
   layout: 'blog',
+  watchQuery: ['tags'],
   components: {
     PostCard,
     Loading,
@@ -52,14 +55,33 @@ export default {
     return {
       statusCode: 404,
       showModalDelete: false,
-      postToDelete: null
+      postToDelete: null,
+      queryTags: ''
     }
   },
   computed: {
     ...mapState({
       posts: state => state.posts.privateList,
       isDataPending: state => state.posts.status.get.isPrivatePending
-    })
+    }),
+    postsToShow() {
+      let filters = []
+      if (this.queryTags[0]) {
+        const found = _.filter(this.posts, p => {
+          const labelsJoined = _.map(p.labels, l => l.name.split(' ').join()) // ['', '']
+          return _.find(this.queryTags, q => _.includes(labelsJoined, q))
+        })
+        filters = [...found]
+      } else {
+        filters = [...this.posts]
+      }
+      return filters
+    }
+  },
+  asyncData({ query }) {
+    return {
+      queryTags: _.get(query, 'tags', '').split(',')
+    }
   },
   mounted() {
     this.getPostsList({ type: 'private' })
