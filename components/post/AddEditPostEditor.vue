@@ -16,17 +16,21 @@
       </div>
       <div class="post-editor__actions">
         <button @click="openCloseCovers()" class="button-secondary">
+          <i class="fa fa-picture-o" aria-hidden="true" />
           Covers
         </button>
         <button @click="publish('hidden')" class="button-secondary">
+          <i class="fa fa-eye-slash" aria-hidden="true" />
           Draft
         </button>
         <button @click="publish('public')" class="button-primary">
+          <i class="fa fa-paper-plane-o" aria-hidden="true" />
           Publish
         </button>
       </div>
       <div v-if="isOpenCovers" class="post-editor__media-covers">
         <button @click="openCloseModalPreview" class="button-secondary --small">
+          <i class="fa fa-file-image-o" aria-hidden="true" />
           Covers preview
         </button>
         <div class="post-editor__media-covers__field">

@@ -74,7 +74,7 @@ export default {
   &__cover {
     @apply rounded-t;
     @apply bg-local bg-center bg-no-repeat bg-cover;
-    @apply h-40;
+    @apply h-32;
   }
 
   &__information {
@@ -138,7 +138,7 @@ export default {
 @screen tablet {
   .post {
     &__cover {
-      @apply h-56;
+      @apply h-64;
     }
 
     &__group {
