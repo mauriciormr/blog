@@ -27,9 +27,9 @@ import {
   SET_AUTHOR_POST_VIEW_PENDING,
   SET_AUTHOR_POST_VIEW_FULFILLED,
   SET_AUTHOR_POST_VIEW_REJECTED,
-  GET_PRIVATE_LABELS_LIST_PENDING,
-  GET_PRIVATE_LABELS_LIST_REJECTED,
-  GET_PRIVATE_LABELS_LIST_FULFILLED,
+  GET_LABELS_LIST_PENDING,
+  GET_LABELS_LIST_REJECTED,
+  GET_LABELS_LIST_FULFILLED,
   DELETE_PRIVATE_POST_PENDING,
   DELETE_PRIVATE_POST_REJECTED,
   DELETE_PRIVATE_POST_FULFILLED
@@ -334,14 +334,14 @@ export const mutations = {
       isAuthorRejected: true
     }
   },
-  [GET_PRIVATE_LABELS_LIST_PENDING](state) {
+  [GET_LABELS_LIST_PENDING](state) {
     state.status.get = {
       ...state.status.get,
       isLabelPending: true,
       isLabelFulfilled: false
     }
   },
-  [GET_PRIVATE_LABELS_LIST_FULFILLED](state, payload) {
+  [GET_LABELS_LIST_FULFILLED](state, payload) {
     state.adminLabels = payload
     state.status.get = {
       ...state.status.get,
@@ -350,7 +350,7 @@ export const mutations = {
       isLabelRejected: false
     }
   },
-  [GET_PRIVATE_LABELS_LIST_REJECTED](state) {
+  [GET_LABELS_LIST_REJECTED](state) {
     state.status.get = {
       ...state.status.get,
       isLabelPending: false,
@@ -500,16 +500,16 @@ export const actions = {
     commit(SET_AUTHOR_POST_VIEW_REJECTED)
     return Promise.resolve()
   },
-  getPrivateLabelsListPending({ commit }) {
-    commit(GET_PRIVATE_LABELS_LIST_PENDING)
+  getLabelsListPending({ commit }) {
+    commit(GET_LABELS_LIST_PENDING)
     return Promise.resolve()
   },
-  getPrivateLabelsListFulfilled({ commit }, labels) {
-    commit(GET_PRIVATE_LABELS_LIST_FULFILLED, labels)
+  getLabelsListFulfilled({ commit }, labels) {
+    commit(GET_LABELS_LIST_FULFILLED, labels)
     return Promise.resolve()
   },
-  getPrivateLabelsListRejected({ commit }) {
-    commit(GET_PRIVATE_LABELS_LIST_REJECTED)
+  getLabelsListRejected({ commit }) {
+    commit(GET_LABELS_LIST_REJECTED)
     return Promise.resolve()
   },
   deletePrivatePostPending({ commit }) {
@@ -581,7 +581,7 @@ export const actions = {
           _.orderBy(formattedPosts, ['number'], ['desc'])
         )
         await dispatch('getReactionsPostsList', type)
-        await dispatch('getPrivateLabelsList')
+        await dispatch('getLabelsList')
 
         return Promise.resolve()
       } catch (error) {
@@ -647,9 +647,9 @@ export const actions = {
       this.$errorGlobalHandler(error)
     }
   },
-  async getPrivateLabelsList({ dispatch, $axios }) {
+  async getLabelsList({ dispatch, $axios }) {
     try {
-      await dispatch('getPrivateLabelsListPending')
+      await dispatch('getLabelsListPending')
       const labels = await this.$axios.$get('labels')
       const labelsFiltered = fnFilterPostLabels(
         [
@@ -659,9 +659,9 @@ export const actions = {
         ],
         labels
       )
-      await dispatch('getPrivateLabelsListFulfilled', labelsFiltered)
+      await dispatch('getLabelsListFulfilled', labelsFiltered)
     } catch (error) {
-      dispatch('getPrivateLabelsListRejected')
+      dispatch('getLabelsListRejected')
       return Promise.reject(error)
     }
   },
