@@ -26,4 +26,9 @@ const OMITTED_LABELS = {
   admin: []
 }
 
-export { POSTS_DATA, OMITTED_LABELS, POSTS_LABELS_CONFIG }
+const PAGINATION = {
+  elementsPerPage: 2,
+  maxItemsPaginationBar: 3
+}
+
+export { POSTS_DATA, OMITTED_LABELS, POSTS_LABELS_CONFIG, PAGINATION }
