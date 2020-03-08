@@ -31,9 +31,11 @@ import Loading from '~/components/Loading.vue'
 
 export default {
   components: { Loading },
-  data() {
-    return {
-      tagsToFilter: []
+  props: {
+    tagsToFilter: {
+      type: Array,
+      required: true,
+      default: () => []
     }
   },
   computed: {
@@ -44,14 +46,15 @@ export default {
   },
   methods: {
     updateQuery(labelName) {
-      const isLabelAdded = this.existLabel(this.tagsToFilter, labelName)
+      let tagsCopy = [...this.tagsToFilter]
+      const isLabelAdded = this.existLabel(tagsCopy, labelName)
       if (isLabelAdded) {
-        _.remove(this.tagsToFilter, t => t === labelName)
-        this.tagsToFilter = [...this.tagsToFilter]
+        _.remove(tagsCopy, t => t === labelName)
+        tagsCopy = [...tagsCopy]
       } else {
-        this.tagsToFilter = [...this.tagsToFilter, labelName]
+        tagsCopy = [...tagsCopy, labelName]
       }
-      this.$router.push(`?tags=${this.tagsToFilter.join()}`)
+      this.$router.push(`?tags=${tagsCopy.join()}`)
     },
     existLabel(tagsNames = [], tagNameToSearch = '') {
       return _.includes(tagsNames, tagNameToSearch)

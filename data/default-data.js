@@ -26,4 +26,30 @@ const OMITTED_LABELS = {
   admin: []
 }
 
-export { POSTS_DATA, OMITTED_LABELS, POSTS_LABELS_CONFIG }
+const PAGINATION = {
+  optionsElementsPerPage: [
+    {
+      number: 10,
+      selected: true
+    },
+    {
+      number: 20,
+      selected: false
+    },
+    {
+      number: 30,
+      selected: false
+    },
+    {
+      number: 40,
+      selected: false
+    },
+    {
+      number: 50,
+      selected: false
+    }
+  ],
+  maxItemsPaginationBar: 3
+}
+
+export { POSTS_DATA, OMITTED_LABELS, POSTS_LABELS_CONFIG, PAGINATION }

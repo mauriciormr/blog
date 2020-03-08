@@ -6,11 +6,13 @@
         <SearchBar class="blog__search" />
         <nuxt class="blog__list" />
       </div>
-      <GeneralInformation class="blog__sidebar" />
+      <GeneralInformation :tagsToFilter="tagsToFilter" class="blog__sidebar" />
     </div>
   </div>
 </template>
 <script>
+import _ from 'lodash'
+
 import Header from '~/components/Header.vue'
 import SearchBar from '~/components/post/SearchBar.vue'
 import GeneralInformation from '~/components/post/GeneralInformation.vue'
@@ -20,6 +22,12 @@ export default {
     Header,
     SearchBar,
     GeneralInformation
+  },
+  computed: {
+    tagsToFilter() {
+      const q = _.get(this.$route.query, 'tags', '')
+      return !q ? [] : q.split(',')
+    }
   }
 }
 </script>
