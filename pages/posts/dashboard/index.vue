@@ -215,11 +215,4 @@ export default {
     }
   }
 }
-
-.modal {
-  @apply fixed;
-  left: 50%;
-  top: 20%;
-  transform: translate(-50%, -20%);
-}
 </style>

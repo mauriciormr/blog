@@ -547,11 +547,4 @@ export default {
     }
   }
 }
-
-.modal {
-  @apply absolute;
-  left: 50%;
-  top: 15%;
-  transform: translate(-50%, 0%);
-}
 </style>

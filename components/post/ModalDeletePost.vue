@@ -1,27 +1,29 @@
 <template>
   <div class="modal-delete">
-    <button @click="closeModal" class="modal-delete__close">
-      <i class="fa fa-times-circle" aria-hidden="true" />
-    </button>
-    <Loading v-if="isDataPending || isDataFulfilled" class="loading" />
-    <div v-else>
-      <div class="modal-delete__post">
-        <div class="modal-delete__post__message">
-          <span>Do you want delete this post?</span>
+    <div class="modal-delete__content">
+      <button @click="closeModal" class="modal-delete__close">
+        <i class="fa fa-times-circle" aria-hidden="true" />
+      </button>
+      <Loading v-if="isDataPending || isDataFulfilled" class="loading" />
+      <div v-else>
+        <div class="modal-delete__post">
+          <div class="modal-delete__post__message">
+            <span>Do you want delete this post?</span>
+          </div>
+          <div v-html="post.post.titleHTML" class="modal-delete__post__title" />
+          <div
+            v-html="post.post.descriptionHTML"
+            class="modal-delete__post__description"
+          />
         </div>
-        <div v-html="post.post.titleHTML" class="modal-delete__post__title" />
-        <div
-          v-html="post.post.descriptionHTML"
-          class="modal-delete__post__description"
-        />
-      </div>
-      <div class="modal-delete__actions">
-        <button @click="closeModal" class="button-secondary --big">
-          Cancel
-        </button>
-        <button @click="deletePost(post.number)" class="button-primary --big">
-          Delete
-        </button>
+        <div class="modal-delete__actions">
+          <button @click="closeModal" class="button-secondary --big">
+            Cancel
+          </button>
+          <button @click="deletePost(post.number)" class="button-primary --big">
+            Delete
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -66,9 +68,24 @@ export default {
 }
 
 .modal-delete {
-  @apply p-4;
-  @apply border border-divContainer rounded shadow bg-secondary;
-  @apply w-11/12;
+  @apply fixed;
+  @apply bg-ternary;
+  height: 100vh;
+  width: 100vw;
+  left: 0;
+  top: 0;
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.5);
+
+  &__content {
+    @apply p-4;
+    @apply border border-divContainer rounded shadow bg-secondary;
+    @apply w-11/12;
+    @apply absolute;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -20%);
+  }
 
   &__close {
     @apply w-full text-right text-2xl;
@@ -106,7 +123,9 @@ export default {
 
 @screen laptop {
   .modal-delete {
-    @apply w-5/12;
+    &__content {
+      @apply w-5/12;
+    }
   }
 }
 </style>
