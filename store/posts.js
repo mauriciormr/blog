@@ -95,7 +95,7 @@ export const mutations = {
       isPublicRejected: false
     }
   },
-  [GET_PUBLIC_POSTS_LIST_REJECTED](state) {
+  [GET_PUBLIC_POSTS_LIST_REJECTED](state, error) {
     state.status.get = {
       ...state.status.get,
       isPublicPending: false,
@@ -119,7 +119,7 @@ export const mutations = {
       isPublicRejected: false
     }
   },
-  [GET_PUBLIC_REACTIONS_POSTS_LIST_REJECTED](state) {
+  [GET_PUBLIC_REACTIONS_POSTS_LIST_REJECTED](state, error) {
     state.status.get = {
       ...state.status.get,
       isPublicPending: false,
@@ -143,7 +143,7 @@ export const mutations = {
       isPrivateRejected: false
     }
   },
-  [GET_PRIVATE_POSTS_LIST_REJECTED](state) {
+  [GET_PRIVATE_POSTS_LIST_REJECTED](state, error) {
     state.status.get = {
       ...state.status.get,
       isPrivatePending: false,
@@ -167,7 +167,7 @@ export const mutations = {
       isPrivateRejected: false
     }
   },
-  [GET_PRIVATE_REACTIONS_POSTS_LIST_REJECTED](state) {
+  [GET_PRIVATE_REACTIONS_POSTS_LIST_REJECTED](state, error) {
     state.status.get = {
       ...state.status.get,
       isPrivatePending: false,
@@ -208,7 +208,7 @@ export const mutations = {
       isRejected: false
     }
   },
-  [POST_ADD_REACTION_REJECTED](state) {
+  [POST_ADD_REACTION_REJECTED](state, error) {
     state.status.post = {
       isPending: false,
       isFulfilled: false,
@@ -242,7 +242,7 @@ export const mutations = {
       isRejected: false
     }
   },
-  [DELETE_REMOVE_REACTION_REJECTED](state) {
+  [DELETE_REMOVE_REACTION_REJECTED](state, error) {
     state.status.delete = {
       isPending: false,
       isFulfilled: false,
@@ -272,7 +272,7 @@ export const mutations = {
       isRejected: false
     }
   },
-  [POST_ADD_POST_REJECTED](state) {
+  [POST_ADD_POST_REJECTED](state, error) {
     state.status.post = {
       isPending: false,
       isFulfilled: false,
@@ -302,7 +302,7 @@ export const mutations = {
       isRejected: false
     }
   },
-  [PATCH_UPDATE_POST_REJECTED](state) {
+  [PATCH_UPDATE_POST_REJECTED](state, error) {
     state.status.post = {
       isPending: false,
       isFulfilled: false,
@@ -326,7 +326,7 @@ export const mutations = {
     }
     state.postView.author = payload
   },
-  [SET_AUTHOR_POST_VIEW_REJECTED](state) {
+  [SET_AUTHOR_POST_VIEW_REJECTED](state, error) {
     state.status.get = {
       ...state.status.get,
       isAuthorPending: false,
@@ -350,7 +350,7 @@ export const mutations = {
       isLabelRejected: false
     }
   },
-  [GET_LABELS_LIST_REJECTED](state) {
+  [GET_LABELS_LIST_REJECTED](state, error) {
     state.status.get = {
       ...state.status.get,
       isLabelPending: false,
@@ -382,7 +382,7 @@ export const mutations = {
       isPrivateRejected: false
     }
   },
-  [DELETE_PRIVATE_POST_REJECTED](state) {
+  [DELETE_PRIVATE_POST_REJECTED](state, error) {
     state.status.delete = {
       isPending: false,
       isFulfilled: false,
@@ -400,8 +400,8 @@ export const actions = {
     commit(GET_PUBLIC_POSTS_LIST_FULFILLED, posts)
     return Promise.resolve()
   },
-  getPublicPostsListRejected({ commit }) {
-    commit(GET_PUBLIC_POSTS_LIST_REJECTED)
+  getPublicPostsListRejected({ commit }, error) {
+    commit(GET_PUBLIC_POSTS_LIST_REJECTED, error)
     return Promise.resolve()
   },
   getPublicReactionsPostsListPending({ commit }) {
@@ -412,8 +412,8 @@ export const actions = {
     commit(GET_PUBLIC_REACTIONS_POSTS_LIST_FULFILLED, posts)
     return Promise.resolve()
   },
-  getPublicReactionsPostsListRejected({ commit }) {
-    commit(GET_PUBLIC_REACTIONS_POSTS_LIST_REJECTED)
+  getPublicReactionsPostsListRejected({ commit }, error) {
+    commit(GET_PUBLIC_REACTIONS_POSTS_LIST_REJECTED, error)
     return Promise.resolve()
   },
   getPrivatePostsListPending({ commit }) {
@@ -424,8 +424,8 @@ export const actions = {
     commit(GET_PRIVATE_POSTS_LIST_FULFILLED, posts)
     return Promise.resolve()
   },
-  getPrivatePostsListRejected({ commit }) {
-    commit(GET_PRIVATE_POSTS_LIST_REJECTED)
+  getPrivatePostsListRejected({ commit }, error) {
+    commit(GET_PRIVATE_POSTS_LIST_REJECTED, error)
     return Promise.resolve()
   },
   getPrivateReactionsPostsListPending({ commit }) {
@@ -436,8 +436,8 @@ export const actions = {
     commit(GET_PRIVATE_REACTIONS_POSTS_LIST_FULFILLED, posts)
     return Promise.resolve()
   },
-  getPrivateReactionsPostsListRejected({ commit }) {
-    commit(GET_PRIVATE_REACTIONS_POSTS_LIST_REJECTED)
+  getPrivateReactionsPostsListRejected({ commit }, error) {
+    commit(GET_PRIVATE_REACTIONS_POSTS_LIST_REJECTED, error)
     return Promise.resolve()
   },
   postAddReactionPending({ commit }) {
@@ -448,8 +448,8 @@ export const actions = {
     commit(POST_ADD_REACTION_FULFILLED, reaction)
     return Promise.resolve()
   },
-  postAddReactionRejected({ commit }) {
-    commit(POST_ADD_REACTION_REJECTED)
+  postAddReactionRejected({ commit }, error) {
+    commit(POST_ADD_REACTION_REJECTED, error)
     return Promise.resolve()
   },
   deleteRemoveReactionPending({ commit }) {
@@ -460,8 +460,8 @@ export const actions = {
     commit(DELETE_REMOVE_REACTION_FULFILLED, reaction)
     return Promise.resolve()
   },
-  deleteRemoveReactionRejected({ commit }) {
-    commit(DELETE_REMOVE_REACTION_REJECTED)
+  deleteRemoveReactionRejected({ commit }, error) {
+    commit(DELETE_REMOVE_REACTION_REJECTED, error)
     return Promise.resolve()
   },
   postAddPostPending({ commit }) {
@@ -472,8 +472,8 @@ export const actions = {
     commit(POST_ADD_POST_FULFILLED)
     return Promise.resolve()
   },
-  postAddPostRejected({ commit }) {
-    commit(POST_ADD_POST_REJECTED)
+  postAddPostRejected({ commit }, error) {
+    commit(POST_ADD_POST_REJECTED, error)
     return Promise.resolve()
   },
   patchUpdatePostPending({ commit }) {
@@ -484,8 +484,8 @@ export const actions = {
     commit(PATCH_UPDATE_POST_FULFILLED)
     return Promise.resolve()
   },
-  patchUpdatePostRejected({ commit }) {
-    commit(PATCH_UPDATE_POST_REJECTED)
+  patchUpdatePostRejected({ commit }, error) {
+    commit(PATCH_UPDATE_POST_REJECTED, error)
     return Promise.resolve()
   },
   setAuthorPostViewPending({ commit }) {
@@ -496,8 +496,8 @@ export const actions = {
     commit(SET_AUTHOR_POST_VIEW_FULFILLED, author)
     return Promise.resolve()
   },
-  setAuthorPostViewRejected({ commit }) {
-    commit(SET_AUTHOR_POST_VIEW_REJECTED)
+  setAuthorPostViewRejected({ commit }, error) {
+    commit(SET_AUTHOR_POST_VIEW_REJECTED, error)
     return Promise.resolve()
   },
   getLabelsListPending({ commit }) {
@@ -508,8 +508,8 @@ export const actions = {
     commit(GET_LABELS_LIST_FULFILLED, labels)
     return Promise.resolve()
   },
-  getLabelsListRejected({ commit }) {
-    commit(GET_LABELS_LIST_REJECTED)
+  getLabelsListRejected({ commit }, error) {
+    commit(GET_LABELS_LIST_REJECTED, error)
     return Promise.resolve()
   },
   deletePrivatePostPending({ commit }) {
@@ -520,8 +520,8 @@ export const actions = {
     commit(DELETE_PRIVATE_POST_FULFILLED)
     return Promise.resolve()
   },
-  deletePrivatePostRejected({ commit }) {
-    commit(DELETE_PRIVATE_POST_REJECTED)
+  deletePrivatePostRejected({ commit }, error) {
+    commit(DELETE_PRIVATE_POST_REJECTED, error)
     return Promise.resolve()
   },
   // Default values in object parameters
@@ -585,8 +585,9 @@ export const actions = {
 
         return Promise.resolve()
       } catch (error) {
-        dispatch(`get${flagType}PostsListRejected`)
+        dispatch(`get${flagType}PostsListRejected`, error)
         this.$errorGlobalHandler(error)
+        return Promise.reject(error)
       }
     }
   },
@@ -643,8 +644,9 @@ export const actions = {
         }
       )
     } catch (error) {
-      dispatch(`get${flagType}ReactionsPostsListRejected`)
+      dispatch(`get${flagType}ReactionsPostsListRejected`, error)
       this.$errorGlobalHandler(error)
+      return Promise.reject(error)
     }
   },
   async getLabelsList({ dispatch, $axios }) {
@@ -661,7 +663,7 @@ export const actions = {
       )
       await dispatch('getLabelsListFulfilled', labelsFiltered)
     } catch (error) {
-      dispatch('getLabelsListRejected')
+      dispatch('getLabelsListRejected', error)
       return Promise.reject(error)
     }
   },
@@ -723,7 +725,7 @@ export const actions = {
       await dispatch('postAddReactionFulfilled', reactionFulfilled)
       return Promise.resolve()
     } catch (error) {
-      dispatch('postAddReactionRejected')
+      dispatch('postAddReactionRejected', error)
       return Promise.reject(error)
     }
   },
@@ -749,7 +751,7 @@ export const actions = {
       })
       return Promise.resolve()
     } catch (error) {
-      dispatch('deleteRemoveReactionRejected')
+      dispatch('deleteRemoveReactionRejected', error)
       return Promise.reject(error)
     }
   },
@@ -787,7 +789,8 @@ export const actions = {
       await dispatch('postAddPostFulfilled')
       return Promise.resolve()
     } catch (error) {
-      await dispatch('postAddPostRejected')
+      await dispatch('postAddPostRejected', error)
+      this.$errorGlobalHandler(error)
       return Promise.reject(error)
     }
   },
@@ -825,7 +828,8 @@ export const actions = {
       await dispatch('patchUpdatePostFulfilled')
       return Promise.resolve()
     } catch (error) {
-      await dispatch('patchUpdatePostRejected')
+      await dispatch('patchUpdatePostRejected', error)
+      this.$errorGlobalHandler(error)
       return Promise.reject(error)
     }
   },
@@ -837,7 +841,7 @@ export const actions = {
       await dispatch('setAuthorPostViewFulfilled', user)
       return Promise.resolve()
     } catch (error) {
-      await dispatch('setAuthorPostViewRejected')
+      await dispatch('setAuthorPostViewRejected', error)
       return Promise.reject(error)
     }
   },
@@ -848,7 +852,7 @@ export const actions = {
       await dispatch('deletePrivatePostFulfilled')
       return Promise.resolve()
     } catch (error) {
-      await dispatch('deletePrivatePostRejected')
+      await dispatch('deletePrivatePostRejected', error)
       return Promise.reject(error)
     }
   }
