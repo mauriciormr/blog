@@ -1,7 +1,8 @@
 <template>
-  <div class="container-page">
-    <div>
-      <button @click="login">
+  <div>
+    <div class="login">
+      <button @click="login" class="login__button">
+        <i class="fa fa-github login__button__icon" aria-hidden="true" />
         Login
       </button>
     </div>
@@ -29,4 +30,29 @@ export default {
 }
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.page {
+  @apply h-screen;
+}
+
+.login {
+  @apply flex justify-center items-center;
+  @apply h-full;
+
+  &__button {
+    @apply flex justify-center items-center;
+    @apply bg-primary border border-divContainer shadow;
+    @apply py-4 px-16;
+    @apply text-secondary font-poppins font-medium text-baseSize;
+
+    &:hover {
+      @apply bg-primarySelected;
+    }
+
+    &__icon {
+      @apply mr-2;
+      @apply text-4xl;
+    }
+  }
+}
+</style>
