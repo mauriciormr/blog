@@ -70,3 +70,7 @@ body {
   @extend .button;
   @apply py-1 px-4;
 }
+
+.vue-notification {
+  @apply font-poppins;
+}
