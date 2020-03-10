@@ -1,6 +1,12 @@
 import _ from 'lodash'
 
 const errorsMessages = {
+  200: {
+    message: 'Action sucess'
+  },
+  201: {
+    message: 'Action sucess'
+  },
   404: {
     message: 'Not found'
   },

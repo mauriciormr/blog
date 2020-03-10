@@ -2,6 +2,7 @@
   <div>
     <Header />
     <nuxt class="page" />
+    <notifications group="foo" position="bottom left" />
   </div>
 </template>
 <script>

@@ -583,10 +583,10 @@ export const actions = {
         await dispatch('getReactionsPostsList', type)
         await dispatch('getLabelsList')
 
-        return Promise.resolve()
+        return Promise.resolve({ status: '200' })
       } catch (error) {
         dispatch(`get${flagType}PostsListRejected`, error)
-        this.$errorGlobalHandler(error)
+        this.$errorGlobalHandler({ message: `${error}` })
         return Promise.reject(error)
       }
     }
@@ -640,12 +640,12 @@ export const actions = {
             `get${flagType}ReactionsPostsListFulfilled`,
             _.orderBy(postsWithReactions, ['number'], ['desc'])
           )
-          return Promise.resolve()
+          return Promise.resolve({ status: '200' })
         }
       )
     } catch (error) {
       dispatch(`get${flagType}ReactionsPostsListRejected`, error)
-      this.$errorGlobalHandler(error)
+      this.$errorGlobalHandler({ message: `${error}` })
       return Promise.reject(error)
     }
   },
@@ -749,7 +749,7 @@ export const actions = {
         idReaction,
         indexReaction
       })
-      return Promise.resolve()
+      return Promise.resolve({ status: '200' })
     } catch (error) {
       dispatch('deleteRemoveReactionRejected', error)
       return Promise.reject(error)
@@ -784,13 +784,13 @@ export const actions = {
         labels: data.labels
       }
 
-      await this.$axios.$post('issues', dataPost)
+      const result = await this.$axios.post('issues', dataPost)
 
       await dispatch('postAddPostFulfilled')
-      return Promise.resolve()
+      return Promise.resolve(result)
     } catch (error) {
       await dispatch('postAddPostRejected', error)
-      this.$errorGlobalHandler(error)
+      this.$errorGlobalHandler({ message: `${error}` })
       return Promise.reject(error)
     }
   },
@@ -799,7 +799,6 @@ export const actions = {
   async patchUpdatePost({ dispatch, rootState }, { data = {} } = {}) {
     try {
       await dispatch('patchUpdatePostPending')
-
       const usernameLogged = _.get(rootState.users.user, 'login', '')
       if (!usernameLogged) {
         throw new Error('401')
@@ -822,14 +821,15 @@ export const actions = {
         body: data.body,
         labels: data.labels
       }
+
       const { postNumber } = data
-      await this.$axios.$patch(`issues/${postNumber}`, dataPost)
+      const result = await this.$axios.patch(`issues/${postNumber}`, dataPost)
 
       await dispatch('patchUpdatePostFulfilled')
-      return Promise.resolve()
+      return Promise.resolve(result)
     } catch (error) {
       await dispatch('patchUpdatePostRejected', error)
-      this.$errorGlobalHandler(error)
+      this.$errorGlobalHandler({ message: `${error}` })
       return Promise.reject(error)
     }
   },
@@ -839,20 +839,30 @@ export const actions = {
       const { url } = author
       const user = await this.$axios.$get(url)
       await dispatch('setAuthorPostViewFulfilled', user)
-      return Promise.resolve()
+      return Promise.resolve({ status: '200' })
     } catch (error) {
       await dispatch('setAuthorPostViewRejected', error)
       return Promise.reject(error)
     }
   },
-  async deletePrivatePost({ dispatch }, postNumber) {
+  async deletePrivatePost({ dispatch, rootState }, postNumber) {
     try {
       await dispatch('deletePrivatePostPending')
-      await this.$axios.$patch(`issues/${postNumber}`, { state: 'closed' })
+
+      const usernameLogged = _.get(rootState.users.user, 'login', '')
+      if (!usernameLogged) {
+        throw new Error('401')
+      }
+
+      const result = await this.$axios.patch(`issues/${postNumber}`, {
+        state: 'closed'
+      })
+
       await dispatch('deletePrivatePostFulfilled')
-      return Promise.resolve()
+      return Promise.resolve(result)
     } catch (error) {
       await dispatch('deletePrivatePostRejected', error)
+      this.$errorGlobalHandler({ message: `${error}` })
       return Promise.reject(error)
     }
   }

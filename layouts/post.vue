@@ -9,6 +9,7 @@
         <AuthorInformation />
       </div>
     </div>
+    <notifications group="foo" position="bottom left" />
   </div>
 </template>
 <script>

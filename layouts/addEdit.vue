@@ -4,6 +4,7 @@
     <div class="blog page container">
       <nuxt class="blog__view" />
     </div>
+    <notifications group="foo" position="bottom left" />
   </div>
 </template>
 <script>
