@@ -33,6 +33,9 @@ module.exports = {
         primary: theme('colors.primary'),
         ternary: theme('colors.ternary')
       }),
+      stroke: theme => ({
+        primary: theme('colors.primary')
+      }),
       // https://tailwindcss.com/docs/breakpoints
       // https://tailwindcss.com/docs/container
       screens: {

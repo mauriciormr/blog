@@ -38,6 +38,7 @@ export default {
     { src: '~plugins/vuex-shared-mutations.js', ssr: false },
     { src: '~plugins/axios.js', ssr: false },
     { src: '~plugins/markdown-it.js' },
+    { src: '~plugins/vue-notification.js', ssr: false },
     { src: '~plugins/error-global-handler.js' }
   ],
   /*

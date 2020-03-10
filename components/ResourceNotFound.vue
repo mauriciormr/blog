@@ -265,7 +265,7 @@ export default {
     }
   },
   mounted() {
-    this.err = errorHandler(new Error(this.error.statusCode))
+    this.err = errorHandler(this.error)
   },
   head() {
     return {

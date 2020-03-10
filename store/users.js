@@ -50,6 +50,7 @@ export const actions = {
   },
   logoutUser({ commit }) {
     commit(LOGOUT_USER)
+    this.$axios.setToken(false)
     return Promise.resolve()
   }
 }

@@ -49,6 +49,7 @@ import _ from 'lodash'
 import { mapState, mapActions } from 'vuex'
 
 import { PAGINATION } from '~/data/default-data'
+import { errorHandler } from '~/utils/validate-errors'
 import PostCard from '~/components/post/PostCard.vue'
 import PaginationHead from '~/components/post/PaginationHead.vue'
 import PaginationBar from '~/components/post/PaginationBar.vue'
@@ -154,7 +155,26 @@ export default {
       this.postToDelete = null
     },
     deletePost(number) {
-      this.deletePrivatePost(number).then(() => window.location.reload(true))
+      const fn = this
+      this.deletePrivatePost(number)
+        .then(result => {
+          fn.$notify({
+            group: 'foo',
+            title: 'Sucess',
+            type: 'success',
+            text: errorHandler({ message: `${result.status}` }).message
+          })
+          setTimeout(() => window.location.reload(true), 500)
+        })
+        .catch(error => {
+          fn.$notify({
+            group: 'foo',
+            title: 'Error',
+            type: 'error',
+            text: errorHandler({ message: `${error}` }).message
+          })
+          fn.closeModalDeletePost()
+        })
     }
   },
   head() {
@@ -214,12 +234,5 @@ export default {
       bottom: 2rem;
     }
   }
-}
-
-.modal {
-  @apply fixed;
-  left: 50%;
-  top: 20%;
-  transform: translate(-50%, -20%);
 }
 </style>

@@ -1,4 +1,12 @@
+import _ from 'lodash'
+
 const errorsMessages = {
+  200: {
+    message: 'Action sucess'
+  },
+  201: {
+    message: 'Action sucess'
+  },
   404: {
     message: 'Not found'
   },
@@ -12,11 +20,18 @@ const errorsMessages = {
 
 const errorHandler = errorObj => {
   let backupError = errorObj
-  if (typeof backupError !== 'object' || !errorObj) {
+  if (
+    typeof backupError !== 'object' ||
+    Object.keys(errorObj).length === 0 ||
+    !errorObj
+  ) {
     backupError = new Error(errorsMessages.default.message)
   }
 
-  const statusCode = backupError.message.match(/\d+/g)
+  const statusCode = !_.get(backupError, 'message')
+    ? ['default']
+    : _.get(backupError, 'message').match(/\d+/g)
+
   const message = statusCode
     ? errorsMessages[statusCode[0]].message
     : backupError.message

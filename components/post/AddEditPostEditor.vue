@@ -6,7 +6,7 @@
     />
     <ResourceNotFound
       v-else-if="!post && typeAction === 'edit'"
-      :error="{ statusCode }"
+      :error="error"
     />
     <div v-else class="post-editor">
       <div>
@@ -178,7 +178,9 @@ export default {
   data() {
     return {
       titlePage: '',
-      statusCode: 404,
+      error: {
+        message: '404'
+      },
       titleText: 'Title post',
       descriptionText: 'Description post',
       blogText: '# Content post',
@@ -273,7 +275,7 @@ export default {
 
         this.titlePage = this.post
           ? this.post.post.title
-          : errorHandler(new Error(this.statusCode)).message
+          : errorHandler(this.error).message
       })
     } else {
       this.getPrivateLabelsList()
@@ -281,6 +283,12 @@ export default {
     }
   },
   methods: {
+    ...mapActions({
+      updatePost: 'posts/patchUpdatePost',
+      addPost: 'posts/postAddPost',
+      getPostsList: 'posts/getPostsList',
+      getPrivateLabelsList: 'posts/getLabelsList'
+    }),
     // Markdown Editor Example
     // https://vuejs.org/v2/examples/index.html
     updateContent: _.debounce(function(e) {
@@ -307,12 +315,6 @@ export default {
     removeLabel(label) {
       this.postLabels = [...fnFilterPostLabels([label.name], this.postLabels)]
     },
-    ...mapActions({
-      updatePost: 'posts/patchUpdatePost',
-      addPost: 'posts/postAddPost',
-      getPostsList: 'posts/getPostsList',
-      getPrivateLabelsList: 'posts/getPrivateLabelsList'
-    }),
     getRefTextArea() {
       return this.$refs.textarea
     },
@@ -320,6 +322,7 @@ export default {
       this.blogText = content
     },
     publish(type = 'public') {
+      const fn = this
       this.showLoading = true
 
       this.postLabels = fnFilterPostLabels(
@@ -351,13 +354,46 @@ export default {
             postNumber: this.postNumber
           }
         }
+
         this.updatePost(dataPost)
-          .then(() => this.$router.push('/posts/dashboard'))
-          .catch(() => (this.showLoading = false))
+          .then(result => {
+            fn.$notify({
+              group: 'foo',
+              title: 'Sucess',
+              type: 'success',
+              text: errorHandler({ message: `${result.status}` }).message
+            })
+            setTimeout(() => this.$router.push('/posts/dashboard'), 1000)
+          })
+          .catch(error => {
+            fn.$notify({
+              group: 'foo',
+              title: 'Error',
+              type: 'error',
+              text: errorHandler({ message: `${error}` }).message
+            })
+            this.showLoading = false
+          })
       } else {
         this.addPost(dataPost)
-          .then(() => this.$router.push('/posts/dashboard'))
-          .catch(() => (this.showLoading = false))
+          .then(result => {
+            fn.$notify({
+              group: 'foo',
+              title: 'Sucess',
+              type: 'success',
+              text: errorHandler({ message: `${result.status}` }).message
+            })
+            setTimeout(() => this.$router.push('/posts/dashboard'), 1000)
+          })
+          .catch(error => {
+            fn.$notify({
+              group: 'foo',
+              title: 'Error',
+              type: 'error',
+              text: errorHandler({ message: `${error}` }).message
+            })
+            this.showLoading = false
+          })
       }
     }
   },
@@ -546,12 +582,5 @@ export default {
       @apply flex-no-wrap;
     }
   }
-}
-
-.modal {
-  @apply absolute;
-  left: 50%;
-  top: 15%;
-  transform: translate(-50%, 0%);
 }
 </style>

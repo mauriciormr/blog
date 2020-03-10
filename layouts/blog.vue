@@ -8,6 +8,7 @@
       </div>
       <GeneralInformation :tagsToFilter="tagsToFilter" class="blog__sidebar" />
     </div>
+    <notifications group="foo" position="bottom left" />
   </div>
 </template>
 <script>
