@@ -42,7 +42,9 @@ import { POSTS_LABELS_CONFIG } from '~/data/default-data'
 // 4. Resseting module state
 const initialState = () => ({
   publicList: [],
+  countPublic: 0,
   privateList: [],
+  countPrivate: 0,
   postView: {
     author: {},
     post: {}
@@ -86,8 +88,9 @@ export const mutations = {
       isPublicFulfilled: false
     }
   },
-  [GET_PUBLIC_POSTS_LIST_FULFILLED](state, payload) {
-    state.publicList = payload
+  [GET_PUBLIC_POSTS_LIST_FULFILLED](state, { posts, count }) {
+    state.publicList = posts
+    state.countPublic = count
     state.status.get = {
       ...state.status.get,
       isPublicPending: false,
@@ -134,8 +137,9 @@ export const mutations = {
       isPrivateFulfilled: false
     }
   },
-  [GET_PRIVATE_POSTS_LIST_FULFILLED](state, payload) {
-    state.privateList = payload
+  [GET_PRIVATE_POSTS_LIST_FULFILLED](state, { posts, count }) {
+    state.privateList = posts
+    state.countPrivate = count
     state.status.get = {
       ...state.status.get,
       isPrivatePending: false,
@@ -528,67 +532,83 @@ export const actions = {
   // https://javascript.info/destructuring-assignment
   async getPostsList(
     { dispatch, state, rootState, $axios },
-    { type = '' } = {}
+    { type = '', page = 1, tags = [] } = {}
   ) {
     let flagType = 'Public'
-    let { isPublicFulfilled: isFulfilled } = state.status.get
 
     if (type === 'private') {
-      const { isPrivateFulfilled } = state.status.get
-      isFulfilled = isPrivateFulfilled
       flagType = 'Private'
     }
 
-    if (!isFulfilled) {
-      try {
-        await dispatch(`get${flagType}PostsListPending`)
-        let posts = null
+    try {
+      await dispatch(`get${flagType}PostsListPending`)
+      let posts = null
+      let postsAllRequest = null
 
-        const postLabel = POSTS_LABELS_CONFIG.post
-        const publicLabel = POSTS_LABELS_CONFIG.public
+      const postLabel = POSTS_LABELS_CONFIG.post
+      const publicLabel = POSTS_LABELS_CONFIG.public
 
+      if (type === 'private') {
+        const usernameLogged = _.get(rootState.users.user, 'login', '')
+
+        postsAllRequest = await this.$axios.get(
+          `issues?creator=${usernameLogged}&labels=${postLabel},${tags}`
+        )
         posts = _.values(
-          await this.$axios.$get(`issues?labels=${postLabel},${publicLabel}`)
-        )
-
-        if (type === 'private') {
-          const usernameLogged = _.get(rootState.users.user, 'login', '')
-          posts = _.values(
-            await this.$axios.$get(
-              `issues?creator=${usernameLogged}&labels=${postLabel}`
-            )
+          await this.$axios.$get(
+            `issues?creator=${usernameLogged}&labels=${postLabel},${tags}&page=${page}`
           )
-        }
-        const formattedPosts = posts.map(p => {
-          const postJSON = JSON.parse(p.title)
-          return {
-            ...p,
-            post: {
-              ...postJSON,
-              titleHTML: this.$markdownit.renderInline(postJSON.title),
-              descriptionHTML: this.$markdownit.renderInline(
-                postJSON.description
-              ),
-              content: p.body,
-              contentHTML: this.$markdownit.render(p.body),
-              coverBlog: postJSON.coverBlog,
-              coverCEO: postJSON.coverCEO
-            }
-          }
-        })
-        await dispatch(
-          `get${flagType}PostsListFulfilled`,
-          _.orderBy(formattedPosts, ['number'], ['desc'])
         )
-        await dispatch('getReactionsPostsList', type)
-        await dispatch('getLabelsList')
-
-        return Promise.resolve({ status: '200' })
-      } catch (error) {
-        dispatch(`get${flagType}PostsListRejected`, error)
-        this.$errorGlobalHandler({ message: `${error}` })
-        return Promise.reject(error)
+      } else {
+        postsAllRequest = await this.$axios.get(
+          `issues?labels=${postLabel},${publicLabel},${tags}`
+        )
+        posts = _.values(
+          await this.$axios.$get(
+            `issues?labels=${postLabel},${publicLabel},${tags}&page=${page}`
+          )
+        )
       }
+
+      // Max number of issues that github returns in a request for page
+      // https://developer.github.com/v3/issues/#list-repository-issues
+      const GITHUB_ITEMS = 30
+      const totalPagesGitHub = /page=(\d).+?page=(\d)/gim.exec(
+        postsAllRequest.headers.link
+      )
+      const totalElementsInApi =
+        (!totalPagesGitHub ? 1 : totalPagesGitHub[2]) * GITHUB_ITEMS
+
+      const formattedPosts = posts.map(p => {
+        const postJSON = JSON.parse(p.title)
+        return {
+          ...p,
+          post: {
+            ...postJSON,
+            titleHTML: this.$markdownit.renderInline(postJSON.title),
+            descriptionHTML: this.$markdownit.renderInline(
+              postJSON.description
+            ),
+            content: p.body,
+            contentHTML: this.$markdownit.render(p.body),
+            coverBlog: postJSON.coverBlog,
+            coverCEO: postJSON.coverCEO
+          }
+        }
+      })
+
+      await dispatch(`get${flagType}PostsListFulfilled`, {
+        posts: _.orderBy(formattedPosts, ['number'], ['desc']),
+        count: totalElementsInApi
+      })
+      await dispatch('getReactionsPostsList', type)
+      await dispatch('getLabelsList')
+
+      return Promise.resolve({ status: '200' })
+    } catch (error) {
+      dispatch(`get${flagType}PostsListRejected`, error)
+      this.$errorGlobalHandler({ message: `${error}` })
+      return Promise.reject(error)
     }
   },
   async getReactionsPostsList(
