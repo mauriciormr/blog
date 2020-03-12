@@ -2,8 +2,8 @@
   <div>
     <Loading v-if="isDataPending && !postProcessed" class="loading" />
     <ResourceNotFound
-      v-else-if="!post && !isDataPending"
-      :error="{ statusCode }"
+      v-else-if="Object.keys(post).length === 0 && !isDataPending"
+      :error="error"
     />
     <div v-else-if="!isDataPending && postProcessed">
       <PostPublicPreview
@@ -37,36 +37,22 @@ export default {
   data() {
     return {
       postNumber: null,
-      titlePage: '',
-      statusCode: 404,
-      customObjectPost: {},
-      postProcessed: false,
-      typePost: 'public'
+      error: {
+        message: '404'
+      },
+      typePost: 'public',
+      titlePage: ''
     }
   },
   computed: {
     ...mapState({
       posts: state => state.posts.publicList,
       isDataPending: state => state.posts.status.get.isPublicPending,
-      author: state => state.posts.postView.author
+      author: state => state.posts.postView.author,
+      post: state => state.posts.postView.post
     }),
-    post() {
-      return _.find(this.posts, { number: +this.postNumber })
-    }
-  },
-  asyncData({ params }) {
-    return {
-      postNumber: params.id
-    }
-  },
-  mounted() {
-    this.getPostsList().then(() => {
-      this.resetAuthorPostView()
-      if (this.post) {
-        this.titlePage = this.post
-          ? this.post.post.title
-          : errorHandler(new Error(this.statusCode)).message
-
+    customObjectPost() {
+      if (Object.keys(this.post).length > 0) {
         const formatDate = moment(this.post.created_at).format('MMM DD')
         const formatYear = moment(this.post.created_at).format('YYYY')
 
@@ -78,9 +64,7 @@ export default {
         const postCover = _.get(this.post.post, 'coverBlog', '').trim()
         const cover = !postCover ? '' : postCover
 
-        this.updateAuthorPostView(this.post.user)
-
-        this.customObjectPost = {
+        return {
           ...this.post,
           titleHTML: this.post.post.titleHTML,
           descriptionHTML: this.post.post.descriptionHTML,
@@ -90,16 +74,36 @@ export default {
           formatYear,
           formatLabels
         }
-        this.postProcessed = true
       }
-    })
+      return {}
+    },
+    postProcessed() {
+      return Object.keys(this.post).length > 0
+    }
+  },
+  asyncData({ params }) {
+    return {
+      postNumber: params.id
+    }
+  },
+  mounted() {
+    this.resetAuthorPostView()
+    this.getPost(this.postNumber)
+      .then(() => {
+        this.updateAuthorPostView(this.post.user)
+        this.titlePage = this.post.post.title
+      })
+      .catch(error => {
+        this.error = { message: `${error}` }
+        this.titlePage = errorHandler(this.error).message
+      })
   },
   methods: {
     ...mapActions({
       handleReaction: 'posts/handleReaction',
       updateAuthorPostView: 'posts/updateAuthorPostView',
       resetAuthorPostView: 'posts/setAuthorPostViewPending',
-      getPostsList: 'posts/getPostsList'
+      getPost: 'posts/getPost'
     })
   },
   head() {

@@ -3,6 +3,9 @@ import {
   GET_PUBLIC_POSTS_LIST_PENDING,
   GET_PUBLIC_POSTS_LIST_FULFILLED,
   GET_PUBLIC_POSTS_LIST_REJECTED,
+  GET_POST_PENDING,
+  GET_POST_REJECTED,
+  GET_POST_FULFILLED,
   GET_PUBLIC_REACTIONS_POSTS_LIST_PENDING,
   GET_PUBLIC_REACTIONS_POSTS_LIST_FULFILLED,
   GET_PUBLIC_REACTIONS_POSTS_LIST_REJECTED,
@@ -106,6 +109,31 @@ export const mutations = {
       isPublicRejected: true
     }
   },
+  [GET_POST_PENDING](state) {
+    state.postView.post = {}
+    state.status.get = {
+      ...state.status.get,
+      isPublicPending: true,
+      isPublicFulfilled: false
+    }
+  },
+  [GET_POST_FULFILLED](state, payload) {
+    state.postView.post = payload
+    state.status.get = {
+      ...state.status.get,
+      isPublicPending: false,
+      isPublicFulfilled: true,
+      isPublicRejected: false
+    }
+  },
+  [GET_POST_REJECTED](state, error) {
+    state.status.get = {
+      ...state.status.get,
+      isPublicPending: false,
+      isPublicFulfilled: false,
+      isPublicRejected: true
+    }
+  },
   [GET_PUBLIC_REACTIONS_POSTS_LIST_PENDING](state) {
     state.status.get = {
       ...state.status.get,
@@ -187,22 +215,14 @@ export const mutations = {
     }
   },
   [POST_ADD_REACTION_FULFILLED](state, payload) {
-    const { postNumber, indexReaction } = payload
-    const statePost = _.find(state.publicList, {
-      number: postNumber
-    })
-    const indexPost = _.findIndex(state.publicList, { number: postNumber })
-    const stateReactionPost = statePost.reactions[indexReaction]
+    const { indexReaction } = payload
 
-    // eslint-disable-next-line
-    state.publicList[indexPost].reactions[
-      indexReaction
-    ].userLoggedHasReaction = true
+    state.postView.post.reactions[indexReaction].userLoggedHasReaction = true
 
-    state.publicList[indexPost].reactions[indexReaction].count += 1
+    state.postView.post.reactions[indexReaction].count += 1
 
-    state.publicList[indexPost].reactions[indexReaction].users = [
-      ...stateReactionPost.users,
+    state.postView.post.reactions[indexReaction].users = [
+      ...state.postView.post.reactions[indexReaction].users,
       payload.reaction
     ]
 
@@ -227,18 +247,16 @@ export const mutations = {
     }
   },
   [DELETE_REMOVE_REACTION_FULFILLED](state, payload) {
-    const { postNumber, indexReaction, idReaction } = payload
-    const indexPost = _.findIndex(state.publicList, { number: postNumber })
+    const { indexReaction, idReaction } = payload
+
     _.remove(
-      state.publicList[indexPost].reactions[indexReaction].users,
+      state.postView.post.reactions[indexReaction].users,
       u => u.id === idReaction
     )
 
-    state.publicList[indexPost].reactions[indexReaction].count -= 1
-    // eslint-disable-next-line
-    state.publicList[indexPost].reactions[
-      indexReaction
-    ].userLoggedHasReaction = false
+    state.postView.post.reactions[indexReaction].userLoggedHasReaction = false
+
+    state.postView.post.reactions[indexReaction].count -= 1
 
     state.status.delete = {
       isPending: false,
@@ -314,6 +332,7 @@ export const mutations = {
     }
   },
   [SET_AUTHOR_POST_VIEW_PENDING](state) {
+    state.postView.author = {}
     state.status.get = {
       ...state.status.get,
       isAuthorPending: true,
@@ -406,6 +425,18 @@ export const actions = {
   },
   getPublicPostsListRejected({ commit }, error) {
     commit(GET_PUBLIC_POSTS_LIST_REJECTED, error)
+    return Promise.resolve()
+  },
+  getPostPending({ commit }) {
+    commit(GET_POST_PENDING)
+    return Promise.resolve()
+  },
+  getPostFulfilled({ commit }, post) {
+    commit(GET_POST_FULFILLED, post)
+    return Promise.resolve()
+  },
+  getPostRejected({ commit }, error) {
+    commit(GET_POST_REJECTED, error)
     return Promise.resolve()
   },
   getPublicReactionsPostsListPending({ commit }) {
@@ -611,6 +642,66 @@ export const actions = {
       return Promise.reject(error)
     }
   },
+  async getPost({ dispatch, rootState }, postNumber) {
+    try {
+      await dispatch('getPostPending')
+
+      const post = await this.$axios.$get(`issues/${postNumber}`)
+
+      const isHidden = _.find(post.labels, { name: POSTS_LABELS_CONFIG.hidden })
+      const isClosed = post.state === 'closed'
+      if (isHidden || isClosed) {
+        throw new Error('404')
+      }
+
+      const postJSON = JSON.parse(post.title)
+      let formattedPost = {
+        ...post,
+        post: {
+          ...postJSON,
+          titleHTML: this.$markdownit.renderInline(postJSON.title),
+          descriptionHTML: this.$markdownit.renderInline(postJSON.description),
+          content: post.body,
+          contentHTML: this.$markdownit.render(post.body),
+          coverBlog: postJSON.coverBlog,
+          coverCEO: postJSON.coverCEO
+        }
+      }
+
+      const usernameLogged = _.get(rootState.users.user, 'login', '')
+      const reactions = _.values(
+        await this.$axios.$get(`issues/${postNumber}/reactions`, {
+          headers: { Accept: 'application/vnd.github.squirrel-girl-preview' }
+        })
+      )
+
+      const reactionsGrouped = _.groupBy(reactions, 'content')
+      const reactionsOrdered = _.map(reactionTypes, rt => {
+        const reaction = _.isUndefined(reactionsGrouped[rt])
+          ? null
+          : reactionsGrouped[rt]
+        return {
+          content: rt,
+          count: !reaction ? 0 : reaction.length,
+          users: !reaction ? [] : reaction,
+          userLoggedHasReaction: !reaction
+            ? false
+            : _.find(reaction, r => r.user.login === usernameLogged)
+        }
+      })
+
+      formattedPost = {
+        ...formattedPost,
+        reactions: reactionsOrdered
+      }
+
+      await dispatch('getPostFulfilled', formattedPost)
+      return Promise.resolve({ status: '200' })
+    } catch (error) {
+      await dispatch('getPostRejected', error)
+      return Promise.reject(error)
+    }
+  },
   async getReactionsPostsList(
     { dispatch, state, $axios, rootState },
     type = 'public'
@@ -738,7 +829,6 @@ export const actions = {
       )
       const indexReaction = _.findIndex(reactionTypes, rt => rt === reaction)
       const reactionFulfilled = {
-        postNumber: number,
         indexReaction,
         reaction: reactionPost
       }
@@ -765,7 +855,6 @@ export const actions = {
       )
       const indexReaction = _.findIndex(reactionTypes, rt => rt === reaction)
       await dispatch('deleteRemoveReactionFulfilled', {
-        postNumber,
         idReaction,
         indexReaction
       })
