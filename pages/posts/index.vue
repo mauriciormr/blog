@@ -85,21 +85,19 @@ export default {
       page: !p ? 1 : p
     }
   },
-  fetch({ query, store }) {
+  // https://nuxtjs.org/api/pages-fetch/#vuex
+  async fetch({ query, store }) {
     const q = _.get(query, 'tags', '')
     const p = _.get(query, 'page', 1)
 
     const queryTags = (!q ? '' : q).split(',')
     const page = !p ? 1 : p
 
-    store.dispatch('posts/getPostsList', {
+    await store.dispatch('posts/getPostsList', {
       type: 'public',
       page,
       tags: queryTags
     })
-  },
-  mounted() {
-    this.getPostsList({ type: 'public', page: this.page, tags: this.queryTags })
   },
   methods: {
     ...mapActions({
