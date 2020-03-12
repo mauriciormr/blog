@@ -2,20 +2,20 @@
   <div>
     <Loading v-if="isDataPending" class="loading" />
     <div v-else class="posts-list">
-      <div v-if="postsToShow.length === 0">
-        <ResourceNotFound :error="{ statusCode }" />
+      <div v-if="posts.length === 0">
+        <ResourceNotFound :error="error" />
       </div>
       <div v-else>
         <div class="admin-posts-list__pagination-head">
           <div class="admin-posts-list__pagination-head__message">
-            <span>{{ postsFiltered.length }} elements found</span>
+            <span>~{{ countPosts }} elements found</span>
           </div>
           <PaginationHead
             :elementsPerPage="elementsPerPage"
             class="admin-posts-list__pagination-head__select"
           />
         </div>
-        <PostCard v-for="post in postsToShow" :key="post.id" :post="post" />
+        <PostCard v-for="post in posts" :key="post.id" :post="post" />
         <PaginationBar :pages="pagesToPagination" class="pagination-bottom" />
       </div>
     </div>
@@ -45,7 +45,9 @@ export default {
   },
   data() {
     return {
-      statusCode: 404,
+      error: {
+        message: '404'
+      },
       queryTags: '',
       elementsPerPage: _.get(
         _.find(PAGINATION.optionsElementsPerPage, 'selected'),
@@ -56,32 +58,11 @@ export default {
   computed: {
     ...mapState({
       posts: state => state.posts.publicList,
+      countPosts: state => state.posts.countPublic,
       isDataPending: state => state.posts.status.get.isPublicPending
     }),
-    postsFiltered() {
-      let filters = []
-      if (this.queryTags[0]) {
-        const found = _.filter(this.posts, p => {
-          const labelsJoined = _.map(p.labels, l => l.name.split(' ').join()) // ['', '']
-          return _.find(this.queryTags, q => _.includes(labelsJoined, q))
-        })
-        filters = [...found]
-      } else {
-        filters = [...this.posts]
-      }
-      return filters
-    },
-    postsToShow() {
-      const start = this.page * this.elementsPerPage - this.elementsPerPage
-      const end = start + this.elementsPerPage
-
-      return _.slice(this.postsFiltered, Math.max(start, 0), end)
-    },
     pagesToPagination() {
-      const numberOfPages = Math.ceil(
-        this.postsFiltered.length / this.elementsPerPage
-      )
-
+      const numberOfPages = Math.ceil(this.countPosts / this.elementsPerPage)
       let pages = []
       for (let i = 1; i <= numberOfPages; i++) {
         pages = [
@@ -98,21 +79,25 @@ export default {
   asyncData({ query }) {
     const q = _.get(query, 'tags', '')
     const p = _.get(query, 'page', 1)
-    const i = _.get(query, 'items')
-
-    const defaultItems = _.get(
-      _.find(PAGINATION.optionsElementsPerPage, 'selected'),
-      'number'
-    )
 
     return {
       queryTags: (!q ? '' : q).split(','),
-      page: !p ? 1 : p,
-      elementsPerPage: !i ? defaultItems : +i
+      page: !p ? 1 : p
     }
   },
-  mounted() {
-    this.getPostsList()
+  // https://nuxtjs.org/api/pages-fetch/#vuex
+  async fetch({ query, store }) {
+    const q = _.get(query, 'tags', '')
+    const p = _.get(query, 'page', 1)
+
+    const queryTags = (!q ? '' : q).split(',')
+    const page = !p ? 1 : p
+
+    await store.dispatch('posts/getPostsList', {
+      type: 'public',
+      page,
+      tags: queryTags
+    })
   },
   methods: {
     ...mapActions({

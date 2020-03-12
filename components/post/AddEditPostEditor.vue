@@ -195,13 +195,10 @@ export default {
   },
   computed: {
     ...mapState({
-      posts: state => state.posts.privateList,
+      post: state => state.posts.postView.post,
       adminLabels: state => state.posts.adminLabels,
-      isDataPending: state => state.posts.status.get.isPrivatePending
+      isDataPending: state => state.posts.status.get.isPublicPending
     }),
-    post() {
-      return _.find(this.posts, { number: +this.postNumber })
-    },
     compiledTitleMarkdown() {
       return this.$markdownit.renderInline(this.titleText)
     },
@@ -238,47 +235,18 @@ export default {
     }
   },
   mounted() {
+    this.getPrivateLabelsList()
     if (this.typeAction === 'edit') {
-      this.getPostsList({ type: 'private' }).then(() => {
-        if (this.post) {
-          this.coverBlog = _.get(
-            this.post.post,
-            'coverBlog',
-            this.coverBlog
-          ).trim()
-
-          this.coverCEO = _.get(
-            this.post.post,
-            'coverCEO',
-            this.coverCEO
-          ).trim()
-
-          this.titleText = _.get(this.post.post, 'title', this.titleText)
-
-          this.descriptionText = _.get(
-            this.post.post,
-            'description',
-            this.decriptionText
-          )
-
-          const backupLabels = [...this.post.labels]
-          this.postLabels = fnFilterPostLabels(
-            [
-              POSTS_LABELS_CONFIG.post,
-              POSTS_LABELS_CONFIG.hidden,
-              POSTS_LABELS_CONFIG.public
-            ],
-            backupLabels
-          )
-          this.blogText = _.get(this.post.post, 'content', this.blogText)
-        }
-
-        this.titlePage = this.post
-          ? this.post.post.title
-          : errorHandler(this.error).message
-      })
+      this.getPost(this.postNumber)
+        .then(() => {
+          this.formatPost(this.post)
+        })
+        .catch(error => {
+          this.error = { message: `${error}` }
+          this.titlePage = errorHandler(this.error).message
+        })
     } else {
-      this.getPrivateLabelsList()
+      this.setPost()
       this.titlePage = 'Add publication'
     }
   },
@@ -286,7 +254,8 @@ export default {
     ...mapActions({
       updatePost: 'posts/patchUpdatePost',
       addPost: 'posts/postAddPost',
-      getPostsList: 'posts/getPostsList',
+      setPost: 'posts/getPostPending',
+      getPost: 'posts/getPost',
       getPrivateLabelsList: 'posts/getLabelsList'
     }),
     // Markdown Editor Example
@@ -320,6 +289,32 @@ export default {
     },
     updateContentFromToolbar(content) {
       this.blogText = content
+    },
+    formatPost(post) {
+      this.coverBlog = _.get(post.post, 'coverBlog', this.coverBlog).trim()
+
+      this.coverCEO = _.get(post.post, 'coverCEO', this.coverCEO).trim()
+
+      this.titleText = _.get(post.post, 'title', this.titleText)
+
+      this.descriptionText = _.get(
+        post.post,
+        'description',
+        this.decriptionText
+      )
+
+      const backupLabels = [...post.labels]
+      this.postLabels = fnFilterPostLabels(
+        [
+          POSTS_LABELS_CONFIG.post,
+          POSTS_LABELS_CONFIG.hidden,
+          POSTS_LABELS_CONFIG.public
+        ],
+        backupLabels
+      )
+      this.blogText = _.get(post.post, 'content', this.blogText)
+
+      this.titlePage = post ? post.post.title : errorHandler(this.error).message
     },
     publish(type = 'public') {
       const fn = this
@@ -363,7 +358,7 @@ export default {
               type: 'success',
               text: errorHandler({ message: `${result.status}` }).message
             })
-            setTimeout(() => this.$router.push('/posts/dashboard'), 1000)
+            this.$router.push('/posts/dashboard')
           })
           .catch(error => {
             fn.$notify({
@@ -383,7 +378,7 @@ export default {
               type: 'success',
               text: errorHandler({ message: `${result.status}` }).message
             })
-            setTimeout(() => this.$router.push('/posts/dashboard'), 1000)
+            this.$router.push('/posts/dashboard')
           })
           .catch(error => {
             fn.$notify({

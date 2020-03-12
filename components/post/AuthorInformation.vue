@@ -1,62 +1,64 @@
 <template>
   <div class="wrapper-card">
-    <Loading v-if="isAuthorPending" class="loading" />
-    <div v-else class="author-card">
-      <span class="author-card__title">AUTHOR</span>
-      <img
-        :src="author.avatar_url"
-        :alt="author.name"
-        class="author-card__photo"
-      />
-      <span v-if="author.bio" class="author-card__bio">
-        "{{ author.bio }}"
-      </span>
-      <span class="author-card__name">{{ author.name }}</span>
-      <span class="author-card__username">@{{ author.login }}</span>
-      <div class="author-card__list">
-        <span v-if="author.location" class="author-card__list__item location">
-          <i
-            class="fa fa-map-marker author-card__list__item__icon"
-            aria-hidden="true"
-          />
-          <span class="author-card__list__item__text">
-            {{ author.location }}
-          </span>
-        </span>
-        <span v-if="author.company" class="author-card__list__item company">
-          <i
-            class="fa fa-briefcase author-card__list__item__icon"
-            aria-hidden="true"
-          />
-          <span class="author-card__list__item__text">
-            {{ author.company }}
-          </span>
-        </span>
-        <span v-if="author.blog" class="author-card__list__item site">
-          <i
-            class="fa fa-globe author-card__list__item__icon"
-            aria-hidden="true"
-          />
-          <a
-            :href="`http://${author.blog}`"
-            class="author-card__list__item__text"
-            target="_blank"
-          >
-            {{ author.blog }}
-          </a>
-        </span>
-      </div>
-      <a
-        :href="author.html_url"
-        class="author-card__button-profile"
-        target="_blank"
-      >
-        <i
-          class="fa fa-github author-card__button-profile__icon"
-          aria-hidden="true"
+    <div v-if="Object.keys(post).length > 0">
+      <Loading v-if="isAuthorPending" class="loading" />
+      <div v-else class="author-card">
+        <span class="author-card__title">AUTHOR</span>
+        <img
+          :src="author.avatar_url"
+          :alt="author.name"
+          class="author-card__photo"
         />
-        <span>View Profile</span>
-      </a>
+        <span v-if="author.bio" class="author-card__bio">
+          "{{ author.bio }}"
+        </span>
+        <span class="author-card__name">{{ author.name }}</span>
+        <span class="author-card__username">@{{ author.login }}</span>
+        <div class="author-card__list">
+          <span v-if="author.location" class="author-card__list__item location">
+            <i
+              class="fa fa-map-marker author-card__list__item__icon"
+              aria-hidden="true"
+            />
+            <span class="author-card__list__item__text">
+              {{ author.location }}
+            </span>
+          </span>
+          <span v-if="author.company" class="author-card__list__item company">
+            <i
+              class="fa fa-briefcase author-card__list__item__icon"
+              aria-hidden="true"
+            />
+            <span class="author-card__list__item__text">
+              {{ author.company }}
+            </span>
+          </span>
+          <span v-if="author.blog" class="author-card__list__item site">
+            <i
+              class="fa fa-globe author-card__list__item__icon"
+              aria-hidden="true"
+            />
+            <a
+              :href="`http://${author.blog}`"
+              class="author-card__list__item__text"
+              target="_blank"
+            >
+              {{ author.blog }}
+            </a>
+          </span>
+        </div>
+        <a
+          :href="author.html_url"
+          class="author-card__button-profile"
+          target="_blank"
+        >
+          <i
+            class="fa fa-github author-card__button-profile__icon"
+            aria-hidden="true"
+          />
+          <span>View Profile</span>
+        </a>
+      </div>
     </div>
   </div>
 </template>
@@ -69,6 +71,7 @@ export default {
   computed: {
     ...mapState({
       author: state => state.posts.postView.author,
+      post: state => state.posts.postView.post,
       isAuthorPending: state => state.posts.status.get.isAuthorPending
     })
   }
