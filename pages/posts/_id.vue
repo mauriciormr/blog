@@ -21,7 +21,7 @@ import moment from 'moment'
 import { mapState, mapActions } from 'vuex'
 import { errorHandler } from '~/utils/validate-errors'
 import { fnFilterPostLabels } from '~/utils/utils'
-import { OMITTED_LABELS } from '~/data/default-data'
+import { OMITTED_LABELS, POSTS_DATA } from '~/data/default-data'
 
 import ResourceNotFound from '~/components/ResourceNotFound.vue'
 import Loading from '~/components/Loading.vue'
@@ -77,6 +77,31 @@ export default {
       }
       return {}
     },
+    objectPostMetadata() {
+      let host = ''
+
+      // https://nuxtjs.org/faq/window-document-undefined/
+      if (process.client) {
+        host = window.location.hostname
+      }
+
+      if (Object.keys(this.post).length > 0) {
+        const postCover = _.get(this.post.post, 'coverBlog', '').trim()
+        return {
+          title: this.post.post.title,
+          description: this.post.post.description,
+          coverMeta: !postCover ? POSTS_DATA.coverList : postCover,
+          url: host
+        }
+      }
+
+      return {
+        title: '',
+        description: '',
+        coverMeta: POSTS_DATA.coverList,
+        url: host
+      }
+    },
     postProcessed() {
       return Object.keys(this.post).length > 0
     }
@@ -109,7 +134,58 @@ export default {
   },
   head() {
     return {
-      title: this.titlePage
+      title: this.titlePage,
+      meta: [
+        { hid: 'title', name: 'title', content: this.objectPostMetadata.title },
+        {
+          hid: 'description',
+          name: 'description',
+          content: this.objectPostMetadata.description
+        },
+        // Open Graph / Facebook
+        { hid: 'og:url', name: 'og:url', content: this.objectPostMetadata.url },
+        {
+          hid: 'og:title',
+          name: 'og:title',
+          content: this.objectPostMetadata.title
+        },
+        {
+          hid: 'og:description',
+          name: 'og:description',
+          content: this.objectPostMetadata.description
+        },
+        {
+          hid: 'og:image',
+          name: 'og:image',
+          content: this.objectPostMetadata.coverMeta
+        },
+        // Twitter
+        {
+          hid: 'twitter:card',
+          name: 'twitter:card',
+          content: 'summary_large_image'
+        },
+        {
+          hid: 'twitter:url',
+          name: 'twitter:url',
+          content: this.objectPostMetadata.url
+        },
+        {
+          hid: 'twitter:title',
+          name: 'twitter:title',
+          content: this.objectPostMetadata.title
+        },
+        {
+          hid: 'twitter:description',
+          name: 'twitter:description',
+          content: this.objectPostMetadata.description
+        },
+        {
+          hid: 'twitter:image',
+          name: 'twitter:image',
+          content: this.objectPostMetadata.coverMeta
+        }
+      ]
     }
   }
 }
