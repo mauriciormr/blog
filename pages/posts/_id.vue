@@ -82,13 +82,14 @@ export default {
     }
   },
   asyncData({ params }) {
+    const issue = /i(\d+)/.exec(params.id)[1]
     return {
-      postNumber: params.id
+      postNumber: issue
     }
   },
   mounted() {
     this.resetAuthorPostView()
-    this.getPost(this.postNumber)
+    this.getPost({ type: 'public', postNumber: this.postNumber })
       .then(() => {
         this.updateAuthorPostView(this.post.user)
         this.titlePage = this.post.post.title

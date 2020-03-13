@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import stringPackage from 'string'
 import {
   GET_PUBLIC_POSTS_LIST_PENDING,
   GET_PUBLIC_POSTS_LIST_FULFILLED,
@@ -616,6 +617,9 @@ export const actions = {
           ...p,
           post: {
             ...postJSON,
+            slug: `i${p.number}-${stringPackage(postJSON.title)
+              .slugify()
+              .toString()}`,
             titleHTML: this.$markdownit.renderInline(postJSON.title),
             descriptionHTML: this.$markdownit.renderInline(
               postJSON.description
@@ -642,16 +646,23 @@ export const actions = {
       return Promise.reject(error)
     }
   },
-  async getPost({ dispatch, rootState }, postNumber) {
+  async getPost(
+    { dispatch, rootState },
+    { type = 'public', postNumber = 0 } = {}
+  ) {
     try {
       await dispatch('getPostPending')
 
       const post = await this.$axios.$get(`issues/${postNumber}`)
 
-      const isHidden = _.find(post.labels, { name: POSTS_LABELS_CONFIG.hidden })
-      const isClosed = post.state === 'closed'
-      if (isHidden || isClosed) {
-        throw new Error('404')
+      if (type === 'public') {
+        const isHidden = _.find(post.labels, {
+          name: POSTS_LABELS_CONFIG.hidden
+        })
+        const isClosed = post.state === 'closed'
+        if (isHidden || isClosed) {
+          throw new Error('404')
+        }
       }
 
       const postJSON = JSON.parse(post.title)
@@ -659,6 +670,9 @@ export const actions = {
         ...post,
         post: {
           ...postJSON,
+          slug: `i${post.number}-${stringPackage(postJSON.title)
+            .slugify()
+            .toString()}`,
           titleHTML: this.$markdownit.renderInline(postJSON.title),
           descriptionHTML: this.$markdownit.renderInline(postJSON.description),
           content: post.body,

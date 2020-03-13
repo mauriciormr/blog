@@ -5,7 +5,7 @@
       class="loading"
     />
     <ResourceNotFound
-      v-else-if="!post && typeAction === 'edit'"
+      v-else-if="Object.keys(post).length === 0 && typeAction === 'edit'"
       :error="error"
     />
     <div v-else class="post-editor">
@@ -237,7 +237,7 @@ export default {
   mounted() {
     this.getPrivateLabelsList()
     if (this.typeAction === 'edit') {
-      this.getPost(this.postNumber)
+      this.getPost({ type: 'private', postNumber: this.postNumber })
         .then(() => {
           this.formatPost(this.post)
         })
