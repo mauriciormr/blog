@@ -1,31 +1,53 @@
 import _ from 'lodash'
 
-const errorsMessages = {
-  200: {
+// https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+const responseCodes = {
+  OK: {
+    code: '200',
     message: 'Action sucess'
   },
-  201: {
+  created: {
+    code: '201',
     message: 'Action sucess'
   },
-  404: {
-    message: 'Not found'
+  accepted: {
+    code: '202',
+    message: 'Action sucess'
   },
-  401: {
+  noContent: {
+    code: '204',
+    message: 'Not elements'
+  },
+  badRequest: {
+    code: '400',
+    message: 'An error ocurred'
+  },
+  unauthorized: {
+    code: '401',
     message: 'Not permission'
   },
+  forbidden: {
+    code: '403',
+    message: 'Not permission'
+  },
+  notFound: {
+    code: '404',
+    message: 'Not found'
+  },
   default: {
+    code: '0',
     message: 'An error has occurred'
   }
 }
 
-const errorHandler = errorObj => {
+const responseCodesHandler = errorObj => {
   let backupError = errorObj
   if (
     typeof backupError !== 'object' ||
     Object.keys(errorObj).length === 0 ||
     !errorObj
   ) {
-    backupError = new Error(errorsMessages.default.message)
+    backupError = new Error(responseCodes.default.code)
   }
 
   const statusCode = !_.get(backupError, 'message')
@@ -33,12 +55,12 @@ const errorHandler = errorObj => {
     : _.get(backupError, 'message').match(/\d+/g)
 
   const message = statusCode
-    ? errorsMessages[statusCode[0]].message
+    ? _.get(_.find(responseCodes, { code: statusCode[0] }), 'message', null)
     : backupError.message
 
   return {
-    statusCode: statusCode ? +statusCode[0] : 0,
-    message
+    statusCode: statusCode ? +statusCode[0] : responseCodes.default.code,
+    message: message || responseCodes.default.message
   }
 }
-export { errorHandler }
+export { responseCodesHandler, responseCodes }

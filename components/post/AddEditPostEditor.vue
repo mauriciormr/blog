@@ -145,7 +145,7 @@ import _ from 'lodash'
 import moment from 'moment'
 
 import { mapActions, mapState } from 'vuex'
-import { errorHandler } from '~/utils/validate-errors'
+import { responseCodesHandler, responseCodes } from '~/utils/validate-errors'
 import { fnFilterPostLabels } from '~/utils/utils'
 import { OMITTED_LABELS, POSTS_LABELS_CONFIG } from '~/data/default-data'
 
@@ -179,7 +179,7 @@ export default {
     return {
       titlePage: '',
       error: {
-        message: '404'
+        message: responseCodes.notFound.code
       },
       titleText: 'Title post',
       descriptionText: 'Description post',
@@ -243,7 +243,7 @@ export default {
         })
         .catch(error => {
           this.error = { message: `${error}` }
-          this.titlePage = errorHandler(this.error).message
+          this.titlePage = responseCodesHandler(this.error).message
         })
     } else {
       this.setPost()
@@ -314,7 +314,9 @@ export default {
       )
       this.blogText = _.get(post.post, 'content', this.blogText)
 
-      this.titlePage = post ? post.post.title : errorHandler(this.error).message
+      this.titlePage = post
+        ? post.post.title
+        : responseCodesHandler(this.error).message
     },
     publish(type = 'public') {
       const fn = this
@@ -356,7 +358,8 @@ export default {
               group: 'foo',
               title: 'Sucess',
               type: 'success',
-              text: errorHandler({ message: `${result.status}` }).message
+              text: responseCodesHandler({ message: `${result.status}` })
+                .message
             })
             this.$router.push('/posts/dashboard')
           })
@@ -365,7 +368,7 @@ export default {
               group: 'foo',
               title: 'Error',
               type: 'error',
-              text: errorHandler({ message: `${error}` }).message
+              text: responseCodesHandler({ message: `${error}` }).message
             })
             this.showLoading = false
           })
@@ -376,7 +379,8 @@ export default {
               group: 'foo',
               title: 'Sucess',
               type: 'success',
-              text: errorHandler({ message: `${result.status}` }).message
+              text: responseCodesHandler({ message: `${result.status}` })
+                .message
             })
             this.$router.push('/posts/dashboard')
           })
@@ -385,7 +389,7 @@ export default {
               group: 'foo',
               title: 'Error',
               type: 'error',
-              text: errorHandler({ message: `${error}` }).message
+              text: responseCodesHandler({ message: `${error}` }).message
             })
             this.showLoading = false
           })

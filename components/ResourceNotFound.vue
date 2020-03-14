@@ -244,7 +244,7 @@
 </template>
 
 <script>
-import { errorHandler } from '~/utils/validate-errors'
+import { responseCodesHandler } from '~/utils/validate-errors'
 
 export default {
   props: {
@@ -265,7 +265,7 @@ export default {
     }
   },
   mounted() {
-    this.err = errorHandler(this.error)
+    this.err = responseCodesHandler(this.error)
   },
   head() {
     return {

@@ -27,6 +27,7 @@ import _ from 'lodash'
 import { mapState, mapActions } from 'vuex'
 
 import { PAGINATION } from '~/data/default-data'
+import { responseCodes } from '~/utils/validate-errors'
 import PostCard from '~/components/post/PostCard.vue'
 import PaginationHead from '~/components/post/PaginationHead.vue'
 import PaginationBar from '~/components/post/PaginationBar.vue'
@@ -46,7 +47,7 @@ export default {
   data() {
     return {
       error: {
-        message: '404'
+        message: responseCodes.noContent.code
       },
       queryTags: '',
       elementsPerPage: _.get(

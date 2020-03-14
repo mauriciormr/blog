@@ -33,7 +33,7 @@
 import _ from 'lodash'
 
 import { mapState, mapActions } from 'vuex'
-import { errorHandler } from '~/utils/validate-errors'
+import { responseCodesHandler } from '~/utils/validate-errors'
 import ResourceNotFound from '~/components/ResourceNotFound.vue'
 
 export default {
@@ -67,7 +67,7 @@ export default {
   mounted() {
     this.titlePage = this.post
       ? this.post.post.title
-      : errorHandler(new Error(this.statusCode)).message
+      : responseCodesHandler(new Error(this.statusCode)).message
   },
   methods: {
     ...mapActions({

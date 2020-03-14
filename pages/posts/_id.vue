@@ -19,7 +19,7 @@ import _ from 'lodash'
 import moment from 'moment'
 
 import { mapState, mapActions } from 'vuex'
-import { errorHandler } from '~/utils/validate-errors'
+import { responseCodesHandler } from '~/utils/validate-errors'
 import { fnFilterPostLabels } from '~/utils/utils'
 import { OMITTED_LABELS, POSTS_DATA } from '~/data/default-data'
 
@@ -121,7 +121,7 @@ export default {
       })
       .catch(error => {
         this.error = { message: `${error}` }
-        this.titlePage = errorHandler(this.error).message
+        this.titlePage = responseCodesHandler(this.error).message
       })
   },
   methods: {

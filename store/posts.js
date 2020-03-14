@@ -39,6 +39,7 @@ import {
   DELETE_PRIVATE_POST_FULFILLED
 } from '../data/mutation-types'
 import reactionTypes from '../data/reaction-types'
+import { responseCodes } from '~/utils/validate-errors'
 import { fnFilterPostLabels } from '~/utils/utils'
 import { POSTS_LABELS_CONFIG } from '~/data/default-data'
 
@@ -639,7 +640,7 @@ export const actions = {
       await dispatch('getReactionsPostsList', type)
       await dispatch('getLabelsList')
 
-      return Promise.resolve({ status: '200' })
+      return Promise.resolve({ status: responseCodes.OK.code })
     } catch (error) {
       dispatch(`get${flagType}PostsListRejected`, error)
       this.$errorGlobalHandler({ message: `${error}` })
@@ -710,7 +711,7 @@ export const actions = {
       }
 
       await dispatch('getPostFulfilled', formattedPost)
-      return Promise.resolve({ status: '200' })
+      return Promise.resolve({ status: responseCodes.OK.code })
     } catch (error) {
       await dispatch('getPostRejected', error)
       return Promise.reject(error)
@@ -765,7 +766,7 @@ export const actions = {
             `get${flagType}ReactionsPostsListFulfilled`,
             _.orderBy(postsWithReactions, ['number'], ['desc'])
           )
-          return Promise.resolve({ status: '200' })
+          return Promise.resolve({ status: responseCodes.OK.code })
         }
       )
     } catch (error) {
@@ -872,7 +873,7 @@ export const actions = {
         idReaction,
         indexReaction
       })
-      return Promise.resolve({ status: '200' })
+      return Promise.resolve()
     } catch (error) {
       dispatch('deleteRemoveReactionRejected', error)
       return Promise.reject(error)
@@ -962,7 +963,7 @@ export const actions = {
       const { url } = author
       const user = await this.$axios.$get(url)
       await dispatch('setAuthorPostViewFulfilled', user)
-      return Promise.resolve({ status: '200' })
+      return Promise.resolve({ status: responseCodes.OK.code })
     } catch (error) {
       await dispatch('setAuthorPostViewRejected', error)
       return Promise.reject(error)
