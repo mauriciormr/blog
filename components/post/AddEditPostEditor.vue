@@ -197,7 +197,8 @@ export default {
     ...mapState({
       post: state => state.posts.postView.post,
       adminLabels: state => state.posts.adminLabels,
-      isDataPending: state => state.posts.status.get.isPublicPending
+      isDataPending: state => state.posts.status.get.isPublicPending,
+      lang: state => state.lang.lang
     }),
     compiledTitleMarkdown() {
       return this.$markdownit.renderInline(this.titleText)
@@ -243,7 +244,7 @@ export default {
         })
         .catch(error => {
           this.error = { message: `${error}` }
-          this.titlePage = responseCodesHandler(this.error).message
+          this.titlePage = responseCodesHandler(this.error, this.lang).message
         })
     } else {
       this.setPost()
@@ -316,7 +317,7 @@ export default {
 
       this.titlePage = post
         ? post.post.title
-        : responseCodesHandler(this.error).message
+        : responseCodesHandler(this.error, this.lang).message
     },
     publish(type = 'public') {
       const fn = this
@@ -358,8 +359,10 @@ export default {
               group: 'foo',
               title: 'Sucess',
               type: 'success',
-              text: responseCodesHandler({ message: `${result.status}` })
-                .message
+              text: responseCodesHandler(
+                { message: `${result.status}` },
+                this.lang
+              ).message
             })
             this.$router.push('/posts/dashboard')
           })
@@ -368,7 +371,8 @@ export default {
               group: 'foo',
               title: 'Error',
               type: 'error',
-              text: responseCodesHandler({ message: `${error}` }).message
+              text: responseCodesHandler({ message: `${error}` }, this.lang)
+                .message
             })
             this.showLoading = false
           })
@@ -379,8 +383,10 @@ export default {
               group: 'foo',
               title: 'Sucess',
               type: 'success',
-              text: responseCodesHandler({ message: `${result.status}` })
-                .message
+              text: responseCodesHandler(
+                { message: `${result.status}` },
+                this.lang
+              ).message
             })
             this.$router.push('/posts/dashboard')
           })
@@ -389,7 +395,8 @@ export default {
               group: 'foo',
               title: 'Error',
               type: 'error',
-              text: responseCodesHandler({ message: `${error}` }).message
+              text: responseCodesHandler({ message: `${error}` }, this.lang)
+                .message
             })
             this.showLoading = false
           })

@@ -643,8 +643,7 @@ export const actions = {
       return Promise.resolve({ status: responseCodes.OK.code })
     } catch (error) {
       dispatch(`get${flagType}PostsListRejected`, error)
-      this.$errorGlobalHandler({ message: `${error}` })
-      return Promise.reject(error)
+      this.$errorGlobalHandler({ message: `${error}` }, rootState.lang.lang)
     }
   },
   async getPost(
@@ -771,8 +770,7 @@ export const actions = {
       )
     } catch (error) {
       dispatch(`get${flagType}ReactionsPostsListRejected`, error)
-      this.$errorGlobalHandler({ message: `${error}` })
-      return Promise.reject(error)
+      this.$errorGlobalHandler({ message: `${error}` }, rootState.lang.lang)
     }
   },
   async getLabelsList({ dispatch, $axios }) {
@@ -914,7 +912,7 @@ export const actions = {
       return Promise.resolve(result)
     } catch (error) {
       await dispatch('postAddPostRejected', error)
-      this.$errorGlobalHandler({ message: `${error}` })
+      this.$errorGlobalHandler({ message: `${error}` }, rootState.lang.lang)
       return Promise.reject(error)
     }
   },
@@ -953,7 +951,7 @@ export const actions = {
       return Promise.resolve(result)
     } catch (error) {
       await dispatch('patchUpdatePostRejected', error)
-      this.$errorGlobalHandler({ message: `${error}` })
+      this.$errorGlobalHandler({ message: `${error}` }, rootState.lang.lang)
       return Promise.reject(error)
     }
   },
@@ -986,7 +984,7 @@ export const actions = {
       return Promise.resolve(result)
     } catch (error) {
       await dispatch('deletePrivatePostRejected', error)
-      this.$errorGlobalHandler({ message: `${error}` })
+      this.$errorGlobalHandler({ message: `${error}` }, rootState.lang.lang)
       return Promise.reject(error)
     }
   }

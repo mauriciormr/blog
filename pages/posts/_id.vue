@@ -49,7 +49,8 @@ export default {
       posts: state => state.posts.publicList,
       isDataPending: state => state.posts.status.get.isPublicPending,
       author: state => state.posts.postView.author,
-      post: state => state.posts.postView.post
+      post: state => state.posts.postView.post,
+      lang: state => state.lang.lang
     }),
     customObjectPost() {
       if (Object.keys(this.post).length > 0) {
@@ -121,7 +122,7 @@ export default {
       })
       .catch(error => {
         this.error = { message: `${error}` }
-        this.titlePage = responseCodesHandler(this.error).message
+        this.titlePage = responseCodesHandler(this.error, this.lang).message
       })
   },
   methods: {

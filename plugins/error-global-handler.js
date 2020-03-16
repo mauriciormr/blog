@@ -1,5 +1,7 @@
 import { responseCodesHandler } from '../utils/validate-errors'
 
 export default ({ error }, inject) => {
-  inject('errorGlobalHandler', err => error(responseCodesHandler(err)))
+  inject('errorGlobalHandler', (err, lang) =>
+    error(responseCodesHandler(err, lang))
+  )
 }

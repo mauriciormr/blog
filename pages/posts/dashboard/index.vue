@@ -86,7 +86,8 @@ export default {
     ...mapState({
       posts: state => state.posts.privateList,
       countPosts: state => state.posts.countPrivate,
-      isDataPending: state => state.posts.status.get.isPrivatePending
+      isDataPending: state => state.posts.status.get.isPrivatePending,
+      lang: state => state.lang.lang
     }),
     pagesToPagination() {
       const numberOfPages = Math.ceil(this.countPosts / this.elementsPerPage)
@@ -148,7 +149,10 @@ export default {
             group: 'foo',
             title: 'Sucess',
             type: 'success',
-            text: responseCodesHandler({ message: `${result.status}` }).message
+            text: responseCodesHandler(
+              { message: `${result.status}` },
+              this.lang
+            ).message
           })
           setTimeout(() => window.location.reload(true), 500)
         })
@@ -157,7 +161,8 @@ export default {
             group: 'foo',
             title: 'Error',
             type: 'error',
-            text: responseCodesHandler({ message: `${error}` }).message
+            text: responseCodesHandler({ message: `${error}` }, this.lang)
+              .message
           })
           fn.closeModalDeletePost()
         })

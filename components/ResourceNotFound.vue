@@ -244,6 +244,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import { responseCodesHandler } from '~/utils/validate-errors'
 
 export default {
@@ -256,7 +257,7 @@ export default {
     showCode: {
       type: Boolean,
       required: false,
-      default: true
+      default: false
     }
   },
   data() {
@@ -264,8 +265,13 @@ export default {
       err: {}
     }
   },
+  computed: {
+    ...mapState({
+      lang: state => state.lang.lang
+    })
+  },
   mounted() {
-    this.err = responseCodesHandler(this.error)
+    this.err = responseCodesHandler(this.error, this.lang)
   },
   head() {
     return {
