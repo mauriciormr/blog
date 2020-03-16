@@ -49,7 +49,7 @@ import _ from 'lodash'
 import { mapState, mapActions } from 'vuex'
 
 import { PAGINATION } from '~/data/default-data'
-import { errorHandler } from '~/utils/validate-errors'
+import { responseCodesHandler, responseCodes } from '~/utils/validate-errors'
 import PostCard from '~/components/post/PostCard.vue'
 import PaginationHead from '~/components/post/PaginationHead.vue'
 import PaginationBar from '~/components/post/PaginationBar.vue'
@@ -71,7 +71,7 @@ export default {
   data() {
     return {
       error: {
-        message: '404'
+        message: responseCodes.noContent.code
       },
       showModalDelete: false,
       postToDelete: null,
@@ -86,7 +86,8 @@ export default {
     ...mapState({
       posts: state => state.posts.privateList,
       countPosts: state => state.posts.countPrivate,
-      isDataPending: state => state.posts.status.get.isPrivatePending
+      isDataPending: state => state.posts.status.get.isPrivatePending,
+      lang: state => state.lang.lang
     }),
     pagesToPagination() {
       const numberOfPages = Math.ceil(this.countPosts / this.elementsPerPage)
@@ -148,7 +149,10 @@ export default {
             group: 'foo',
             title: 'Sucess',
             type: 'success',
-            text: errorHandler({ message: `${result.status}` }).message
+            text: responseCodesHandler(
+              { message: `${result.status}` },
+              this.lang
+            ).message
           })
           setTimeout(() => window.location.reload(true), 500)
         })
@@ -157,7 +161,8 @@ export default {
             group: 'foo',
             title: 'Error',
             type: 'error',
-            text: errorHandler({ message: `${error}` }).message
+            text: responseCodesHandler({ message: `${error}` }, this.lang)
+              .message
           })
           fn.closeModalDeletePost()
         })

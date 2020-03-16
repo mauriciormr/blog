@@ -19,9 +19,9 @@ import _ from 'lodash'
 import moment from 'moment'
 
 import { mapState, mapActions } from 'vuex'
-import { errorHandler } from '~/utils/validate-errors'
+import { responseCodesHandler } from '~/utils/validate-errors'
 import { fnFilterPostLabels } from '~/utils/utils'
-import { OMITTED_LABELS } from '~/data/default-data'
+import { OMITTED_LABELS, POSTS_DATA } from '~/data/default-data'
 
 import ResourceNotFound from '~/components/ResourceNotFound.vue'
 import Loading from '~/components/Loading.vue'
@@ -49,7 +49,8 @@ export default {
       posts: state => state.posts.publicList,
       isDataPending: state => state.posts.status.get.isPublicPending,
       author: state => state.posts.postView.author,
-      post: state => state.posts.postView.post
+      post: state => state.posts.postView.post,
+      lang: state => state.lang.lang
     }),
     customObjectPost() {
       if (Object.keys(this.post).length > 0) {
@@ -77,25 +78,51 @@ export default {
       }
       return {}
     },
+    objectPostMetadata() {
+      let host = ''
+
+      // https://nuxtjs.org/faq/window-document-undefined/
+      if (process.client) {
+        host = window.location.hostname
+      }
+
+      if (Object.keys(this.post).length > 0) {
+        const postCover = _.get(this.post.post, 'coverBlog', '').trim()
+        return {
+          title: this.post.post.title,
+          description: this.post.post.description,
+          coverMeta: !postCover ? POSTS_DATA.coverList : postCover,
+          url: host
+        }
+      }
+
+      return {
+        title: '',
+        description: '',
+        coverMeta: POSTS_DATA.coverList,
+        url: host
+      }
+    },
     postProcessed() {
       return Object.keys(this.post).length > 0
     }
   },
   asyncData({ params }) {
+    const issue = /i(\d+)/.exec(params.id)[1]
     return {
-      postNumber: params.id
+      postNumber: issue
     }
   },
   mounted() {
     this.resetAuthorPostView()
-    this.getPost(this.postNumber)
+    this.getPost({ type: 'public', postNumber: this.postNumber })
       .then(() => {
         this.updateAuthorPostView(this.post.user)
         this.titlePage = this.post.post.title
       })
       .catch(error => {
         this.error = { message: `${error}` }
-        this.titlePage = errorHandler(this.error).message
+        this.titlePage = responseCodesHandler(this.error, this.lang).message
       })
   },
   methods: {
@@ -108,7 +135,58 @@ export default {
   },
   head() {
     return {
-      title: this.titlePage
+      title: this.titlePage,
+      meta: [
+        { hid: 'title', name: 'title', content: this.objectPostMetadata.title },
+        {
+          hid: 'description',
+          name: 'description',
+          content: this.objectPostMetadata.description
+        },
+        // Open Graph / Facebook
+        { hid: 'og:url', name: 'og:url', content: this.objectPostMetadata.url },
+        {
+          hid: 'og:title',
+          name: 'og:title',
+          content: this.objectPostMetadata.title
+        },
+        {
+          hid: 'og:description',
+          name: 'og:description',
+          content: this.objectPostMetadata.description
+        },
+        {
+          hid: 'og:image',
+          name: 'og:image',
+          content: this.objectPostMetadata.coverMeta
+        },
+        // Twitter
+        {
+          hid: 'twitter:card',
+          name: 'twitter:card',
+          content: 'summary_large_image'
+        },
+        {
+          hid: 'twitter:url',
+          name: 'twitter:url',
+          content: this.objectPostMetadata.url
+        },
+        {
+          hid: 'twitter:title',
+          name: 'twitter:title',
+          content: this.objectPostMetadata.title
+        },
+        {
+          hid: 'twitter:description',
+          name: 'twitter:description',
+          content: this.objectPostMetadata.description
+        },
+        {
+          hid: 'twitter:image',
+          name: 'twitter:image',
+          content: this.objectPostMetadata.coverMeta
+        }
+      ]
     }
   }
 }

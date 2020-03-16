@@ -39,6 +39,17 @@
               {{ link.name }}
             </nuxt-link>
           </li>
+          <li class="nav__list__item nav__list__item__lang">
+            <select :value="langVuex" class="nav__list__item__lang__select">
+              <option v-for="lang in langs" @click="setPageLanguage(lang)">
+                {{ lang }}
+              </option>
+            </select>
+            <i
+              class="fa fa-angle-down nav__list__item-dropdown__arrow"
+              aria-hidden="true"
+            />
+          </li>
           <li
             v-if="user.logged"
             @click="openCloseDropdown()"
@@ -82,8 +93,9 @@
 
 <script>
 import _ from 'lodash'
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import { HEADER_LINKS, ADMIN_HEADER_LINKS } from '~/data/config'
+import { AVAILABLE_LANGS } from '~/data/default-data'
 
 export default {
   data() {
@@ -104,15 +116,20 @@ export default {
       ),
       adminLinks: _.filter(ADMIN_HEADER_LINKS, link =>
         _.get(link, 'show', false)
-      )
+      ),
+      langs: AVAILABLE_LANGS
     }
   },
   computed: {
     ...mapState({
-      user: state => state.users.user
+      user: state => state.users.user,
+      langVuex: state => state.lang.lang
     })
   },
   methods: {
+    ...mapActions({
+      setPageLanguage: 'lang/setPageLanguage'
+    }),
     openClose() {
       this.isOpen = !this.isOpen
     },
@@ -190,6 +207,15 @@ export default {
 
     &__item:last-child::after {
       height: 0px;
+    }
+
+    &__item__lang {
+      @apply flex items-center justify-center;
+
+      &__select {
+        @apply appearance-none cursor-pointer;
+        @apply bg-primary;
+      }
     }
 
     &__item-dropdown {

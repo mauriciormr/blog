@@ -33,7 +33,7 @@
 import _ from 'lodash'
 
 import { mapState, mapActions } from 'vuex'
-import { errorHandler } from '~/utils/validate-errors'
+import { responseCodesHandler } from '~/utils/validate-errors'
 import ResourceNotFound from '~/components/ResourceNotFound.vue'
 
 export default {
@@ -50,7 +50,8 @@ export default {
   computed: {
     ...mapState({
       posts: state => state.posts.privateList,
-      isDataPending: state => state.posts.status.get.isPrivatePending
+      isDataPending: state => state.posts.status.get.isPrivatePending,
+      lang: state => state.lang.lang
     }),
     post() {
       return _.find(this.posts, { number: +this.postNumber })
@@ -67,7 +68,7 @@ export default {
   mounted() {
     this.titlePage = this.post
       ? this.post.post.title
-      : errorHandler(new Error(this.statusCode)).message
+      : responseCodesHandler(new Error(this.statusCode), this.lang).message
   },
   methods: {
     ...mapActions({

@@ -5,7 +5,7 @@
       class="loading"
     />
     <ResourceNotFound
-      v-else-if="!post && typeAction === 'edit'"
+      v-else-if="Object.keys(post).length === 0 && typeAction === 'edit'"
       :error="error"
     />
     <div v-else class="post-editor">
@@ -145,7 +145,7 @@ import _ from 'lodash'
 import moment from 'moment'
 
 import { mapActions, mapState } from 'vuex'
-import { errorHandler } from '~/utils/validate-errors'
+import { responseCodesHandler, responseCodes } from '~/utils/validate-errors'
 import { fnFilterPostLabels } from '~/utils/utils'
 import { OMITTED_LABELS, POSTS_LABELS_CONFIG } from '~/data/default-data'
 
@@ -179,7 +179,7 @@ export default {
     return {
       titlePage: '',
       error: {
-        message: '404'
+        message: responseCodes.notFound.code
       },
       titleText: 'Title post',
       descriptionText: 'Description post',
@@ -197,7 +197,8 @@ export default {
     ...mapState({
       post: state => state.posts.postView.post,
       adminLabels: state => state.posts.adminLabels,
-      isDataPending: state => state.posts.status.get.isPublicPending
+      isDataPending: state => state.posts.status.get.isPublicPending,
+      lang: state => state.lang.lang
     }),
     compiledTitleMarkdown() {
       return this.$markdownit.renderInline(this.titleText)
@@ -237,13 +238,13 @@ export default {
   mounted() {
     this.getPrivateLabelsList()
     if (this.typeAction === 'edit') {
-      this.getPost(this.postNumber)
+      this.getPost({ type: 'private', postNumber: this.postNumber })
         .then(() => {
           this.formatPost(this.post)
         })
         .catch(error => {
           this.error = { message: `${error}` }
-          this.titlePage = errorHandler(this.error).message
+          this.titlePage = responseCodesHandler(this.error, this.lang).message
         })
     } else {
       this.setPost()
@@ -314,7 +315,9 @@ export default {
       )
       this.blogText = _.get(post.post, 'content', this.blogText)
 
-      this.titlePage = post ? post.post.title : errorHandler(this.error).message
+      this.titlePage = post
+        ? post.post.title
+        : responseCodesHandler(this.error, this.lang).message
     },
     publish(type = 'public') {
       const fn = this
@@ -356,7 +359,10 @@ export default {
               group: 'foo',
               title: 'Sucess',
               type: 'success',
-              text: errorHandler({ message: `${result.status}` }).message
+              text: responseCodesHandler(
+                { message: `${result.status}` },
+                this.lang
+              ).message
             })
             this.$router.push('/posts/dashboard')
           })
@@ -365,7 +371,8 @@ export default {
               group: 'foo',
               title: 'Error',
               type: 'error',
-              text: errorHandler({ message: `${error}` }).message
+              text: responseCodesHandler({ message: `${error}` }, this.lang)
+                .message
             })
             this.showLoading = false
           })
@@ -376,7 +383,10 @@ export default {
               group: 'foo',
               title: 'Sucess',
               type: 'success',
-              text: errorHandler({ message: `${result.status}` }).message
+              text: responseCodesHandler(
+                { message: `${result.status}` },
+                this.lang
+              ).message
             })
             this.$router.push('/posts/dashboard')
           })
@@ -385,7 +395,8 @@ export default {
               group: 'foo',
               title: 'Error',
               type: 'error',
-              text: errorHandler({ message: `${error}` }).message
+              text: responseCodesHandler({ message: `${error}` }, this.lang)
+                .message
             })
             this.showLoading = false
           })

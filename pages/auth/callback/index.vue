@@ -243,7 +243,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 
 export default {
   data() {
@@ -252,6 +252,11 @@ export default {
       logged: false,
       error: {}
     }
+  },
+  computed: {
+    ...mapState({
+      lang: state => state.lang.lang
+    })
   },
   async asyncData({ query, $axios, redirect }) {
     try {
@@ -299,7 +304,7 @@ export default {
     }
 
     if (Object.keys(this.error).length > 0) {
-      this.$errorGlobalHandler(this.error)
+      this.$errorGlobalHandler(this.error, this.lang)
     }
   },
   methods: {

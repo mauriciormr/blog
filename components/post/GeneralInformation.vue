@@ -8,9 +8,9 @@
       <div class="general__tags-list">
         <span
           v-for="label in adminLabels"
-          @click="updateQuery(label.name)"
+          @click="addLabelToTheFilter(label.name)"
           :style="
-            existLabel(tagsToFilter, label.name)
+            existLabel(localTagsToFilter, label.name)
               ? `backgroundColor: #${label.color}`
               : ''
           "
@@ -18,6 +18,15 @@
         >
           #{{ label.name }}
         </span>
+      </div>
+      <div class="general__tags-list__filter">
+        <button
+          v-if="localTagsToFilter.length > 0"
+          @click="updateQuery"
+          class="button-primary general__tags-list__filter__button"
+        >
+          Filter
+        </button>
       </div>
     </div>
   </div>
@@ -38,6 +47,11 @@ export default {
       default: () => []
     }
   },
+  data() {
+    return {
+      localTagsToFilter: this.tagsToFilter
+    }
+  },
   computed: {
     ...mapState({
       adminLabels: state => state.posts.adminLabels,
@@ -45,19 +59,24 @@ export default {
     })
   },
   methods: {
-    updateQuery(labelName) {
-      let tagsCopy = [...this.tagsToFilter]
+    addLabelToTheFilter(labelName) {
+      const tagsCopy = [...this.localTagsToFilter]
       const isLabelAdded = this.existLabel(tagsCopy, labelName)
       if (isLabelAdded) {
         _.remove(tagsCopy, t => t === labelName)
-        tagsCopy = [...tagsCopy]
+        this.localTagsToFilter = [...tagsCopy]
       } else {
-        tagsCopy = [...tagsCopy, labelName]
+        this.localTagsToFilter = [...tagsCopy, labelName]
       }
-      this.$router.push(`?tags=${tagsCopy.join()}`)
+      if (this.localTagsToFilter.length === 0) {
+        this.$router.push(`?tags=`)
+      }
     },
     existLabel(tagsNames = [], tagNameToSearch = '') {
       return _.includes(tagsNames, tagNameToSearch)
+    },
+    updateQuery() {
+      this.$router.push(`?tags=${this.localTagsToFilter.join()}`)
     }
   }
 }
@@ -88,6 +107,18 @@ export default {
 
       &:hover {
         @apply bg-primarySelected;
+      }
+    }
+
+    &__filter {
+      @apply flex justify-end;
+
+      &__button {
+        @apply text-secondary;
+
+        &:hover {
+          @apply bg-primarySelected;
+        }
       }
     }
   }

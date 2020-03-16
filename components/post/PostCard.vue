@@ -1,6 +1,6 @@
 <template>
   <div class="post-card">
-    <nuxt-link :to="`/posts/${post.number}`" class="post-card__wrapper">
+    <nuxt-link :to="`/posts/${post.post.slug}`" class="post-card__wrapper">
       <div
         :style="`background-image: url('${cover}')`"
         class="post-card__cover"

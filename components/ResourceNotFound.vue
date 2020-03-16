@@ -244,7 +244,8 @@
 </template>
 
 <script>
-import { errorHandler } from '~/utils/validate-errors'
+import { mapState } from 'vuex'
+import { responseCodesHandler } from '~/utils/validate-errors'
 
 export default {
   props: {
@@ -256,7 +257,7 @@ export default {
     showCode: {
       type: Boolean,
       required: false,
-      default: true
+      default: false
     }
   },
   data() {
@@ -264,8 +265,13 @@ export default {
       err: {}
     }
   },
+  computed: {
+    ...mapState({
+      lang: state => state.lang.lang
+    })
+  },
   mounted() {
-    this.err = errorHandler(this.error)
+    this.err = responseCodesHandler(this.error, this.lang)
   },
   head() {
     return {

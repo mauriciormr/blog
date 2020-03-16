@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import stringPackage from 'string'
 import {
   GET_PUBLIC_POSTS_LIST_PENDING,
   GET_PUBLIC_POSTS_LIST_FULFILLED,
@@ -38,6 +39,7 @@ import {
   DELETE_PRIVATE_POST_FULFILLED
 } from '../data/mutation-types'
 import reactionTypes from '../data/reaction-types'
+import { responseCodes } from '~/utils/validate-errors'
 import { fnFilterPostLabels } from '~/utils/utils'
 import { POSTS_LABELS_CONFIG } from '~/data/default-data'
 
@@ -616,6 +618,9 @@ export const actions = {
           ...p,
           post: {
             ...postJSON,
+            slug: `i${p.number}-${stringPackage(postJSON.title)
+              .slugify()
+              .toString()}`,
             titleHTML: this.$markdownit.renderInline(postJSON.title),
             descriptionHTML: this.$markdownit.renderInline(
               postJSON.description
@@ -635,23 +640,29 @@ export const actions = {
       await dispatch('getReactionsPostsList', type)
       await dispatch('getLabelsList')
 
-      return Promise.resolve({ status: '200' })
+      return Promise.resolve({ status: responseCodes.OK.code })
     } catch (error) {
       dispatch(`get${flagType}PostsListRejected`, error)
-      this.$errorGlobalHandler({ message: `${error}` })
-      return Promise.reject(error)
+      this.$errorGlobalHandler({ message: `${error}` }, rootState.lang.lang)
     }
   },
-  async getPost({ dispatch, rootState }, postNumber) {
+  async getPost(
+    { dispatch, rootState },
+    { type = 'public', postNumber = 0 } = {}
+  ) {
     try {
       await dispatch('getPostPending')
 
       const post = await this.$axios.$get(`issues/${postNumber}`)
 
-      const isHidden = _.find(post.labels, { name: POSTS_LABELS_CONFIG.hidden })
-      const isClosed = post.state === 'closed'
-      if (isHidden || isClosed) {
-        throw new Error('404')
+      if (type === 'public') {
+        const isHidden = _.find(post.labels, {
+          name: POSTS_LABELS_CONFIG.hidden
+        })
+        const isClosed = post.state === 'closed'
+        if (isHidden || isClosed) {
+          throw new Error('404')
+        }
       }
 
       const postJSON = JSON.parse(post.title)
@@ -659,6 +670,9 @@ export const actions = {
         ...post,
         post: {
           ...postJSON,
+          slug: `i${post.number}-${stringPackage(postJSON.title)
+            .slugify()
+            .toString()}`,
           titleHTML: this.$markdownit.renderInline(postJSON.title),
           descriptionHTML: this.$markdownit.renderInline(postJSON.description),
           content: post.body,
@@ -696,7 +710,7 @@ export const actions = {
       }
 
       await dispatch('getPostFulfilled', formattedPost)
-      return Promise.resolve({ status: '200' })
+      return Promise.resolve({ status: responseCodes.OK.code })
     } catch (error) {
       await dispatch('getPostRejected', error)
       return Promise.reject(error)
@@ -751,13 +765,12 @@ export const actions = {
             `get${flagType}ReactionsPostsListFulfilled`,
             _.orderBy(postsWithReactions, ['number'], ['desc'])
           )
-          return Promise.resolve({ status: '200' })
+          return Promise.resolve({ status: responseCodes.OK.code })
         }
       )
     } catch (error) {
       dispatch(`get${flagType}ReactionsPostsListRejected`, error)
-      this.$errorGlobalHandler({ message: `${error}` })
-      return Promise.reject(error)
+      this.$errorGlobalHandler({ message: `${error}` }, rootState.lang.lang)
     }
   },
   async getLabelsList({ dispatch, $axios }) {
@@ -858,7 +871,7 @@ export const actions = {
         idReaction,
         indexReaction
       })
-      return Promise.resolve({ status: '200' })
+      return Promise.resolve()
     } catch (error) {
       dispatch('deleteRemoveReactionRejected', error)
       return Promise.reject(error)
@@ -899,7 +912,7 @@ export const actions = {
       return Promise.resolve(result)
     } catch (error) {
       await dispatch('postAddPostRejected', error)
-      this.$errorGlobalHandler({ message: `${error}` })
+      this.$errorGlobalHandler({ message: `${error}` }, rootState.lang.lang)
       return Promise.reject(error)
     }
   },
@@ -938,7 +951,7 @@ export const actions = {
       return Promise.resolve(result)
     } catch (error) {
       await dispatch('patchUpdatePostRejected', error)
-      this.$errorGlobalHandler({ message: `${error}` })
+      this.$errorGlobalHandler({ message: `${error}` }, rootState.lang.lang)
       return Promise.reject(error)
     }
   },
@@ -948,7 +961,7 @@ export const actions = {
       const { url } = author
       const user = await this.$axios.$get(url)
       await dispatch('setAuthorPostViewFulfilled', user)
-      return Promise.resolve({ status: '200' })
+      return Promise.resolve({ status: responseCodes.OK.code })
     } catch (error) {
       await dispatch('setAuthorPostViewRejected', error)
       return Promise.reject(error)
@@ -971,7 +984,7 @@ export const actions = {
       return Promise.resolve(result)
     } catch (error) {
       await dispatch('deletePrivatePostRejected', error)
-      this.$errorGlobalHandler({ message: `${error}` })
+      this.$errorGlobalHandler({ message: `${error}` }, rootState.lang.lang)
       return Promise.reject(error)
     }
   }

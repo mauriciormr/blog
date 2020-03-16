@@ -1,6 +1,8 @@
 const POSTS_DATA = {
-  coverList: '/img/meta/post_banner_default.jpg',
-  coverCEO: '/img/meta/post_banner_default.jpg',
+  coverList:
+    'https://user-images.githubusercontent.com/13499566/76646314-610fb680-6520-11ea-8151-71cb23be1112.jpg',
+  coverCEO:
+    'https://user-images.githubusercontent.com/13499566/76646314-610fb680-6520-11ea-8151-71cb23be1112.jpg',
   coverBlog: ''
 }
 
@@ -52,4 +54,12 @@ const PAGINATION = {
   maxItemsPaginationBar: 3
 }
 
-export { POSTS_DATA, OMITTED_LABELS, POSTS_LABELS_CONFIG, PAGINATION }
+const AVAILABLE_LANGS = ['en', 'es']
+
+export {
+  POSTS_DATA,
+  OMITTED_LABELS,
+  POSTS_LABELS_CONFIG,
+  PAGINATION,
+  AVAILABLE_LANGS
+}

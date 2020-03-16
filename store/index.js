@@ -10,10 +10,14 @@ export const actions = {
     const cookies = app.$cookies.get('vuex')
     if (cookies) {
       const {
-        users: { user }
+        users: { user },
+        lang: { lang }
       } = cookies
       if (user.logged) {
         dispatch('users/loginUser', user)
+      }
+      if (lang) {
+        dispatch('lang/setPageLanguage', lang)
       }
     }
   }
@@ -21,7 +25,7 @@ export const actions = {
 
 export const plugins = [
   createPersistedState({
-    paths: ['users'],
+    paths: ['users', 'lang'],
     storage: {
       getItem: key => Cookies.getJSON(key),
       setItem: (key, value) =>
