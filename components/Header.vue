@@ -26,7 +26,7 @@
             class="nav__list__item"
           >
             <nuxt-link :to="link.route">
-              {{ link.name }}
+              {{ link.name[`${langVuex}`] }}
             </nuxt-link>
           </li>
           <li
@@ -36,7 +36,7 @@
             class="nav__list__item"
           >
             <nuxt-link :to="link.route">
-              {{ link.name }}
+              {{ link.name[`${langVuex}`] }}
             </nuxt-link>
           </li>
           <li class="nav__list__item nav__list__item__lang">
@@ -77,10 +77,10 @@
                 class="nav__list__item-dropdown__list__item"
               >
                 <nuxt-link :to="link.route" v-if="link.route">
-                  <span>{{ link.name }}</span>
+                  <span>{{ link.name[`${langVuex}`] }}</span>
                 </nuxt-link>
                 <span v-else>
-                  {{ link.name }}
+                  {{ link.name[`${langVuex}`] }}
                 </span>
               </li>
             </ul>
