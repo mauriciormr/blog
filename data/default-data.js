@@ -167,6 +167,16 @@ const LABELS = {
         en: 'Search',
         es: 'Buscar'
       }
+    },
+    authorInformation: {
+      authorCardTitle: {
+        en: 'Author',
+        es: 'Autor'
+      },
+      authorCardButtonProfile: {
+        en: 'View profile',
+        es: 'Ver perfil'
+      }
     }
   },
   layouts: {}
