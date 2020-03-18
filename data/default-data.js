@@ -95,6 +95,72 @@ const LABELS = {
         en: 'Filter',
         es: 'Filtrar'
       }
+    },
+    addEditPostEditor: {
+      postEditorTitleAdd: {
+        en: 'Add publication',
+        es: 'Agregar publicación'
+      },
+      postEditorTitleEdit: {
+        en: 'Edit publication',
+        es: 'Editar publicación'
+      },
+      postEditorActionsCovers: {
+        en: 'Set covers',
+        es: 'Establecer covers'
+      },
+      postEditorActionsDraft: {
+        en: 'Save as draft',
+        es: 'Guardar como borrador'
+      },
+      postEditorActionsPublish: {
+        en: 'Publish',
+        es: 'Publicar'
+      },
+      postEditorMediaCoversCovers: {
+        en: 'Covers preview',
+        es: 'Visualizar covers'
+      },
+      postEditorMediaCoversFieldBlog: {
+        en: 'Cover blog',
+        es: 'Cover blog'
+      },
+      postEditorMediaCoversFieldBlogPlaceholder: {
+        en: 'URL main cover',
+        es: 'URL cover principal'
+      },
+      postEditorMediaCoversFieldSocial: {
+        en: 'Cover social media',
+        es: 'Cover redes sociales'
+      },
+      postEditorMediaCoversFieldSocialPlaceholder: {
+        en: 'URL cover CEO',
+        es: 'URL cover CEO'
+      },
+      postEditorContainerEditorFieldTitle: {
+        en: 'Title',
+        es: 'Título'
+      },
+      postEditorContainerEditorFieldTitlePlaceholder: {
+        en: 'Title post',
+        es: 'Título publicación'
+      },
+      postEditorContainerEditorFieldDescription: {
+        en: 'Description',
+        es: 'Descripción'
+      },
+      postEditorContainerEditorFieldDescriptionPlaceholder: {
+        en: 'Description post',
+        es: 'Descripción publicación'
+      },
+      postEditorContainerEditorFieldBlogTextPlaceholder: {
+        en: '# Content post',
+        es: '# Contenido publicación'
+      },
+      postEditorContainerEditorFieldTags: {
+        en: 'Tags',
+        es: 'Etiquetas'
+      }
     }
   },
   layouts: {}
