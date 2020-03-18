@@ -65,7 +65,22 @@ const LABELS = {
       }
     }
   },
-  components: {},
+  components: {
+    modalDeletePost: {
+      modalDeletePostMessage: {
+        en: 'Do you want delete this post?',
+        es: '¿Quieres borrar ésta publicación?'
+      },
+      modalDeleteActionsCancel: {
+        en: 'Cancel',
+        es: 'Cancelar'
+      },
+      modalDeleteActionsDelete: {
+        en: 'Delete',
+        es: 'Borrar'
+      }
+    }
+  },
   layouts: {}
 }
 
