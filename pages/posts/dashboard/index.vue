@@ -87,8 +87,12 @@ export default {
       posts: state => state.posts.privateList,
       countPosts: state => state.posts.countPrivate,
       isDataPending: state => state.posts.status.get.isPrivatePending,
-      lang: state => state.lang.lang
+      langVuex: state => state.lang.lang,
+      LABELS: state => state.lang.labels
     }),
+    LABELS_PAGES() {
+      return _.get(this.LABELS, 'pages.privatePublicationsList', {})
+    },
     pagesToPagination() {
       const numberOfPages = Math.ceil(this.countPosts / this.elementsPerPage)
 
@@ -151,7 +155,7 @@ export default {
             type: 'success',
             text: responseCodesHandler(
               { message: `${result.status}` },
-              this.lang
+              this.langVuex
             ).message
           })
           setTimeout(() => window.location.reload(true), 500)
@@ -161,7 +165,7 @@ export default {
             group: 'foo',
             title: 'Error',
             type: 'error',
-            text: responseCodesHandler({ message: `${error}` }, this.lang)
+            text: responseCodesHandler({ message: `${error}` }, this.langVuex)
               .message
           })
           fn.closeModalDeletePost()
@@ -170,7 +174,7 @@ export default {
   },
   head() {
     return {
-      title: 'Dashboard'
+      title: _.get(this.LABELS_PAGES, 'titlePage', '')
     }
   }
 }

@@ -58,10 +58,10 @@ const AVAILABLE_LANGS = ['en', 'es']
 
 const LABELS = {
   pages: {
-    publicPublicationsList: {
+    privatePublicationsList: {
       titlePage: {
-        en: 'Publications',
-        es: 'Publicaciones'
+        en: 'Administration dashboard',
+        es: 'Panel de administración'
       }
     }
   },
