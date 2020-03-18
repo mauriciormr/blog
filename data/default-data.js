@@ -56,10 +56,24 @@ const PAGINATION = {
 
 const AVAILABLE_LANGS = ['en', 'es']
 
+const LABELS = {
+  pages: {
+    publicPublicationsList: {
+      titlePage: {
+        en: 'Publications',
+        es: 'Publicaciones'
+      }
+    }
+  },
+  components: {},
+  layouts: {}
+}
+
 export {
   POSTS_DATA,
   OMITTED_LABELS,
   POSTS_LABELS_CONFIG,
   PAGINATION,
-  AVAILABLE_LANGS
+  AVAILABLE_LANGS,
+  LABELS
 }
