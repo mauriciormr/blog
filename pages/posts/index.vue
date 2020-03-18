@@ -60,8 +60,12 @@ export default {
     ...mapState({
       posts: state => state.posts.publicList,
       countPosts: state => state.posts.countPublic,
-      isDataPending: state => state.posts.status.get.isPublicPending
+      isDataPending: state => state.posts.status.get.isPublicPending,
+      LABELS: state => state.lang.labels
     }),
+    LABELS_PAGES() {
+      return _.get(this.LABELS, 'pages.publicPublicationsList', {})
+    },
     pagesToPagination() {
       const numberOfPages = Math.ceil(this.countPosts / this.elementsPerPage)
       let pages = []
@@ -107,7 +111,7 @@ export default {
   },
   head() {
     return {
-      title: 'Publications'
+      title: _.get(this.LABELS_PAGES, 'titlePage', '')
     }
   }
 }

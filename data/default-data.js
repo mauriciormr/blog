@@ -63,6 +63,12 @@ const LABELS = {
         en: 'Administration dashboard',
         es: 'Panel de administración'
       }
+    },
+    publicPublicationsList: {
+      titlePage: {
+        en: 'Publications',
+        es: 'Publicaciones'
+      }
     }
   },
   components: {
