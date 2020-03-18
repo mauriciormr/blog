@@ -7,9 +7,6 @@
       </div>
       <div v-else>
         <div class="admin-posts-list__pagination-head">
-          <div class="admin-posts-list__pagination-head__message">
-            <span>~{{ countPosts }} elements found</span>
-          </div>
           <PaginationHead
             :elementsPerPage="elementsPerPage"
             class="admin-posts-list__pagination-head__select"
@@ -123,10 +120,6 @@ export default {
     @apply flex justify-end items-center;
     @apply text-baseSize font-raleway text-secondary;
     @apply mb-4;
-
-    &__message {
-      @apply mr-4;
-    }
 
     &__select {
       @apply w-3/12;
