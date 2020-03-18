@@ -161,6 +161,12 @@ const LABELS = {
         en: 'Tags',
         es: 'Etiquetas'
       }
+    },
+    searchBar: {
+      searchBarInputPlaceholder: {
+        en: 'Search',
+        es: 'Buscar'
+      }
     }
   },
   layouts: {}
