@@ -3,7 +3,7 @@
     <Loading v-if="isDataPending" class="loading" />
     <div v-else class="general">
       <h2 class="general__title">
-        Categories
+        {{ LABELS_PAGES.generalTitle }}
       </h2>
       <div class="general__tags-list">
         <span
@@ -25,7 +25,7 @@
           @click="updateQuery"
           class="button-primary general__tags-list__filter__button"
         >
-          Filter
+          {{ LABELS_PAGES.generalTagsListFilterButton }}
         </button>
       </div>
     </div>
@@ -55,8 +55,12 @@ export default {
   computed: {
     ...mapState({
       adminLabels: state => state.posts.adminLabels,
-      isDataPending: state => state.posts.status.get.isLabelPending
-    })
+      isDataPending: state => state.posts.status.get.isLabelPending,
+      LABELS: state => state.lang.labels
+    }),
+    LABELS_PAGES() {
+      return _.get(this.LABELS, 'components.generalInformation', {})
+    }
   },
   methods: {
     addLabelToTheFilter(labelName) {

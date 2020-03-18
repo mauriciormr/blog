@@ -85,6 +85,16 @@ const LABELS = {
         en: 'Delete',
         es: 'Borrar'
       }
+    },
+    generalInformation: {
+      generalTitle: {
+        en: 'Categories',
+        es: 'Categorías'
+      },
+      generalTagsListFilterButton: {
+        en: 'Filter',
+        es: 'Filtrar'
+      }
     }
   },
   layouts: {}
