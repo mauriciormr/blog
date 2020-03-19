@@ -8,7 +8,9 @@
       <div v-else>
         <div class="modal-delete__post">
           <div class="modal-delete__post__message">
-            <span>Do you want delete this post?</span>
+            <span>
+              {{ LABELS_COMPONENTS.modalDeletePostMessage }}
+            </span>
           </div>
           <div v-html="post.post.titleHTML" class="modal-delete__post__title" />
           <div
@@ -18,10 +20,10 @@
         </div>
         <div class="modal-delete__actions">
           <button @click="closeModal" class="button-secondary --big">
-            Cancel
+            {{ LABELS_COMPONENTS.modalDeleteActionsCancel }}
           </button>
           <button @click="deletePost(post.number)" class="button-primary --big">
-            Delete
+            {{ LABELS_COMPONENTS.modalDeleteActionsDelete }}
           </button>
         </div>
       </div>
@@ -30,6 +32,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import { mapState } from 'vuex'
 
 import Loading from '~/components/Loading.vue'
@@ -48,8 +51,12 @@ export default {
   computed: {
     ...mapState({
       isDataPending: state => state.posts.status.delete.isPending,
-      isDataFulfilled: state => state.posts.status.delete.isFulfilled
-    })
+      isDataFulfilled: state => state.posts.status.delete.isFulfilled,
+      LABELS: state => state.lang.labels
+    }),
+    LABELS_COMPONENTS() {
+      return _.get(this.LABELS, 'components.modalDeletePost', {})
+    }
   },
   methods: {
     closeModal() {

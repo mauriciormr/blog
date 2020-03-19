@@ -11,9 +11,12 @@
           </h1>
         </div>
         <div class="cover__letters__role">
-          <h2>{{ USER.role }}</h2>
+          <h2>{{ USER.role[`${langVuex}`] }}</h2>
         </div>
-        <div v-html="USER.quote" class="cover__letters__quote container" />
+        <div
+          v-html="USER.quote[`${langVuex}`]"
+          class="cover__letters__quote container"
+        />
         <div class="cover__social__icons-abs-container container">
           <SocialIcon
             v-for="social in USER.social"
@@ -57,7 +60,8 @@ export default {
   },
   computed: {
     ...mapState({
-      user: state => state.users.user
+      user: state => state.users.user,
+      langVuex: state => state.lang.lang
     })
   },
   methods: {

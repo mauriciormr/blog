@@ -7,9 +7,6 @@
       </div>
       <div v-else>
         <div class="admin-posts-list__pagination-head">
-          <div class="admin-posts-list__pagination-head__message">
-            <span>~{{ countPosts }} elements found</span>
-          </div>
           <PaginationHead
             :elementsPerPage="elementsPerPage"
             class="admin-posts-list__pagination-head__select"
@@ -60,8 +57,12 @@ export default {
     ...mapState({
       posts: state => state.posts.publicList,
       countPosts: state => state.posts.countPublic,
-      isDataPending: state => state.posts.status.get.isPublicPending
+      isDataPending: state => state.posts.status.get.isPublicPending,
+      LABELS: state => state.lang.labels
     }),
+    LABELS_PAGES() {
+      return _.get(this.LABELS, 'pages.publicPublicationsList', {})
+    },
     pagesToPagination() {
       const numberOfPages = Math.ceil(this.countPosts / this.elementsPerPage)
       let pages = []
@@ -107,7 +108,7 @@ export default {
   },
   head() {
     return {
-      title: 'Publications'
+      title: _.get(this.LABELS_PAGES, 'titlePage', '')
     }
   }
 }
@@ -119,10 +120,6 @@ export default {
     @apply flex justify-end items-center;
     @apply text-baseSize font-raleway text-secondary;
     @apply mb-4;
-
-    &__message {
-      @apply mr-4;
-    }
 
     &__select {
       @apply w-3/12;

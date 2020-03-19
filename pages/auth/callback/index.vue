@@ -238,11 +238,14 @@
         fill="#be7c5e"
       />
     </svg>
-    <span class="callback__message">Authentication in process...</span>
+    <span class="callback__message">
+      {{ LABELS_PAGES.callbackMessage }}
+    </span>
   </div>
 </template>
 
 <script>
+import _ from 'lodash'
 import { mapActions, mapState } from 'vuex'
 
 export default {
@@ -255,8 +258,12 @@ export default {
   },
   computed: {
     ...mapState({
-      lang: state => state.lang.lang
-    })
+      lang: state => state.lang.lang,
+      LABELS: state => state.lang.labels
+    }),
+    LABELS_PAGES() {
+      return _.get(this.LABELS, 'pages.callback', {})
+    }
   },
   async asyncData({ query, $axios, redirect }) {
     try {
@@ -314,7 +321,7 @@ export default {
   },
   head() {
     return {
-      title: 'Authentification'
+      title: this.LABELS_PAGES.callbackTitle
     }
   }
 }

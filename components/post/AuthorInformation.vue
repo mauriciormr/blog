@@ -3,7 +3,9 @@
     <div v-if="Object.keys(post).length > 0">
       <Loading v-if="isAuthorPending" class="loading" />
       <div v-else class="author-card">
-        <span class="author-card__title">AUTHOR</span>
+        <span class="author-card__title">
+          {{ LABELS_PAGES.authorCardTitle }}
+        </span>
         <img
           :src="author.avatar_url"
           :alt="author.name"
@@ -56,14 +58,18 @@
             class="fa fa-github author-card__button-profile__icon"
             aria-hidden="true"
           />
-          <span>View Profile</span>
+          <span>
+            {{ LABELS_PAGES.authorCardButtonProfile }}
+          </span>
         </a>
       </div>
     </div>
   </div>
 </template>
 <script>
+import _ from 'lodash'
 import { mapState } from 'vuex'
+
 import Loading from '~/components/Loading.vue'
 
 export default {
@@ -72,8 +78,12 @@ export default {
     ...mapState({
       author: state => state.posts.postView.author,
       post: state => state.posts.postView.post,
-      isAuthorPending: state => state.posts.status.get.isAuthorPending
-    })
+      isAuthorPending: state => state.posts.status.get.isAuthorPending,
+      LABELS: state => state.lang.labels
+    }),
+    LABELS_PAGES() {
+      return _.get(this.LABELS, 'components.authorInformation', {})
+    }
   }
 }
 </script>

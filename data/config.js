@@ -1,24 +1,36 @@
 const HEADER_LINKS = [
   {
-    name: 'Home',
+    name: {
+      en: 'Home',
+      es: 'Inicio'
+    },
     route: '/',
     show: true,
     showWhenUserIsLogged: true
   },
   {
-    name: 'About me',
+    name: {
+      en: 'About me',
+      es: 'Sobre mí'
+    },
     route: '/posts/',
     show: true,
     showWhenUserIsLogged: true
   },
   {
-    name: 'Blog',
+    name: {
+      en: 'Blog',
+      es: 'Blog'
+    },
     route: '/posts/',
     show: true,
     showWhenUserIsLogged: true
   },
   {
-    name: 'Login',
+    name: {
+      en: 'Login',
+      es: 'Iniciar Sesión'
+    },
     route: '/login/',
     show: true,
     showWhenUserIsLogged: false
@@ -27,13 +39,19 @@ const HEADER_LINKS = [
 
 const ADMIN_HEADER_LINKS = [
   {
-    name: 'My publications',
+    name: {
+      en: 'My publications',
+      es: 'Mis publicaciones'
+    },
     route: '/posts/dashboard',
     show: true,
     action: ''
   },
   {
-    name: 'Logout',
+    name: {
+      en: 'Logout',
+      es: 'Salir'
+    },
     route: '',
     show: true,
     //  - Vuex action -
@@ -45,9 +63,15 @@ const ADMIN_HEADER_LINKS = [
 const USER_INFORMATION = {
   name: 'Nombre',
   lastname: 'Apellido',
-  role: 'ROL EN MAYUSCULA',
-  quote: `<p>Hola. ¡Mucho gusto!</p>
-          <p>Es un placer saludarte</p>`,
+  role: {
+    en: 'UPPERCASE ROLE',
+    es: 'ROL EN MAYUSCULA'
+  },
+  quote: {
+    en: `<p>Hi. ¡Nice to meet you!</p>`,
+    es: `<p>Hola. ¡Mucho gusto!</p>
+          <p>Es un placer saludarte</p>`
+  },
   social: {
     facebook: {
       link: 'https://facebook.com',

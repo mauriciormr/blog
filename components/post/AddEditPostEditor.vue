@@ -11,44 +11,68 @@
     <div v-else class="post-editor">
       <div>
         <h2 class="post-editor__title">
-          Add publication
+          {{
+            typeAction === 'edit'
+              ? LABELS_PAGES.postEditorTitleEdit
+              : LABELS_PAGES.postEditorTitleAdd
+          }}
         </h2>
       </div>
       <div class="post-editor__actions">
-        <button @click="openCloseCovers()" class="button-secondary">
+        <button
+          @click="openCloseCovers()"
+          class="button-secondary post-editor__actions__covers"
+        >
           <i class="fa fa-picture-o" aria-hidden="true" />
-          Covers
+          {{ LABELS_PAGES.postEditorActionsCovers }}
         </button>
-        <button @click="publish('hidden')" class="button-secondary">
+        <button
+          @click="publish('hidden')"
+          class="button-secondary post-editor__actions__draft"
+        >
           <i class="fa fa-eye-slash" aria-hidden="true" />
-          Draft
+          {{ LABELS_PAGES.postEditorActionsDraft }}
         </button>
-        <button @click="publish('public')" class="button-primary">
+        <button
+          @click="publish('public')"
+          class="button-primary post-editor__actions__publish"
+        >
           <i class="fa fa-paper-plane-o" aria-hidden="true" />
-          Publish
+          {{ LABELS_PAGES.postEditorActionsPublish }}
         </button>
       </div>
       <div v-if="isOpenCovers" class="post-editor__media-covers">
-        <button @click="openCloseModalPreview" class="button-secondary --small">
+        <button
+          @click="openCloseModalPreview"
+          class="button-secondary --small post-editor__media-covers__covers"
+        >
           <i class="fa fa-file-image-o" aria-hidden="true" />
-          Covers preview
+          {{ LABELS_PAGES.postEditorMediaCoversCovers }}
         </button>
         <div class="post-editor__media-covers__field">
-          <label>Blog</label>
+          <label class="post-editor__media-covers__field__blog">
+            {{ LABELS_PAGES.postEditorMediaCoversFieldBlog }}
+          </label>
           <input
             v-model="coverBlog"
+            :placeholder="
+              LABELS_PAGES.postEditorMediaCoversFieldBlogPlaceholder
+            "
             type="text"
-            placeholder="URL cover principal"
-            class="input-text --small"
+            class="input-text --small post-editor__media-covers__field__blog__placeholder"
           />
         </div>
         <div class="post-editor__media-covers__field">
-          <label>Redes sociales</label>
+          <label class="post-editor__media-covers__field__social">
+            {{ LABELS_PAGES.postEditorMediaCoversFieldSocial }}
+          </label>
           <input
             v-model="coverCEO"
+            :placeholder="
+              LABELS_PAGES.postEditorMediaCoversFieldSocialPlaceholder
+            "
             type="text"
-            placeholder="URL cover CEO"
-            class="input-text --small"
+            class="input-text --small post-editor__media-covers__field__social__placeholder"
           />
         </div>
       </div>
@@ -69,27 +93,39 @@
           class="post-editor__container__editor"
         >
           <div class="post-editor__container__editor__field">
-            <label>Title</label>
+            <label class="post-editor__container__editor__field__title">
+              {{ LABELS_PAGES.postEditorContainerEditorFieldTitle }}
+            </label>
             <input
               :value="titleText"
               @input="updateTitle"
-              class="input-text --small"
+              :placeholder="
+                LABELS_PAGES.postEditorContainerEditorFieldTitlePlaceholder
+              "
+              class="input-text --small post-editor__container__editor__field__title__placeholder"
               type="text"
             />
           </div>
           <div class="post-editor__container__editor__field">
-            <label>Description</label>
+            <label class="post-editor__container__editor__field__description">
+              {{ LABELS_PAGES.postEditorContainerEditorFieldDescription }}
+            </label>
             <input
               :value="descriptionText"
               @input="updateDescription"
-              class="input-text --small"
+              :placeholder="
+                LABELS_PAGES.postEditorContainerEditorFieldDescriptionPlaceholder
+              "
+              class="input-text --small post-editor__container__editor__field__description__placeholder"
               type="text"
             />
           </div>
           <div
             class="post-editor__container__editor__field post-editor__container__editor__labels"
           >
-            <label>Tags</label>
+            <label class="post-editor__container__editor__field__tags">
+              {{ LABELS_PAGES.postEditorContainerEditorFieldTags }}
+            </label>
             <select
               class="post-editor__container__editor__labels__select input-text --small"
             >
@@ -181,9 +217,9 @@ export default {
       error: {
         message: responseCodes.notFound.code
       },
-      titleText: 'Title post',
-      descriptionText: 'Description post',
-      blogText: '# Content post',
+      titleText: '',
+      descriptionText: '',
+      blogText: '',
       isOpenCovers: false,
       coverBlog: '',
       coverCEO: '',
@@ -198,8 +234,12 @@ export default {
       post: state => state.posts.postView.post,
       adminLabels: state => state.posts.adminLabels,
       isDataPending: state => state.posts.status.get.isPublicPending,
-      lang: state => state.lang.lang
+      langVuex: state => state.lang.lang,
+      LABELS: state => state.lang.labels
     }),
+    LABELS_PAGES() {
+      return _.get(this.LABELS, 'components.addEditPostEditor', {})
+    },
     compiledTitleMarkdown() {
       return this.$markdownit.renderInline(this.titleText)
     },
@@ -244,7 +284,10 @@ export default {
         })
         .catch(error => {
           this.error = { message: `${error}` }
-          this.titlePage = responseCodesHandler(this.error, this.lang).message
+          this.titlePage = responseCodesHandler(
+            this.error,
+            this.langVuex
+          ).message
         })
     } else {
       this.setPost()
@@ -317,7 +360,7 @@ export default {
 
       this.titlePage = post
         ? post.post.title
-        : responseCodesHandler(this.error, this.lang).message
+        : responseCodesHandler(this.error, this.langVuex).message
     },
     publish(type = 'public') {
       const fn = this
@@ -361,7 +404,7 @@ export default {
               type: 'success',
               text: responseCodesHandler(
                 { message: `${result.status}` },
-                this.lang
+                this.langVuex
               ).message
             })
             this.$router.push('/posts/dashboard')
@@ -371,7 +414,7 @@ export default {
               group: 'foo',
               title: 'Error',
               type: 'error',
-              text: responseCodesHandler({ message: `${error}` }, this.lang)
+              text: responseCodesHandler({ message: `${error}` }, this.langVuex)
                 .message
             })
             this.showLoading = false
@@ -385,7 +428,7 @@ export default {
               type: 'success',
               text: responseCodesHandler(
                 { message: `${result.status}` },
-                this.lang
+                this.langVuex
               ).message
             })
             this.$router.push('/posts/dashboard')
@@ -395,7 +438,7 @@ export default {
               group: 'foo',
               title: 'Error',
               type: 'error',
-              text: responseCodesHandler({ message: `${error}` }, this.lang)
+              text: responseCodesHandler({ message: `${error}` }, this.langVuex)
                 .message
             })
             this.showLoading = false
@@ -405,7 +448,10 @@ export default {
   },
   head() {
     return {
-      title: this.typeAction !== 'edit' ? 'Add publication' : this.titlePage
+      title:
+        this.typeAction !== 'edit'
+          ? this.LABELS_PAGES.postEditorTitleAdd
+          : this.titlePage
     }
   }
 }

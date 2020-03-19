@@ -56,10 +56,153 @@ const PAGINATION = {
 
 const AVAILABLE_LANGS = ['en', 'es']
 
+const LABELS = {
+  pages: {
+    privatePublicationsList: {
+      titlePage: {
+        en: 'Administration dashboard',
+        es: 'Panel de administración'
+      }
+    },
+    publicPublicationsList: {
+      titlePage: {
+        en: 'Publications',
+        es: 'Publicaciones'
+      }
+    },
+    login: {
+      loginButtonIcon: {
+        en: 'Login',
+        es: 'Iniciar sesión'
+      }
+    },
+    callback: {
+      callbackTitle: {
+        en: 'Authentification',
+        es: 'Autentificación'
+      },
+      callbackMessage: {
+        en: 'Authentication in process...',
+        es: 'Autentificación en proceso...'
+      }
+    }
+  },
+  components: {
+    modalDeletePost: {
+      modalDeletePostMessage: {
+        en: 'Do you want delete this post?',
+        es: '¿Quieres borrar ésta publicación?'
+      },
+      modalDeleteActionsCancel: {
+        en: 'Cancel',
+        es: 'Cancelar'
+      },
+      modalDeleteActionsDelete: {
+        en: 'Delete',
+        es: 'Borrar'
+      }
+    },
+    generalInformation: {
+      generalTitle: {
+        en: 'Categories',
+        es: 'Categorías'
+      },
+      generalTagsListFilterButton: {
+        en: 'Filter',
+        es: 'Filtrar'
+      }
+    },
+    addEditPostEditor: {
+      postEditorTitleAdd: {
+        en: 'Add publication',
+        es: 'Agregar publicación'
+      },
+      postEditorTitleEdit: {
+        en: 'Edit publication',
+        es: 'Editar publicación'
+      },
+      postEditorActionsCovers: {
+        en: 'Set covers',
+        es: 'Establecer covers'
+      },
+      postEditorActionsDraft: {
+        en: 'Save as draft',
+        es: 'Guardar como borrador'
+      },
+      postEditorActionsPublish: {
+        en: 'Publish',
+        es: 'Publicar'
+      },
+      postEditorMediaCoversCovers: {
+        en: 'Covers preview',
+        es: 'Visualizar covers'
+      },
+      postEditorMediaCoversFieldBlog: {
+        en: 'Cover blog',
+        es: 'Cover blog'
+      },
+      postEditorMediaCoversFieldBlogPlaceholder: {
+        en: 'URL main cover',
+        es: 'URL cover principal'
+      },
+      postEditorMediaCoversFieldSocial: {
+        en: 'Cover social media',
+        es: 'Cover redes sociales'
+      },
+      postEditorMediaCoversFieldSocialPlaceholder: {
+        en: 'URL cover CEO',
+        es: 'URL cover CEO'
+      },
+      postEditorContainerEditorFieldTitle: {
+        en: 'Title',
+        es: 'Título'
+      },
+      postEditorContainerEditorFieldTitlePlaceholder: {
+        en: 'Title post',
+        es: 'Título publicación'
+      },
+      postEditorContainerEditorFieldDescription: {
+        en: 'Description',
+        es: 'Descripción'
+      },
+      postEditorContainerEditorFieldDescriptionPlaceholder: {
+        en: 'Description post',
+        es: 'Descripción publicación'
+      },
+      postEditorContainerEditorFieldBlogTextPlaceholder: {
+        en: '# Content post',
+        es: '# Contenido publicación'
+      },
+      postEditorContainerEditorFieldTags: {
+        en: 'Tags',
+        es: 'Etiquetas'
+      }
+    },
+    searchBar: {
+      searchBarInputPlaceholder: {
+        en: 'Search',
+        es: 'Buscar'
+      }
+    },
+    authorInformation: {
+      authorCardTitle: {
+        en: 'Author',
+        es: 'Autor'
+      },
+      authorCardButtonProfile: {
+        en: 'View profile',
+        es: 'Ver perfil'
+      }
+    }
+  },
+  layouts: {}
+}
+
 export {
   POSTS_DATA,
   OMITTED_LABELS,
   POSTS_LABELS_CONFIG,
   PAGINATION,
-  AVAILABLE_LANGS
+  AVAILABLE_LANGS,
+  LABELS
 }

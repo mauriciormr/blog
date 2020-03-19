@@ -3,16 +3,27 @@
     <div class="login">
       <button @click="login" class="login__button">
         <i class="fa fa-github login__button__icon" aria-hidden="true" />
-        Login
+        {{ LABELS_PAGES.loginButtonIcon }}
       </button>
     </div>
   </div>
 </template>
 
 <script>
+import _ from 'lodash'
+import { mapState } from 'vuex'
+
 import stringRandom from 'string-random'
 
 export default {
+  computed: {
+    ...mapState({
+      LABELS: state => state.lang.labels
+    }),
+    LABELS_PAGES() {
+      return _.get(this.LABELS, 'pages.login', {})
+    }
+  },
   methods: {
     login() {
       const clientId = process.env.GITHUB_CLIENT_ID
@@ -24,7 +35,7 @@ export default {
   },
   head() {
     return {
-      title: 'Login'
+      title: this.LABELS_PAGES.loginButtonIcon
     }
   }
 }
