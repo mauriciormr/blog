@@ -69,6 +69,12 @@ const LABELS = {
         en: 'Publications',
         es: 'Publicaciones'
       }
+    },
+    login: {
+      loginButtonIcon: {
+        en: 'Login',
+        es: 'Iniciar sesión'
+      }
     }
   },
   components: {
