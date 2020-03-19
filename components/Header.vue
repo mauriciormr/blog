@@ -46,7 +46,7 @@
               </option>
             </select>
             <i
-              class="fa fa-angle-down nav__list__item-dropdown__arrow"
+              class="fa fa-angle-down nav__list__item-lang__arrow"
               aria-hidden="true"
             />
           </li>
