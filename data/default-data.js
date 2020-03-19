@@ -75,6 +75,16 @@ const LABELS = {
         en: 'Login',
         es: 'Iniciar sesión'
       }
+    },
+    callback: {
+      callbackTitle: {
+        en: 'Authentification',
+        es: 'Autentificación'
+      },
+      callbackMessage: {
+        en: 'Authentication in process...',
+        es: 'Autentificación en proceso...'
+      }
     }
   },
   components: {
