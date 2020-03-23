@@ -569,7 +569,7 @@ export default {
       &__text {
         @apply border bg-base border-divContainer w-full;
         @apply p-2;
-        @apply font-poppins text-sm;
+        @apply font-poppins text-sm text-primary;
         height: 90vh;
       }
     }

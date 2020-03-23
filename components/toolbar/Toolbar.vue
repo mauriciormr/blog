@@ -100,6 +100,7 @@ export default {
 <style lang="scss" scoped>
 .toolbar {
   @apply flex flex-wrap justify-end;
+  @apply text-primary;
 
   &__option {
     @apply px-1 mr-1;

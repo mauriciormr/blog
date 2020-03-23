@@ -4,7 +4,7 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-:root {
+.bright-green-theme {
   --bg-background-base: #F5F5F5;
   --bg-background-primary: #00F49B;
   --bg-background-primary--selected: rgba(0, 244, 155, 0.5);
@@ -18,4 +18,20 @@
   --border-input--focus: #00F49B;
   --text-input: #747474;
   --border-div-container: #D6DFE0;
+}
+
+.dark-theme {
+  --bg-background-base: #18191A;
+  --bg-background-primary: #454546;
+  --bg-background-primary--selected: rgba(69, 69, 70, 0.5);
+  --bg-background-secondary: #242526 ;
+  --bg-background-ternary: rgba(255, 255, 255, 0.1);
+  --text-primary: #E4E6EB;
+  --text-secondary: #B0B3B8;
+  --bg-input: #454546;
+  --bg-input--selected: rgba(69, 69, 70, 0.5);
+  --border-input: rgba(255, 255, 255, 0.1);
+  --border-input--focus: #E4E6EB;
+  --text-input: #747474;
+  --border-div-container: rgba(255, 255, 255, 0.1);
 }

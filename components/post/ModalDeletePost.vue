@@ -95,7 +95,7 @@ export default {
   }
 
   &__close {
-    @apply w-full text-right text-2xl;
+    @apply w-full text-right text-2xl text-primary;
   }
 
   &__post {

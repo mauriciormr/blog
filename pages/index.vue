@@ -68,6 +68,11 @@ export default {
     ...mapActions({
       logoutUser: 'users/logoutUser'
     })
+  },
+  head() {
+    return {
+      title: `${this.USER.name} ${this.USER.lastname}`
+    }
   }
 }
 </script>
