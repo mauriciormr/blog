@@ -240,6 +240,7 @@
     </svg>
     <span class="callback__message">
       {{ LABELS_PAGES.callbackMessage }}
+      {{ code }}
     </span>
   </div>
 </template>
@@ -253,7 +254,8 @@ export default {
     return {
       userData: {},
       logged: false,
-      error: {}
+      error: {},
+      code: {}
     }
   },
   computed: {
@@ -267,6 +269,7 @@ export default {
   },
   async asyncData({ query, $axios, redirect }) {
     try {
+      console.log('query', query)
       const github = await $axios.$post(
         `${process.env.GITHUB_ACCESS_TOKEN_URL}`,
         {
@@ -296,7 +299,8 @@ export default {
       }
     } catch (error) {
       return {
-        error
+        error,
+        code: query.code
       }
     }
   },
@@ -311,7 +315,8 @@ export default {
     }
 
     if (Object.keys(this.error).length > 0) {
-      this.$errorGlobalHandler(this.error, this.lang)
+
+      //this.$errorGlobalHandler({message: this.code}, this.lang)
     }
   },
   methods: {
