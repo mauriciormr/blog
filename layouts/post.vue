@@ -13,6 +13,9 @@
   </div>
 </template>
 <script>
+import _ from 'lodash'
+import { mapState } from 'vuex'
+
 import Header from '~/components/Header.vue'
 import AuthorInformation from '~/components/post/AuthorInformation.vue'
 
@@ -20,6 +23,18 @@ export default {
   components: {
     Header,
     AuthorInformation
+  },
+  computed: {
+    ...mapState({
+      theme: state => state.themes.theme
+    })
+  },
+  head() {
+    return {
+      bodyAttrs: {
+        class: [_.get(this.theme, 'className', '')]
+      }
+    }
   }
 }
 </script>

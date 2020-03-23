@@ -13,6 +13,7 @@
 </template>
 <script>
 import _ from 'lodash'
+import { mapState } from 'vuex'
 
 import Header from '~/components/Header.vue'
 import SearchBar from '~/components/post/SearchBar.vue'
@@ -25,9 +26,19 @@ export default {
     GeneralInformation
   },
   computed: {
+    ...mapState({
+      theme: state => state.themes.theme
+    }),
     tagsToFilter() {
       const q = _.get(this.$route.query, 'tags', '')
       return !q ? [] : q.split(',')
+    }
+  },
+  head() {
+    return {
+      bodyAttrs: {
+        class: [_.get(this.theme, 'className', '')]
+      }
     }
   }
 }

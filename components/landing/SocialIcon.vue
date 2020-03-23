@@ -4,7 +4,7 @@
     <!-- https://alligator.io/vuejs/raw-html-binding/ -->
     <svg
       v-html="social.icon"
-      class="svg"
+      class="svg-icon"
       xmlns="http://www.w3.org/2000/svg"
       version="1.1"
       preserveAspectRatio="none"
@@ -22,12 +22,12 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
-.svg {
+<style lang="scss">
+.svg-icon {
   height: 60%;
+}
 
-  path {
-    @apply fill-base;
-  }
+.svg-icon path {
+  @apply fill-primary;
 }
 </style>

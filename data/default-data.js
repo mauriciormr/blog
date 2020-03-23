@@ -54,7 +54,7 @@ const PAGINATION = {
   maxItemsPaginationBar: 3
 }
 
-const AVAILABLE_LANGS = ['en', 'es']
+const AVAILABLE_LANGS = ['es', 'en']
 
 const LABELS = {
   pages: {
@@ -198,11 +198,25 @@ const LABELS = {
   layouts: {}
 }
 
+const THEMES = {
+  brightGreenTheme: {
+    name: 'Bright Green Theme',
+    className: 'bright-green-theme',
+    selected: true
+  },
+  darkTheme: {
+    name: 'Dark Theme',
+    className: 'dark-theme',
+    selected: false
+  }
+}
+
 export {
   POSTS_DATA,
   OMITTED_LABELS,
   POSTS_LABELS_CONFIG,
   PAGINATION,
   AVAILABLE_LANGS,
-  LABELS
+  LABELS,
+  THEMES
 }

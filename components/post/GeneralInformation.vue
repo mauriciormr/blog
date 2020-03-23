@@ -86,14 +86,15 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .blog__sidebar {
   @apply bg-secondary;
 }
-
+</style>
+<style lang="scss" scoped>
 .general {
   &__title {
-    @apply font-raleway text-baseSize font-semibold;
+    @apply font-raleway text-primary text-baseSize font-semibold;
     @apply border-b border-divContainer mb-4;
   }
 

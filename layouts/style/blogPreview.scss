@@ -144,13 +144,17 @@
 
   div.post__title {
     line-height: 1.5;
-    @apply font-raleway font-semibold text-3xl;
+    @apply font-raleway font-semibold text-3xl text-primary;
     @apply mb-4;
   }
 
   div.post__description {
     @apply font-raleway italic text-secondary font-medium;
     @apply mb-4;
+  }
+
+  div.post__content {
+    @apply text-primary;
   }
 
   @screen desktop {
