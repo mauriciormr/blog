@@ -10,15 +10,6 @@ const HEADER_LINKS = [
   },
   {
     name: {
-      en: 'About me',
-      es: 'Sobre mí'
-    },
-    route: '/posts/',
-    show: true,
-    showWhenUserIsLogged: true
-  },
-  {
-    name: {
       en: 'Blog',
       es: 'Blog'
     },
@@ -29,7 +20,7 @@ const HEADER_LINKS = [
   {
     name: {
       en: 'Login',
-      es: 'Iniciar Sesión'
+      es: 'Entrar'
     },
     route: '/login/',
     show: true,
