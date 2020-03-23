@@ -4,7 +4,7 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-.bright-green-theme {
+[class="bright-green-theme"] {
   --bg-background-base: #F5F5F5;
   --bg-background-primary: #00F49B;
   --bg-background-primary--selected: rgba(0, 244, 155, 0.5);
@@ -20,7 +20,7 @@
   --border-div-container: #D6DFE0;
 }
 
-.dark-theme {
+[class="dark-theme"] {
   --bg-background-base: #18191A;
   --bg-background-primary: #454546;
   --bg-background-primary--selected: rgba(69, 69, 70, 0.5);
